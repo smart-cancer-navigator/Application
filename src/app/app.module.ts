@@ -1,15 +1,18 @@
+// Modules
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms';
 import { HttpModule }    from '@angular/http';
+import { AppRoutingModule } from './app-routing.module';
 
+// Components
 import { AppComponent }  from './app.component';
-
-// Custom Components
 import { FilterableDropdownComponent } from './filterable-dropdown.component';
 import { InfoHeaderComponent } from './info-header.component';
+import { DiseaseSelectionComponent } from './disease-selection.component';
+import { DataEntryComponent } from './data-entry.component';
 
-// Custom Services
+// Services
 import { GeneDatabaseManager } from './gene-database-manager.service';
 import { GeneDatabaseService } from './gene-database.service';
 
@@ -17,12 +20,15 @@ import { GeneDatabaseService } from './gene-database.service';
   imports:      [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,
     FilterableDropdownComponent,
-    InfoHeaderComponent
+    InfoHeaderComponent,
+    DataEntryComponent,
+    DiseaseSelectionComponent
   ],
   providers: [
     GeneDatabaseManager,

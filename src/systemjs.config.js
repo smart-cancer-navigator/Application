@@ -6,7 +6,8 @@
   System.config({
     paths: {
       // paths serve as alias
-      'npm:': 'node_modules/'
+      'npm:': 'node_modules/',
+      'fhirclient': 'node_modules/fhirclient/fhir-client.js'
     },
     // map tells the System loader where to look for things
     map: {
