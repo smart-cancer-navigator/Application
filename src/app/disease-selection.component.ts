@@ -79,7 +79,7 @@ export class DiseaseSelectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(SMARTReferenceService.getSMARTInstance());
+    console.log(SMARTReferenceService.FHIRClientInstance());
 
     this.diseases = this.searchTerms
       .debounceTime(300)        // wait 300ms after each keystroke before considering the term
@@ -97,7 +97,7 @@ export class DiseaseSelectionComponent implements OnInit {
   }
 
   gotoDetail(disease: Disease): void {
-    let link = ['/data-entry', disease.name];
+    const link = ['/data-entry', disease.name];
     this.router.navigate(link);
   }
 }
