@@ -5,10 +5,10 @@
  * add the full functionality of another database.
  */
 "use strict";
-var GeneDatabaseService = (function () {
-    function GeneDatabaseService() {
+var SingleDatabaseService = (function () {
+    function SingleDatabaseService() {
     }
-    return GeneDatabaseService;
+    return SingleDatabaseService;
 }());
-exports.GeneDatabaseService = GeneDatabaseService;
-//# sourceMappingURL=gene-database.service.js.map
+exports.SingleDatabaseService = SingleDatabaseService;
+//# sourceMappingURL=single-database.service.js.map

@@ -20,8 +20,8 @@ var InfoHeaderComponent = (function () {
 InfoHeaderComponent = __decorate([
     core_1.Component({
         selector: 'info-header',
-        template: "\n    \n  ",
-        styles: ["\n    \n  "]
+        template: "\n    <div id=\"header\">\n      <img id=\"smartLogo\" src=\"assets/smart-logo.png\">\n      <p id=\"patientHeader\">John Smith - Age 42 - Thyroid Cancer</p>\n      <p id=\"userHeader\">Rebecca Cohen, M.D.</p>\n    </div>\n  ",
+        styles: ["\n    #header {\n      height: 100px;\n      width: 100%;\n      display: flex;\n      align-items: center;\n\n      background-color: #dbdbdb;\n      padding: 5px;\n      text-align: center;\n    }\n\n    #header * {\n      margin: 0;\n      float: left;\n    }\n\n    #header p {\n      font-size: 30px;\n    }\n\n    #smartLogo {\n      width: auto;\n      height: 75%;\n    }\n\n    #patientHeader {\n      width: 60%;\n      color: #fff;\n    }\n\n    #userHeader {\n      width: 30%;\n      color: #fff;\n    }\n  "]
     })
 ], InfoHeaderComponent);
 exports.InfoHeaderComponent = InfoHeaderComponent;

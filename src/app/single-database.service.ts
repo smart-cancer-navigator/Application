@@ -5,6 +5,5 @@
  * add the full functionality of another database.
  */
 
-export class GeneDatabaseService {
-
+export class SingleDatabaseService {
 }

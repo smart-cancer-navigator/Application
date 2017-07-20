@@ -8,25 +8,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+require("rxjs/add/operator/switchMap");
 var core_1 = require("@angular/core");
 var router_1 = require("@angular/router");
 var common_1 = require("@angular/common");
-var GeneVariantType = (function () {
-    function GeneVariantType() {
-    }
-    return GeneVariantType;
-}());
+var disease_search_service_1 = require("./disease-search.service");
 var DataEntryComponent = (function () {
-    function DataEntryComponent(route, location) {
+    function DataEntryComponent(diseaseService, route, location) {
+        this.diseaseService = diseaseService;
         this.route = route;
         this.location = location;
-        this.geneVariantTypeArray = [
-            { gene: 'PX41', variant: '225E', type: 'Missense Variant' },
-            { gene: 'BRCA1', variant: '226B', type: 'Loss of Function Variant' }
-        ];
     }
     DataEntryComponent.prototype.ngOnInit = function () {
-        // Do something with the ParamMap
+    };
+    DataEntryComponent.prototype.goBack = function () {
+        this.location.back();
     };
     return DataEntryComponent;
 }());
@@ -34,9 +30,10 @@ DataEntryComponent = __decorate([
     core_1.Component({
         selector: 'data-entry',
         template: "    \n    \n  ",
-        styles: ["\n  "]
+        styles: ["\n    \n  "]
     }),
-    __metadata("design:paramtypes", [router_1.ActivatedRoute,
+    __metadata("design:paramtypes", [disease_search_service_1.DiseaseSearchService,
+        router_1.ActivatedRoute,
         common_1.Location])
 ], DataEntryComponent);
 exports.DataEntryComponent = DataEntryComponent;

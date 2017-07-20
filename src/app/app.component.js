@@ -10,12 +10,15 @@ var AppComponent = (function () {
     function AppComponent() {
         this.title = 'SMART EHR Module (Angular)';
     }
+    AppComponent.prototype.ngOnInit = function () {
+    };
     return AppComponent;
 }());
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "\n    <info-header></info-header>\n    <router-outlet></router-outlet>\n  ",
+        template: "\n    <info-header></info-header>\n    <div id=\"content\">\n      <router-outlet></router-outlet>\n    </div>\n  ",
+        styles: ["    \n    #content {\n      margin: 50px;\n      width: calc(100% - 100px);\n    }\n  "]
     })
 ], AppComponent);
 exports.AppComponent = AppComponent;

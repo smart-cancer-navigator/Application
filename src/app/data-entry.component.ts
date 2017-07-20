@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import 'rxjs/add/operator/switchMap';
+import { Component, OnInit }        from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Location } from '@angular/common';
+import { Location }                 from '@angular/common';
 
-class GeneVariantType {
-  gene: string;
-  variant: string;
-  type: string;
-}
+import { Disease }        from './disease';
+import { DiseaseSearchService } from './disease-search.service';
+
+import { Gene } from './gene';
+import { GeneSearchService } from './gene-search.service';
+import {SMARTReferenceService} from './smart-reference.service';
 
 @Component({
   selector: 'data-entry',
@@ -14,21 +16,23 @@ class GeneVariantType {
     
   `,
   styles: [`
+    
   `]
 })
 
 export class DataEntryComponent implements OnInit {
-  geneVariantTypeArray: GeneVariantType[] = [
-    {gene: 'PX41', variant: '225E', type: 'Missense Variant' },
-    {gene: 'BRCA1', variant: '226B', type: 'Loss of Function Variant' }
-  ];
+  disease: Disease;
 
   constructor(
+    private diseaseService: DiseaseSearchService,
     private route: ActivatedRoute,
     private location: Location
   ) {}
 
   ngOnInit(): void {
-    // Do something with the ParamMap
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
