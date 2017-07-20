@@ -30,11 +30,11 @@ import 'rxjs/add/operator/switchMap';
     <div>
       <div *ngFor="let disease of diseases | async"
            (click)="gotoDetail(disease)" class="search-result" >
-        {{hero.name}}
+        {{disease.name}}
       </div>
     </div>
   `,
-  styles: [`    
+  styles: [`
     h1 {
       text-align: center;
     }
