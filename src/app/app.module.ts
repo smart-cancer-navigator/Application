@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 // Components
 import { AppComponent } from './app.component';
 import { InfoHeaderComponent } from './info-header.component';
-import { DiseaseSelectionComponent } from './disease-selection.component';
+import { CancerTypeSelectionComponent } from './cancertype-selection.component';
 import { DataEntryComponent } from './data-entry.component';
 import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
@@ -28,7 +28,7 @@ import { SingleDatabaseService } from './single-database.service';
     AppComponent,
     InfoHeaderComponent,
     DataEntryComponent,
-    DiseaseSelectionComponent,
+    CancerTypeSelectionComponent,
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent
   ],

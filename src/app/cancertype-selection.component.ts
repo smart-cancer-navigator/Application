@@ -1,6 +1,6 @@
 /**
- * Since the SMART app is unable to figure out which disease an oncologist is looking at without
- * any sort of user data (based on the organization of FHIR objects), this component provides an
+ * Since the SMART app is unable to figure out which cancer type an oncologist is looking at without
+ * any sort of user input (based on the organization of FHIR objects), this component provides an
  * interface through which the user can accomplish this.
  */
 
@@ -8,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 
-import {SMARTReferenceService} from './smart-reference.service';
-import { Disease } from './disease';
+import { SMARTReferenceService } from './smart-reference.service';
+import { CancerType } from './cancertype';
 import { Subject } from 'rxjs/Subject';
-import { DiseaseSearchService } from './disease-search.service';
+import { CancerTypeSearchService } from './cancertype-search.service';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -23,14 +23,14 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 
 @Component({
-  selector: 'disease-selection',
+  selector: 'cancertype-selection',
   template: `
     <h1>Select Patient Cancer Type</h1>
-    <input #searchBox id="search-box" (keyup)="search(searchBox.value)" />
+    <input #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
     <div>
-      <div *ngFor="let disease of diseases | async"
-           (click)="gotoDetail(disease)" class="search-result" >
-        {{disease.name}}
+      <div *ngFor="let cancertype of cancertypes | async"
+           (click)="choose(cancertype)" class="search-result">
+        {{cancertype.name}}
       </div>
     </div>
   `,
@@ -62,16 +62,16 @@ import 'rxjs/add/operator/switchMap';
       background-color: #607D8B;
     }
   `],
-  providers: [DiseaseSearchService]
+  providers: [CancerTypeSearchService]
 })
 
-export class DiseaseSelectionComponent implements OnInit {
+export class CancerTypeSelectionComponent implements OnInit {
 
   // Angular components which apparently make filterable searches easier...?
-  diseases: Observable<Disease[]>;
+  cancertypes: Observable<CancerType[]>;
   private searchTerms = new Subject<string>();
 
-  constructor(private diseaseSearchService: DiseaseSearchService, private router: Router) {}
+  constructor(private cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
 
   // Push a search term into the observable stream.
   search(term: string): void {
@@ -81,23 +81,23 @@ export class DiseaseSelectionComponent implements OnInit {
   ngOnInit(): void {
     console.log(SMARTReferenceService.FHIRClientInstance());
 
-    this.diseases = this.searchTerms
+    this.cancertypes = this.searchTerms
       .debounceTime(300)        // wait 300ms after each keystroke before considering the term
       .distinctUntilChanged()   // ignore if next search term is same as previous
       .switchMap(term => term   // switch to new observable each time the term changes
         // return the http search observable
-        ? this.diseaseSearchService.search(term)
+        ? this.cancertypeSearchService.search(term)
         // or the observable of empty heroes if there was no search term
-        : Observable.of<Disease[]>([]))
+        : Observable.of<CancerType[]>([]))
       .catch(error => {
         // TODO: add real error handling
         console.log(error);
-        return Observable.of<Disease[]>([]);
+        return Observable.of<CancerType[]>([]);
       });
   }
 
-  gotoDetail(disease: Disease): void {
-    const link = ['/data-entry', disease.name];
+  choose(cancertype: CancerType): void {
+    const link = ['/data-entry', cancertype.name];
     this.router.navigate(link);
   }
 }
