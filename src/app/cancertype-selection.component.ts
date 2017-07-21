@@ -8,7 +8,6 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 
-import {SMARTClient, SMARTReferenceService} from './smart-reference.service';
 import { CancerType } from './cancertype';
 import { Subject } from 'rxjs/Subject';
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -82,9 +81,6 @@ export class CancerTypeSelectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Client from other');
-    console.log(SMARTClient);
-
     // Think of this as a funnel, order is super important.
     this.cancertypes = this.searchTerms
       .debounceTime(300)        // wait 300ms after each keystroke before considering the term

@@ -8,39 +8,17 @@
  * https://stackoverflow.com/questions/34714462/updating-variable-changes-in-components-from-a-service-with-angular2
  */
 
-import {Subject} from 'rxjs/Subject';
 import {Injectable} from '@angular/core';
 
 declare const FHIR: any;
 export const SMARTModule = FHIR;
-
-export var SMARTClient = null;
+export let SMARTClient = null;
 
 @Injectable()
 export class SMARTReferenceService {
-  smartModule: any = FHIR;
-  // Since this value changes, we have to have it update based on Observables.
-  smartClientSubject: Subject <any> = new Subject <any>();
-
-  myID: string = this.makeID();
-
-  makeID(): string {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    for (let i = 0; i < 5; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-
-    return text;
-  }
-
   ready() {
-    console.log('ID: ' + this.myID);
-    this.smartModule.oauth2.ready(function (smart) {
-      console.log('Updating');
+    SMARTModule.oauth2.ready(function (smart) {
       SMARTClient = smart;
-      console.log('now is ', smart);
     });
   }
 }
