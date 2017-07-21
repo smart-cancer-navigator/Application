@@ -18,14 +18,15 @@ import { SMARTReferenceService } from './smart-reference.service';
 export class SMARTTokenReceptionComponent implements OnInit {
   state = 'Receiving token...';
 
-  constructor(private router: Router) {}
+  constructor(
+    private smartReferenceService: SMARTReferenceService,
+    private router: Router) {}
 
   ngOnInit() {
     // Set up the client reference.
-    SMARTReferenceService.ready();
+    this.smartReferenceService.ready();
 
     // Redirect to the disease selection.
-    this.router.navigate(['/cancertype-selection']);
+    setTimeout(() => this.router.navigate(['/cancertype-selection']), 1500);
   }
-
 }

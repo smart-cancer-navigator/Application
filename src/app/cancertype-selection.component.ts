@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 
-import { SMARTReferenceService } from './smart-reference.service';
+import {SMARTClient, SMARTReferenceService} from './smart-reference.service';
 import { CancerType } from './cancertype';
 import { Subject } from 'rxjs/Subject';
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -21,6 +21,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'cancertype-selection',
@@ -71,7 +72,9 @@ export class CancerTypeSelectionComponent implements OnInit {
   cancertypes: Observable<CancerType[]>;
   private searchTerms = new Subject<string>();
 
-  constructor(private cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
+  constructor(
+    private cancertypeSearchService: CancerTypeSearchService,
+    private router: Router) {}
 
   // Push a search term into the observable stream.
   search(term: string): void {
@@ -79,12 +82,14 @@ export class CancerTypeSelectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(SMARTReferenceService.FHIRClientInstance());
+    console.log('Client from other');
+    console.log(SMARTClient);
 
+    // Think of this as a funnel, order is super important.
     this.cancertypes = this.searchTerms
       .debounceTime(300)        // wait 300ms after each keystroke before considering the term
       .distinctUntilChanged()   // ignore if next search term is same as previous
-      .switchMap(term => term   // switch to new observable each time the term changes
+      .switchMap(term => term   // switch to new observable each time the term changes (ternary operator)
         // return the http search observable
         ? this.cancertypeSearchService.search(term)
         // or the observable of empty heroes if there was no search term

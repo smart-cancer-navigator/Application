@@ -16,6 +16,8 @@ import { SMARTTokenReceptionComponent } from './smart-token-reception.component'
 // Services
 import { GeneSearchService } from './gene-search.service';
 import { SingleDatabaseService } from './single-database.service';
+import { CancerTypeSearchService } from './cancertype-search.service';
+import {SMARTReferenceService} from './smart-reference.service';
 
 @NgModule({
   imports:      [
@@ -34,8 +36,12 @@ import { SingleDatabaseService } from './single-database.service';
   ],
   providers: [
     SingleDatabaseService,
-    GeneSearchService
+    GeneSearchService,
+    CancerTypeSearchService,
+    SMARTReferenceService
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule { }

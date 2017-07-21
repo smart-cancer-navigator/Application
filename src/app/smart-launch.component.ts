@@ -6,7 +6,7 @@
 // Modules required to access URL parameters.
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import {OnInit, Component} from '@angular/core';
-import {SMARTReferenceService} from './smart-reference.service';
+import {SMARTModule, SMARTReferenceService} from './smart-reference.service';
 
 @Component({
   selector: 'smart-launch',
@@ -24,7 +24,7 @@ export class SMARTLaunchComponent implements OnInit {
     // subscribe to router event
     this.activatedRoute.params.subscribe((params: Params) => {
       if (params['iss'] !== null && params['launch'] !== null) {
-        SMARTReferenceService.FHIRClientInstance().oauth2.authorize({
+        SMARTModule.oauth2.authorize({
           client_id: '1e7af332-b27a-4de2-8c51-728ae3ed25c2',
           scope: 'launch patient/*.* openid profile',
           redirect_uri: 'http://127.0.0.1:4200/token-reception'
@@ -35,5 +35,4 @@ export class SMARTLaunchComponent implements OnInit {
       }
     });
   }
-
 }
