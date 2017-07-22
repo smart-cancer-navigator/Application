@@ -6,21 +6,23 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http }       from '@angular/http';
+import { Http } from '@angular/http';
 
-import { Observable }     from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { Gene }           from './gene';
+import { CancerType } from './cancertype';
 
 @Injectable()
-export class GeneSearchService {
+export class DataEntryService {
 
   constructor(private http: Http) {}
 
-  search(term: string): Observable<Gene[]> {
-    return this.http
-      .get(`api/heroes/?name=${term}`)
-      .map(response => response.json().data as Gene[]);
+  // search(term: string): Observable<Gene[]> {
+  //   return Observable.of<Gene[]>([]);
+  // }
+
+  getCancerType(id: number): CancerType {
+    return null;
   }
 }

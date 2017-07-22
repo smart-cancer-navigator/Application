@@ -40,7 +40,9 @@ export class CancerTypeSelectionComponent implements OnInit {
     this.cancertypeSearchService.initialize();
   }
 
-  choose(cancertype: FilterableSearchOption): void {
-    console.log('Cancer type selection component got choice', cancertype);
+  choose(selection: FilterableSearchOption): void {
+    console.log('Cancer type selection component got choice', selection);
+    const cancertype: CancerType = selection as CancerType;
+    this.router.navigate(['/data-entry', cancertype.fhirID]);
   }
 }

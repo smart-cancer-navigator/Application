@@ -1,9 +1,9 @@
 // Modules
-import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule }   from '@angular/forms';
-import { HttpModule }    from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Components
 import { AppComponent } from './app.component';
@@ -15,15 +15,17 @@ import { SMARTTokenReceptionComponent } from './smart-token-reception.component'
 import { FilterableSearchComponent } from './filterable-search.component';
 
 // Services
-import { GeneSearchService } from './gene-search.service';
+import { DataEntryService } from './data-entry.service';
 import { SingleDatabaseService } from './single-database.service';
 import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
 
+import { AddressComponent } from './address.component';
+
 @NgModule({
   imports:      [
     BrowserModule,
-    FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     AppRoutingModule
   ],
@@ -34,11 +36,12 @@ import { SMARTReferenceService } from './smart-reference.service';
     CancerTypeSelectionComponent,
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
-    FilterableSearchComponent
+    FilterableSearchComponent,
+    AddressComponent
   ],
   providers: [
     SingleDatabaseService,
-    GeneSearchService,
+    DataEntryService,
     CancerTypeSearchService,
     SMARTReferenceService
   ],

@@ -11,7 +11,7 @@ import {SMARTReferenceService} from './smart-reference.service';
   `,
   styles: [`
     #content {
-      margin: 50px;
+      margin: 0 50px;
       width: calc(100% - 100px);
     }
   `]

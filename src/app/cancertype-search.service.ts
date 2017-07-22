@@ -29,8 +29,6 @@ export class CancerTypeSearchService implements FilterableSearchService {
    * things.  I chose the '=>' solution from https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript
    */
   public initialize = () => {
-    console.log('Initializing');
-
     if (!SMARTClient) {
       console.log('No SMART client available!');
       return;
@@ -38,15 +36,14 @@ export class CancerTypeSearchService implements FilterableSearchService {
 
     // Query for available conditions (max of 10)
     SMARTClient.api.search({type: 'Condition', count: 10}).then((conditions) => {
-      console.log('Success!');
       console.log('Conditions', conditions);
       for (const condition of conditions.data.entry)
       {
         console.log('Condition: ' + condition.resource.code.text);
-        this.availableCancerTypes.push(new CancerType(condition.resource.code.text, 1));
+        this.availableCancerTypes.push(new CancerType(condition.resource.code.text, parseInt(condition.resource.code.coding[0].code), 1));
       }
     }, function() {
-      console.log('Failure!');
+      console.log('SMART Query Failed!');
     });
   }
 
@@ -60,7 +57,6 @@ export class CancerTypeSearchService implements FilterableSearchService {
     // Compile a list of available cancer types which start with the string in question.
     const applicableCancerTypes: CancerType[] = [];
     for (const cancertype of this.availableCancerTypes) {
-      console.log('Checking if ' + cancertype.optionName + ' starts with ' + term);
       if (cancertype.optionName.toLowerCase().startsWith(term)) {
         applicableCancerTypes.push(cancertype);
       }
