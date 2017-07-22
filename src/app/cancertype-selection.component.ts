@@ -20,7 +20,6 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
-import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'cancertype-selection',
@@ -81,7 +80,7 @@ export class CancerTypeSelectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Think of this as a funnel, order is super important.
+    // Refer to https://blog.thoughtram.io/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html
     this.cancertypes = this.searchTerms
       .debounceTime(300)        // wait 300ms after each keystroke before considering the term
       .distinctUntilChanged()   // ignore if next search term is same as previous
