@@ -36,12 +36,6 @@ export class CancerTypeSelectionComponent {
   constructor(private cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
 
   choose(cancertype: FilterableSearchOption): void {
-    if (cancertype instanceof CancerType) {
-      console.log('Result is a cancer type instance');
-    } else {
-      console.log('Result is not a cancer type instance');
-    }
-
     console.log('Cancer type selection component got choice', cancertype);
   }
 }

@@ -73,7 +73,7 @@ export class FilterableSearchComponent implements OnInit {
     this.onSelected.emit(option);
   }
 
-  // Angular components which apparently make filterable searches easier...?
+  // Angular components which apparently make filterable searches easier
   options: Observable<FilterableSearchOption[]>;
   private searchTerms = new Subject<string>();
 
@@ -92,7 +92,7 @@ export class FilterableSearchComponent implements OnInit {
       .distinctUntilChanged()   // ignore if next search term is same as previous
       .switchMap(term => term   // switch to new observable each time the term changes (ternary operator)
         ? this.searchService.search(term) // return the http search observable
-        : Observable.of<FilterableSearchOption[]>([])) // or the observable of empty heroes if there was no search term
+        : Observable.of<FilterableSearchOption[]>([])) // or the observable of empty options if there was no search term
       .catch(error => {
         // TODO: add real error handling
         console.log('Search Service Error', error);

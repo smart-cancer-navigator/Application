@@ -3,7 +3,7 @@
  * populates the dropdown list for the available options.
  */
 
-import {FilterableSearchService} from './filterable-search.service';
+import { FilterableSearchService } from './filterable-search.service';
 
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
@@ -14,6 +14,7 @@ import 'rxjs/add/operator/map';
 import { CancerType } from './cancertype';
 import { SMARTClient } from './smart-reference.service';
 
+// Since this search service extends the filterable search service, it is applicable to the filterable search component.
 @Injectable()
 export class CancerTypeSearchService extends FilterableSearchService {
   constructor(private http: Http) {
@@ -24,6 +25,7 @@ export class CancerTypeSearchService extends FilterableSearchService {
       return;
     }
 
+    // Query for available conditions (max of 10)
     SMARTClient.api.search({type: 'Condition', count: 10}).then(function (conditions) {
       console.log('Success!');
       console.log('Conditions', conditions);
@@ -36,7 +38,7 @@ export class CancerTypeSearchService extends FilterableSearchService {
     });
   }
 
-  cancertypeexamples = [
+  cancertypeexamples: CancerType[] = [
     {optionName: 'breast cancer', pathogenicity: 1},
     {optionName: 'thyroid cancer', pathogenicity: 2}
     ];
