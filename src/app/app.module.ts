@@ -12,12 +12,13 @@ import { CancerTypeSelectionComponent } from './cancertype-selection.component';
 import { DataEntryComponent } from './data-entry.component';
 import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
+import { FilterableSearchComponent } from './filterable-search.component';
 
 // Services
 import { GeneSearchService } from './gene-search.service';
 import { SingleDatabaseService } from './single-database.service';
 import { CancerTypeSearchService } from './cancertype-search.service';
-import {SMARTReferenceService} from './smart-reference.service';
+import { SMARTReferenceService } from './smart-reference.service';
 
 @NgModule({
   imports:      [
@@ -32,7 +33,8 @@ import {SMARTReferenceService} from './smart-reference.service';
     DataEntryComponent,
     CancerTypeSelectionComponent,
     SMARTLaunchComponent,
-    SMARTTokenReceptionComponent
+    SMARTTokenReceptionComponent,
+    FilterableSearchComponent
   ],
   providers: [
     SingleDatabaseService,
