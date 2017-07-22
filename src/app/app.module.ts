@@ -20,7 +20,7 @@ import { SingleDatabaseService } from './single-database.service';
 import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
 
-import { AddressComponent } from './address.component';
+import { GeneDataRowComponent } from './gene-data-row.component';
 
 @NgModule({
   imports:      [
@@ -37,7 +37,7 @@ import { AddressComponent } from './address.component';
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
-    AddressComponent
+    GeneDataRowComponent
   ],
   providers: [
     SingleDatabaseService,

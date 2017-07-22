@@ -19,18 +19,18 @@ import { Customer } from './customer.interface';
         <div *ngFor="let geneVariation of myForm.controls.geneVariations.controls; let i=index" class="entryPanel">
           <div class="panel-heading">
             <p>Variation {{i + 1}}</p>
-            <button *ngIf="myForm.controls.geneVariations.controls.length > 1" (click)="removeGeneVariation(i)">X
+            <button class="clickable" *ngIf="myForm.controls.geneVariations.controls.length > 1"
+                    (click)="removeRow(i)">X
             </button>
           </div>
           <div class="panel-body" [formGroupName]="i">
-            <address [adressForm]="myForm.controls.geneVariations.controls[i]"></address>
+            <gene-data-row [geneDataFormGroup]="myForm.controls.geneVariations.controls[i]"></gene-data-row>
           </div>
         </div>
       </div>
 
-      <button type="button" (click)="addGeneVariation()" style="cursor: default">Add Address</button>
-
-      <button type="submit" class="btn btn-primary pull-right" [disabled]="!myForm.valid">Submit</button>
+      <button type="button" (click)="addRow()" style="cursor: default" class="finalizeButton clickable">Add Row</button>
+      <button type="submit" [disabled]="!myForm.valid" class="finalizeButton clickable">Submit</button>
 
       <div>myForm details:-</div>
       <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
@@ -39,8 +39,9 @@ import { Customer } from './customer.interface';
   `,
   styles: [`
     .entryPanel {
-      border: 1px solid black;
+      border: 0.5px solid black;
       border-radius: 5px;
+      margin-bottom: 5px;
     }
 
     .panel-heading {
@@ -54,7 +55,7 @@ import { Customer } from './customer.interface';
       margin: 5px;
       font-size: 15px;
       text-align: left;
-      width: 150px;
+      width: calc(100% - 40px);
     }
 
     .panel-heading button {
@@ -66,26 +67,48 @@ import { Customer } from './customer.interface';
       background-color: red;
       border: 1px solid white;
       border-radius: 5px;
+      padding: 0;
+      font-size: 20px;
+      color: white;
+    }
+
+    .clickable {
       opacity: 1;
     }
 
-    .panel-heading button:hover {
+    .clickable:hover {
       opacity: 0.7;
     }
-    
-    .panel-heading button:active {
+
+    .clickable:active {
       opacity: 0.5;
     }
     
+    button:disabled {
+      opacity: 0.5;
+    }
+
     .panel-body {
       width: 100%;
+      padding: 10px;
     }
-    
+
     address {
       width: 100%;
     }
+
+    .finalizeButton {
+      width: calc(50% - 2px);
+      height: 30px;
+      border: 1px solid black;
+      border-radius: 10px;
+      background-color: #718599;
+      color: white;
+      font-size: 20px;
+    }
   `]
 })
+
 export class DataEntryComponent implements OnInit {
   public myForm: FormGroup;
 
@@ -96,8 +119,8 @@ export class DataEntryComponent implements OnInit {
       geneVariations: this._fb.array([])
     });
 
-    // add address
-    this.addGeneVariation();
+    // add row
+    this.addRow();
 
     /* subscribe to addresses value changes */
     // this.myForm.controls['addresses'].valueChanges.subscribe(x => {
@@ -105,18 +128,14 @@ export class DataEntryComponent implements OnInit {
     // })
   }
 
-  initAddress() {
-    return this._fb.group({
+  addRow() {
+    const control = <FormArray>this.myForm.controls['geneVariations'];
+    const newRow = this._fb.group({
       street: ['', Validators.required],
       postcode: ['']
     });
-  }
 
-  addGeneVariation() {
-    const control = <FormArray>this.myForm.controls['geneVariations'];
-    const addrCtrl = this.initAddress();
-
-    control.push(addrCtrl);
+    control.push(newRow);
 
     /* subscribe to individual address value changes */
     // addrCtrl.valueChanges.subscribe(x => {
@@ -124,7 +143,7 @@ export class DataEntryComponent implements OnInit {
     // })
   }
 
-  removeGeneVariation(i: number) {
+  removeRow(i: number) {
     const control = <FormArray>this.myForm.controls['geneVariations'];
     control.removeAt(i);
   }
