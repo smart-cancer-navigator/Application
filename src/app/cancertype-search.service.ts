@@ -16,9 +16,20 @@ import { SMARTClient } from './smart-reference.service';
 
 // Since this search service extends the filterable search service, it is applicable to the filterable search component.
 @Injectable()
-export class CancerTypeSearchService extends FilterableSearchService {
+export class CancerTypeSearchService implements FilterableSearchService {
+
+  public availableCancerTypes: CancerType[] = [];
+
   constructor(private http: Http) {
-    super();
+    // ALTHOUGH TEMPTING, according to Angular docs DON'T put any logic in the constructor.
+  }
+
+  /**
+   * OK SO here's the thing: TypeScript is weird and to preserve 'this' context, you have to do one of three
+   * things.  I chose the '=>' solution from https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript
+   */
+  public initialize = () => {
+    console.log('Initializing');
 
     if (!SMARTClient) {
       console.log('No SMART client available!');
@@ -26,25 +37,35 @@ export class CancerTypeSearchService extends FilterableSearchService {
     }
 
     // Query for available conditions (max of 10)
-    SMARTClient.api.search({type: 'Condition', count: 10}).then(function (conditions) {
+    SMARTClient.api.search({type: 'Condition', count: 10}).then((conditions) => {
       console.log('Success!');
       console.log('Conditions', conditions);
       for (const condition of conditions.data.entry)
       {
         console.log('Condition: ' + condition.resource.code.text);
+        this.availableCancerTypes.push(new CancerType(condition.resource.code.text, 1));
       }
     }, function() {
       console.log('Failure!');
     });
   }
 
-  cancertypeexamples: CancerType[] = [
-    {optionName: 'breast cancer', pathogenicity: 1},
-    {optionName: 'thyroid cancer', pathogenicity: 2}
-    ];
-  search(term: string): Observable<CancerType[]> {
-    // TODO: Figure out how to convert jQuery Deferred object to an Observable
-    return Observable.of(this.cancertypeexamples);
+  public search = (term: string): Observable<CancerType[]> => {
+
+    if (this.availableCancerTypes.length === 0) {
+      console.log('No cancer types found!');
+      return;
+    }
+
+    // Compile a list of available cancer types which start with the string in question.
+    const applicableCancerTypes: CancerType[] = [];
+    for (const cancertype of this.availableCancerTypes) {
+      console.log('Checking if ' + cancertype.optionName + ' starts with ' + term);
+      if (cancertype.optionName.toLowerCase().startsWith(term)) {
+        applicableCancerTypes.push(cancertype);
+      }
+    }
+    return Observable.of(applicableCancerTypes);
 
     // return this.http
     //   .get(`api/heroes/?name=${term}`)

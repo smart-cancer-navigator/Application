@@ -4,7 +4,7 @@
  * interface through which the user can accomplish this.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -31,9 +31,14 @@ import {CancerType} from './cancertype';
   providers: [CancerTypeSearchService]
 })
 
-export class CancerTypeSelectionComponent {
+export class CancerTypeSelectionComponent implements OnInit {
 
   constructor(private cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
+
+  ngOnInit(): void {
+    // Child class specific
+    this.cancertypeSearchService.initialize();
+  }
 
   choose(cancertype: FilterableSearchOption): void {
     console.log('Cancer type selection component got choice', cancertype);

@@ -32,11 +32,11 @@ import 'rxjs/add/operator/switchMap';
     <input #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
     <div>
       <div *ngFor="let option of options | async" (click)="onSelection(option)" class="search-result">
-        {{option.optionName}}
+        <p>{{option.optionName}}</p>
       </div>
     </div>
   `,
-  styles: [`    
+  styles: [`
     input {
       width: 100%;
       height: 30px;
@@ -44,20 +44,27 @@ import 'rxjs/add/operator/switchMap';
       text-align: center;
     }
 
-    .search-result{
-      border-bottom: 1px solid gray;
-      border-left: 1px solid gray;
-      border-right: 1px solid gray;
-      width:195px;
-      height: 16px;
+    .search-result {
+      float: left;
+      border: 1px solid #a8a8a8;
+      border-radius: 5px;
+      margin: 3px;
       padding: 5px;
+      width: calc(50% - 18px);
+      height: 20px;
+      font-size: 18px;
       background-color: white;
       cursor: pointer;
+      text-align: center;
     }
 
     .search-result:hover {
       color: #eee;
       background-color: #607D8B;
+    }
+    
+    p {
+      margin: 0;
     }
   `]
 })

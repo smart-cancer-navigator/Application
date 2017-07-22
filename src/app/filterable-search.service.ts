@@ -10,8 +10,8 @@ import {Injectable} from '@angular/core';
 import {FilterableSearchOption} from './filterable-search-option';
 
 // Extension classes must be Injectable.
-@Injectable()
-export abstract class FilterableSearchService {
+export interface FilterableSearchService {
+  // TODO: Figure out how to convert jQuery Deferred object to an Observable
   // Must either return an async Observable (i.e. GET requests must be sent), or simply an array of applicable options.
-  abstract search(term: string): Observable <FilterableSearchOption[]>;
+  search: (term: string) => Observable <FilterableSearchOption[]>;
 }
