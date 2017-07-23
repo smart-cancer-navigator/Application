@@ -48,6 +48,10 @@ export class CancerTypeSearchService implements FilterableSearchService {
   }
 
   public search = (term: string): Observable<CancerType[]> => {
+    if (!SMARTClient) {
+      console.log('No SMART client available!');
+      return Observable.of([new CancerType('NO SMART CLIENT >:(', 1, 1)]);
+    }
 
     if (this.availableCancerTypes.length === 0) {
       console.log('No cancer types found!');

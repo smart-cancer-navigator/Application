@@ -13,14 +13,15 @@ import { DataEntryComponent } from './data-entry.component';
 import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
 import { FilterableSearchComponent } from './filterable-search.component';
+import { GeneDataRowComponent } from './gene-data-row.component';
 
 // Services
-import { DataEntryService } from './data-entry.service';
 import { SingleDatabaseService } from './single-database.service';
 import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
-
-import { GeneDataRowComponent } from './gene-data-row.component';
+import { GeneSearchService } from './gene-search.service';
+import { VariantSearchService } from './variant-search.service';
+import { VariantTypeSearchService } from './variant-type-search.service';
 
 @NgModule({
   imports:      [
@@ -41,9 +42,11 @@ import { GeneDataRowComponent } from './gene-data-row.component';
   ],
   providers: [
     SingleDatabaseService,
-    DataEntryService,
     CancerTypeSearchService,
-    SMARTReferenceService
+    SMARTReferenceService,
+    GeneSearchService,
+    VariantSearchService,
+    VariantTypeSearchService
   ],
   bootstrap: [
     AppComponent

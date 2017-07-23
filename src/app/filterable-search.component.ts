@@ -28,11 +28,15 @@ import 'rxjs/add/operator/switchMap';
 
 @Component({
   selector: 'filterable-search',
-  template: `
-    <input #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholder}}"/>
+  template: `    
     <div>
-      <div *ngFor="let option of options | async" (click)="onSelection(option)" class="search-result">
-        <p>{{option.optionName}}</p>
+      <!-- If form control name is provided vs. not -->
+      <input *ngIf="formControlName !== '' && formControlName !== undefined" #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholder}}"/>
+      <input *ngIf="formControlName === '' || formControlName === undefined" #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholder}}"/>
+      <div>
+        <div *ngFor="let option of options | async" (click)="onSelection(option)" class="search-result">
+          <p>{{option.optionName}}</p>
+        </div>
       </div>
     </div>
   `,
@@ -76,7 +80,7 @@ export class FilterableSearchComponent implements OnInit {
 
   // In case this search component is part of a form.
   @Input() formComponentName: string;
-  @Input() placeholder: string;
+  @Input() placeholderString: string;
 
   // Provide the component with a callback for when an option is selected.
   @Output() onSelected: EventEmitter<any> = new EventEmitter();

@@ -24,9 +24,12 @@ import {CancerType} from './cancertype';
   selector: 'cancertype-selection',
   template: `
     <h1>Select Patient Cancer Type</h1>
-    <filterable-search [searchService]="this.cancertypeSearchService" (onSelected)="choose($event)"></filterable-search>
+    <filterable-search [searchService]="this.cancertypeSearchService" [placeholderString]="'Cancer Type'" (onSelected)="choose($event)"></filterable-search>
   `,
   styles: [`
+    filterable-search {
+      width: 100%;
+    }
   `],
   providers: [CancerTypeSearchService]
 })

@@ -19,9 +19,7 @@ import { Customer } from './customer.interface';
         <div *ngFor="let geneVariation of myForm.controls.geneVariations.controls; let i=index" class="entryPanel">
           <div class="panel-heading">
             <p>Variation {{i + 1}}</p>
-            <button class="clickable" *ngIf="myForm.controls.geneVariations.controls.length > 1"
-                    (click)="removeRow(i)">X
-            </button>
+            <button class="clickable" *ngIf="myForm.controls.geneVariations.controls.length > 1" (click)="removeRow(i)">X</button>
           </div>
           <div class="panel-body" [formGroupName]="i">
             <gene-data-row [geneDataFormGroup]="myForm.controls.geneVariations.controls[i]"></gene-data-row>
@@ -32,7 +30,7 @@ import { Customer } from './customer.interface';
       <button type="button" (click)="addRow()" style="cursor: default" class="finalizeButton clickable">Add Row</button>
       <button type="submit" [disabled]="!myForm.valid" class="finalizeButton clickable">Submit</button>
 
-      <div>myForm details:-</div>
+      <p>myForm details:-</p>
       <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
       <pre>form value: <br>{{myForm.value | json}}</pre>
     </form>
@@ -41,7 +39,7 @@ import { Customer } from './customer.interface';
     .entryPanel {
       border: 0.5px solid black;
       border-radius: 5px;
-      margin-bottom: 5px;
+      margin: 0;
     }
 
     .panel-heading {
@@ -56,6 +54,7 @@ import { Customer } from './customer.interface';
       font-size: 15px;
       text-align: left;
       width: calc(100% - 40px);
+      font-weight: bold;
     }
 
     .panel-heading button {
@@ -83,14 +82,13 @@ import { Customer } from './customer.interface';
     .clickable:active {
       opacity: 0.5;
     }
-    
+
     button:disabled {
       opacity: 0.5;
     }
 
     .panel-body {
       width: 100%;
-      padding: 10px;
     }
 
     address {
@@ -131,8 +129,9 @@ export class DataEntryComponent implements OnInit {
   addRow() {
     const control = <FormArray>this.myForm.controls['geneVariations'];
     const newRow = this._fb.group({
-      street: ['', Validators.required],
-      postcode: ['']
+      gene: ['', Validators.required],
+      variation: ['', Validators.required],
+      type: ['']
     });
 
     control.push(newRow);
