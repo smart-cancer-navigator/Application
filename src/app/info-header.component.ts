@@ -44,12 +44,12 @@ import { Component } from '@angular/core';
 
     #patientHeader {
       width: 60%;
-      color: #fff;
+      color: black;
     }
 
     #userHeader {
       width: 30%;
-      color: #fff;
+      color: black;
     }
   `]
 })

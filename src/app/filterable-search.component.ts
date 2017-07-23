@@ -25,14 +25,19 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'filterable-search',
   template: `    
     <div>
       <!-- If form control name is provided vs. not -->
-      <input *ngIf="formControlName !== '' && formControlName !== undefined" #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholder}}"/>
-      <input *ngIf="formControlName === '' || formControlName === undefined" #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholder}}"/>
+      <div *ngIf="formGroupReference !== undefined" [formGroup]="formGroupReference">
+        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholderString}}"/>
+      </div>
+      <div *ngIf="formGroupReference === undefined">
+        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholderString}}"/>
+      </div>
       <div>
         <div *ngFor="let option of options | async" (click)="onSelection(option)" class="search-result">
           <p>{{option.optionName}}</p>
@@ -81,6 +86,7 @@ export class FilterableSearchComponent implements OnInit {
   // In case this search component is part of a form.
   @Input() formComponentName: string;
   @Input() placeholderString: string;
+  @Input() formGroupReference: FormGroup;
 
   // Provide the component with a callback for when an option is selected.
   @Output() onSelected: EventEmitter<any> = new EventEmitter();

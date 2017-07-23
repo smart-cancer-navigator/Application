@@ -39,13 +39,15 @@ import { Customer } from './customer.interface';
     .entryPanel {
       border: 0.5px solid black;
       border-radius: 5px;
-      margin: 0;
+      margin-top: 5px;
+      margin-left: 0;
+      margin-bottom: 5px;
     }
 
     .panel-heading {
       height: 30px;
       padding: 0;
-      background-color: #c8c8c8;
+      background-color: black;
     }
 
     .panel-heading p {
@@ -54,7 +56,7 @@ import { Customer } from './customer.interface';
       font-size: 15px;
       text-align: left;
       width: calc(100% - 40px);
-      font-weight: bold;
+      color: white;
     }
 
     .panel-heading button {
@@ -130,7 +132,7 @@ export class DataEntryComponent implements OnInit {
     const control = <FormArray>this.myForm.controls['geneVariations'];
     const newRow = this._fb.group({
       gene: ['', Validators.required],
-      variation: ['', Validators.required],
+      variant: ['', Validators.required],
       type: ['']
     });
 
