@@ -14,7 +14,7 @@ import { VariantTypeSearchService } from './variant-type-search.service';
 @Component({
   selector: 'gene-data-row',
   template: `
-    <div id="form">
+    <div id="rowContainer">
       <div>
         <filterable-search [formGroupReference]="geneDataFormGroup" [searchService]="geneSearchService"
                            [formComponentName]="'gene'" [placeholderString]="'Gene'"
@@ -32,11 +32,11 @@ import { VariantTypeSearchService } from './variant-type-search.service';
     </div>
   `,
   styles: [`   
-    #form {
-      height: 100px;
+    #rowContainer {
+      height: 300px;
     }
     
-    #form div {
+    #rowContainer div {
       float: left;
       margin: 4px;
       width: calc(33.333% - 10px);

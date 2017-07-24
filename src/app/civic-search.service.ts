@@ -6,39 +6,91 @@ import { GeneDataProvider, VariantDataProvider, VariantTypeDataProvider } from '
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant, VariantType } from './genomic-data';
 import { Http } from '@angular/http';
-import {Injectable} from "@angular/core";
+import {Injectable} from '@angular/core';
 
 
 @Injectable()
 export class CIViCSearchService implements GeneDataProvider, VariantDataProvider, VariantTypeDataProvider {
 
-  constructor (private http: Http) {}
+  constructor (private http: Http) {
+    this.initializeDatabase();
+  }
 
-  public provideGenes = (searchTerm: string): Observable<Gene[]> => {
+  // All of the genes within the CIViC database are contained within this Observable.
+  civicGenes: Observable <Gene[]>;
+
+  public initializeDatabase = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('page', '1');
     params.set('count', '1000');
 
-    return this.http
+    this.civicGenes = this.http
       .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
       .map(response => response.json())
-      .map(responseJSON => {;
+      .map(responseJSON => {
         const genes: Gene[] = [];
         for (const record of responseJSON.records) {
-          console.log('Adding new record', record);
-          if (record.name.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-            genes.push(new Gene(record.name, record.id));
-          }
+          genes.push(new Gene(record.name, record.id, Observable.of<Variant[]>([])));
         }
         return genes;
       });
   }
 
-  public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
-    return null;
+  public provideGenes = (searchTerm: string): Observable<Gene[]> => {
+
+    return this.civicGenes
+      .map(genes => {
+        const applicableGenes: Gene[] = [];
+        for (const gene of genes) {
+          if (gene.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+            applicableGenes.push(gene);
+          }
+        }
+        return applicableGenes;
+      });
   }
 
+
+  /**
+   * The variants for the CIViC Search Service
+   */
+  public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
+    if (additionalContext.variants) {
+      return additionalContext.variants.map(unfilteredVariants => {
+        const applicableVariants: Variant[] = [];
+        for (const variant of unfilteredVariants) {
+          if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+            applicableVariants.push(variant);
+          }
+        }
+        return applicableVariants;
+      });
+
+    } else {
+      // Return empty if no variants are provided in this gene.
+      return Observable.of<Variant[]>([]);
+    }
+  }
+
+
+  /**
+   * The variant types for the CIViC Search Service
+   */
   public provideVariantTypes = (searchTerm: string, additionalContext: Variant): Observable<VariantType[]> => {
-    return null;
+    if (additionalContext.variantTypes) {
+      return additionalContext.variantTypes.map(unfilteredVariantTypes => {
+        const applicableVariantTypes: VariantType[] = [];
+        for (const variant of unfilteredVariantTypes) {
+          if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+            applicableVariantTypes.push(variant);
+          }
+        }
+        return applicableVariantTypes;
+      });
+
+    } else {
+      // Return empty if no variants are provided in this gene.
+      return Observable.of<VariantType[]>([]);
+    }
   }
 }

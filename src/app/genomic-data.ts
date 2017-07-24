@@ -1,4 +1,5 @@
 import { FilterableSearchOption } from './filterable-search-option.interface';
+import {Observable} from 'rxjs/Observable';
 
 /**
  * The gene class provides a quick and easy way to obtain gene names, various IDs, and so on from a
@@ -8,10 +9,12 @@ import { FilterableSearchOption } from './filterable-search-option.interface';
 export class Gene implements FilterableSearchOption {
   optionName: string;
   id: number;
+  variants: Observable<Variant[]>;
 
-  constructor(optionNameParam: string, idParam: number) {
+  constructor(optionNameParam: string, idParam: number, variantsParam: Observable<Variant[]>) {
     this.optionName = optionNameParam;
     this.id = idParam;
+    this.variants = variantsParam;
   }
 }
 
@@ -23,11 +26,13 @@ export class Variant implements FilterableSearchOption {
   optionName: string;
   origin: Gene;
   id: number;
+  variantTypes: Observable<VariantType[]>;
 
-  constructor(optionNameParam: string, originParam: Gene, idParam: number) {
+  constructor(optionNameParam: string, originParam: Gene, idParam: number, variantTypesParam: Observable<VariantType[]>) {
     this.optionName = optionNameParam;
     this.origin = originParam;
     this.id = idParam;
+    this.variantTypes = variantTypesParam;
   }
 }
 

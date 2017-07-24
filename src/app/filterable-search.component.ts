@@ -118,7 +118,7 @@ export class FilterableSearchComponent implements OnInit {
      * This is essentially subscribing the options to the searchTerms.
      */
     this.options = this.searchTerms
-      .debounceTime(300)        // wait 300ms after each keystroke before considering the term
+      .debounceTime(100)        // wait 300ms after each keystroke before considering the term
       .distinctUntilChanged()   // ignore if next search term is same as previous
       .switchMap(term => term   // switch to new observable each time the term changes (ternary operator)
         ? this.searchService.search(term) // return the http search observable

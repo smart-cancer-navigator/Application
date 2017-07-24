@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancerTypeSearchService } from './cancertype-search.service';
-import { FilterableSearchOption } from './filterable-search-option';
+import { FilterableSearchOption } from './filterable-search-option.interface';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -24,7 +24,7 @@ import {CancerType} from './cancertype';
   selector: 'cancertype-selection',
   template: `
     <h1>Select Patient Cancer Type</h1>
-    <filterable-search [searchService]="this.cancertypeSearchService" [placeholderString]="'Cancer Type'" (onSelected)="choose($event)"></filterable-search>
+    <filterable-search [searchService]="cancertypeSearchService" [placeholderString]="'Cancer Type'" (onSelected)="choose($event)"></filterable-search>
   `,
   styles: [`
     filterable-search {
@@ -36,7 +36,7 @@ import {CancerType} from './cancertype';
 
 export class CancerTypeSelectionComponent implements OnInit {
 
-  constructor(private cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
+  constructor(public cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
 
   ngOnInit(): void {
     // Child class specific
