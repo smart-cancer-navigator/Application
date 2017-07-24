@@ -6,7 +6,10 @@ import { GeneDataProvider, VariantDataProvider, VariantTypeDataProvider } from '
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant, VariantType } from './genomic-data';
 import { Http } from '@angular/http';
+import {Injectable} from "@angular/core";
 
+
+@Injectable()
 export class CIViCSearchService implements GeneDataProvider, VariantDataProvider, VariantTypeDataProvider {
 
   constructor (private http: Http) {}
@@ -18,8 +21,8 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
 
     return this.http
       .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
-      .map(response => response.json().data)
-      .map(responseJSON => {
+      .map(response => response.json())
+      .map(responseJSON => {;
         const genes: Gene[] = [];
         for (const record of responseJSON.records) {
           console.log('Adding new record', record);
