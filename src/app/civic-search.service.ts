@@ -28,16 +28,45 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
       .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
       .map(response => response.json())
       .map(responseJSON => {
+        console.log('Looking at', responseJSON);
         const genes: Gene[] = [];
+        // For every gene
         for (const record of responseJSON.records) {
-          genes.push(new Gene(record.name, record.id, Observable.of<Variant[]>([])));
+          // Construct a new gene.
+          const gene: Gene = new Gene(record.name, record.id);
+
+          // Construct variant array
+          const geneVariants: Variant[] = [];
+          for (const variant of record.variants) {
+            const currentVariant: Variant = new Variant(variant.name, gene, variant.id);
+
+            // Construct the Observable which will provide variant types
+            const variantTypeObservable: Observable<VariantType[]> = this.http.get('https://civic.genome.wustl.edu/api/variants/' + currentVariant.id)
+              .map(response => response.json())
+              .map(variantResponseJSON => {
+                console.log('Looking at', variantResponseJSON);
+                return null;
+              });
+
+            currentVariant.setVariantTypes(variantTypeObservable);
+
+            geneVariants.push(currentVariant);
+          }
+
+          // Add the variants array to the gene.
+          console.log('Adding ' + geneVariants.length + ' variants');
+          gene.setVariants(Observable.of(geneVariants));
+
+          genes.push(gene);
         }
         return genes;
       });
   }
 
+  /**
+   * The genes for the CIViC search service.
+   */
   public provideGenes = (searchTerm: string): Observable<Gene[]> => {
-
     return this.civicGenes
       .map(genes => {
         const applicableGenes: Gene[] = [];
@@ -57,6 +86,7 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
   public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
     if (additionalContext.variants) {
       return additionalContext.variants.map(unfilteredVariants => {
+        console.log('Unfiltered:', unfilteredVariants);
         const applicableVariants: Variant[] = [];
         for (const variant of unfilteredVariants) {
           if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {

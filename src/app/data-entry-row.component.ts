@@ -12,7 +12,7 @@ import { VariantSearchService } from './variant-search.service';
 import { VariantTypeSearchService } from './variant-type-search.service';
 
 @Component({
-  selector: 'gene-data-row',
+  selector: 'data-entry-row',
   template: `
     <div id="rowContainer">
       <div>
@@ -46,7 +46,7 @@ import { VariantTypeSearchService } from './variant-type-search.service';
 })
 
 @Injectable()
-export class GeneDataRowComponent {
+export class DataEntryRowComponent {
   @Input() public geneDataFormGroup: FormGroup;
 
   constructor (public geneSearchService: GeneSearchService, public variantSearchService: VariantSearchService, public variantTypeSearchService: VariantTypeSearchService) {}

@@ -13,7 +13,7 @@ import { DataEntryComponent } from './data-entry.component';
 import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
 import { FilterableSearchComponent } from './filterable-search.component';
-import { GeneDataRowComponent } from './gene-data-row.component';
+import { DataEntryRowComponent } from './data-entry-row.component';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -38,7 +38,7 @@ import { CIViCSearchService } from './civic-search.service';
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
-    GeneDataRowComponent
+    DataEntryRowComponent
   ],
   providers: [
     CancerTypeSearchService,

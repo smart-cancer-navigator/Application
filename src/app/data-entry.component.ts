@@ -22,7 +22,7 @@ import { Gene, GeneVariantType } from './genomic-data';
             <button class="clickable" *ngIf="myForm.controls['geneVariations'].controls.length > 1" (click)="removeRow(i)">X</button>
           </div>
           <div class="panel-body" [formGroupName]="i">
-            <gene-data-row [geneDataFormGroup]="geneVariation"></gene-data-row>
+            <data-entry-row [geneDataFormGroup]="geneVariation"></data-entry-row>
           </div>
         </div>
       </div>

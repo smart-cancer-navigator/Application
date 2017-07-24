@@ -9,11 +9,14 @@ import {Observable} from 'rxjs/Observable';
 export class Gene implements FilterableSearchOption {
   optionName: string;
   id: number;
-  variants: Observable<Variant[]>;
+  variants: Observable<Variant[]>; // This is classified as an Observable, since they may be stored as GET requests.
 
-  constructor(optionNameParam: string, idParam: number, variantsParam: Observable<Variant[]>) {
+  constructor (optionNameParam: string, idParam: number, ) {
     this.optionName = optionNameParam;
     this.id = idParam;
+  }
+
+  setVariants(variantsParam: Observable <Variant[]>) {
     this.variants = variantsParam;
   }
 }
@@ -28,10 +31,13 @@ export class Variant implements FilterableSearchOption {
   id: number;
   variantTypes: Observable<VariantType[]>;
 
-  constructor(optionNameParam: string, originParam: Gene, idParam: number, variantTypesParam: Observable<VariantType[]>) {
+  constructor(optionNameParam: string, originParam: Gene, idParam: number) {
     this.optionName = optionNameParam;
     this.origin = originParam;
     this.id = idParam;
+  }
+
+  setVariantTypes(variantTypesParam: Observable <VariantType[]>) {
     this.variantTypes = variantTypesParam;
   }
 }

@@ -3,15 +3,14 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search.service.interface';
 import { VariantType, Variant, Gene } from './genomic-data';
-import {CIViCSearchService} from './civic-search.service';
-import {VariantTypeDataProvider} from "./database-services.interface";
+import { CIViCSearchService } from './civic-search.service';
+import { VariantTypeDataProvider } from './database-services.interface';
 
 @Injectable()
 export class VariantTypeSearchService implements FilterableSearchService {
@@ -33,17 +32,17 @@ export class VariantTypeSearchService implements FilterableSearchService {
       .map(
         searchService => searchService.provideVariantTypes(term, this.variantContext)
       )
-    ).map((variantArrays: Variant[][]) => {
+    ).map((variantTypeArrays: VariantType[][]) => {
         // TODO: Prevent gene overlap, as in CADD submits a gene which CIViC already had.  They should be merged.
-        const massiveVariantArray: Variant[] = [];
+        const massiveVariantTypeArray: VariantType[] = [];
 
-        for (const geneArray of variantArrays) {
-          for (const gene of geneArray) {
-            massiveVariantArray.push(gene);
+        for (const variantTypeArray of variantTypeArrays) {
+          for (const variantType of variantTypeArray) {
+            massiveVariantTypeArray.push(variantType);
           }
         }
 
-        return massiveVariantArray;
+        return massiveVariantTypeArray;
       }
     );
   }

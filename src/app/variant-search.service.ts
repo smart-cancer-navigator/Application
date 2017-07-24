@@ -23,10 +23,17 @@ export class VariantSearchService implements FilterableSearchService {
   // Provided by the gene search filterable dropdown on selection.
   geneContext: Gene;
   onGeneChosen(gene: Gene) {
+    console.log('Got gene chosen', gene);
     this.geneContext = gene;
   }
 
   public search = (term: string): Observable<Variant[]> => {
+
+    if (!this.geneContext) {
+      console.log('Searching with no gene chosen!');
+      return Observable.of <Variant[]> ([]);
+    }
+
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDataProviders
       .map(
@@ -36,9 +43,10 @@ export class VariantSearchService implements FilterableSearchService {
         // TODO: Prevent gene overlap, as in CADD submits a gene which CIViC already had.  They should be merged.
         const massiveVariantArray: Variant[] = [];
 
-        for (const geneArray of variantArrays) {
-          for (const gene of geneArray) {
-            massiveVariantArray.push(gene);
+        for (const variantArray of variantArrays) {
+          for (const variant of variantArray) {
+            console.log('Added ', variant);
+            massiveVariantArray.push(variant);
           }
         }
 
