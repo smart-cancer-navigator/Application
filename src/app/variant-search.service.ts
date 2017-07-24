@@ -45,7 +45,6 @@ export class VariantSearchService implements FilterableSearchService {
 
         for (const variantArray of variantArrays) {
           for (const variant of variantArray) {
-            console.log('Added ', variant);
             massiveVariantArray.push(variant);
           }
         }

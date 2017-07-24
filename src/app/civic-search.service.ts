@@ -28,7 +28,6 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
       .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
       .map(response => response.json())
       .map(responseJSON => {
-        console.log('Looking at', responseJSON);
         const genes: Gene[] = [];
         // For every gene
         for (const record of responseJSON.records) {
@@ -43,9 +42,14 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
             // Construct the Observable which will provide variant types
             const variantTypeObservable: Observable<VariantType[]> = this.http.get('https://civic.genome.wustl.edu/api/variants/' + currentVariant.id)
               .map(response => response.json())
-              .map(variantResponseJSON => {
-                console.log('Looking at', variantResponseJSON);
-                return null;
+              .map(variantTypeResponseJSON => {
+                const variantTypes: VariantType[] = [];
+
+                for (const variantTypeJSON of variantTypeResponseJSON.variant_types) {
+                  variantTypes.push(new VariantType(variantTypeJSON.display_name, currentVariant));
+                }
+
+                return variantTypes;
               });
 
             currentVariant.setVariantTypes(variantTypeObservable);
@@ -54,7 +58,6 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
           }
 
           // Add the variants array to the gene.
-          console.log('Adding ' + geneVariants.length + ' variants');
           gene.setVariants(Observable.of(geneVariants));
 
           genes.push(gene);
@@ -86,7 +89,6 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
   public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
     if (additionalContext.variants) {
       return additionalContext.variants.map(unfilteredVariants => {
-        console.log('Unfiltered:', unfilteredVariants);
         const applicableVariants: Variant[] = [];
         for (const variant of unfilteredVariants) {
           if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
