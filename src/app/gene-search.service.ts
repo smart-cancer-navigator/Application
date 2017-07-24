@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search.service';
-import {Gene} from './gene-variant-type';
+import { Gene } from './genomic-data';
 
 @Injectable()
 export class GeneSearchService implements FilterableSearchService {

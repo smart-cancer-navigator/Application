@@ -9,10 +9,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search.service';
-import {Gene, Variant} from './gene-variant-type';
+import { Gene, Variant } from './genomic-data';
 
 @Injectable()
 export class VariantSearchService implements FilterableSearchService {
+
+  // Provided by the gene search filterable dropdown on selection.
+  geneContext: Gene;
+  onGeneChosen(gene: Gene) {
+    this.geneContext = gene;
+    console.log('Got gene chosen');
+  }
 
   constructor(private http: Http) {}
 

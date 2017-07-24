@@ -11,7 +11,7 @@
  * interface through which the user can accomplish this.
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { FilterableSearchService } from './filterable-search.service';
 import { FilterableSearchOption } from './filterable-search-option';
 
@@ -90,8 +90,17 @@ export class FilterableSearchComponent implements OnInit {
 
   // Provide the component with a callback for when an option is selected.
   @Output() onSelected: EventEmitter<any> = new EventEmitter();
+  @ViewChild('searchBox')searchBox: any = null; // Update text box on selection as well.
   onSelection(option: FilterableSearchOption): void {
+    this.searchBox.nativeElement.value = option.optionName;
     this.onSelected.emit(option);
+
+    // In case a user selects something from the dropdown, ensure that the form value is updated without any user input into the box.
+    if (this.formGroupReference !== undefined) {
+      this.formGroupReference.controls[this.formComponentName].patchValue(option.optionName);
+    }
+
+    this.searchTerms.next(option.optionName);
   }
 
   // Angular components which apparently make filterable searches easier

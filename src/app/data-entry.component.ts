@@ -8,7 +8,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
-import { Customer } from './customer.interface';
+import { Gene, GeneVariantType } from './genomic-data';
 
 @Component({
   selector: 'data-entry',
@@ -16,13 +16,13 @@ import { Customer } from './customer.interface';
     <form [formGroup]="myForm" novalidate (ngSubmit)="save(myForm)">
       <!-- Gene Variation List -->
       <div formArrayName="geneVariations">
-        <div *ngFor="let geneVariation of myForm.controls.geneVariations.controls; let i=index" class="entryPanel">
+        <div *ngFor="let geneVariation of myForm.controls['geneVariations'].controls; let i=index" class="entryPanel">
           <div class="panel-heading">
             <p>Variation {{i + 1}}</p>
-            <button class="clickable" *ngIf="myForm.controls.geneVariations.controls.length > 1" (click)="removeRow(i)">X</button>
+            <button class="clickable" *ngIf="myForm.controls['geneVariations'].controls.length > 1" (click)="removeRow(i)">X</button>
           </div>
           <div class="panel-body" [formGroupName]="i">
-            <gene-data-row [geneDataFormGroup]="myForm.controls.geneVariations.controls[i]"></gene-data-row>
+            <gene-data-row [geneDataFormGroup]="geneVariation"></gene-data-row>
           </div>
         </div>
       </div>
@@ -122,6 +122,8 @@ export class DataEntryComponent implements OnInit {
     // add row
     this.addRow();
 
+    console.log(this.myForm);
+
     /* subscribe to addresses value changes */
     // this.myForm.controls['addresses'].valueChanges.subscribe(x => {
     //   console.log(x);
@@ -149,7 +151,7 @@ export class DataEntryComponent implements OnInit {
     control.removeAt(i);
   }
 
-  save(model: Customer) {
+  save(model: GeneVariantType[]) {
     // call API to save
     // ...
     console.log(model);

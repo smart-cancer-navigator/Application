@@ -9,10 +9,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search.service';
-import { VariantType, Variant, Gene } from './gene-variant-type';
+import { VariantType, Variant, Gene } from './genomic-data';
 
 @Injectable()
 export class VariantTypeSearchService implements FilterableSearchService {
+
+  // Provided by the variant search service when selected.
+  variantContext: Variant;
+  onVariantChosen(variant: Variant): void {
+    this.variantContext = variant;
+    console.log('Got variant chosen');
+  }
 
   constructor(private http: Http) {}
 

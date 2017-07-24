@@ -1,5 +1,5 @@
-import {FilterableSearchOption} from './filterable-search-option';
-import {GeneVariantType} from './gene-variant-type';
+import { FilterableSearchOption } from './filterable-search-option';
+import { GeneVariantType } from './genomic-data';
 
 export class CancerType implements FilterableSearchOption {
   public optionName: string;
