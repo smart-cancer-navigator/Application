@@ -7,7 +7,7 @@
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import {Injectable} from '@angular/core';
-import {FilterableSearchOption} from './filterable-search-option';
+import {FilterableSearchOption} from './filterable-search-option.interface';
 
 // Extension classes must be Injectable.
 export interface FilterableSearchService {

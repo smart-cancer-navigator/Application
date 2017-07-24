@@ -11,9 +11,10 @@
  * interface through which the user can accomplish this.
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import { FilterableSearchService } from './filterable-search.service';
-import { FilterableSearchOption } from './filterable-search-option';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FilterableSearchService } from './filterable-search.service.interface';
+import { FilterableSearchOption } from './filterable-search-option.interface';
+import { FormGroup } from '@angular/forms';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -25,7 +26,6 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
-import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'filterable-search',

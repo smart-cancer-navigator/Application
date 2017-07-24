@@ -1,4 +1,4 @@
-import { FilterableSearchOption } from './filterable-search-option';
+import { FilterableSearchOption } from './filterable-search-option.interface';
 
 /**
  * The gene class provides a quick and easy way to obtain gene names, various IDs, and so on from a

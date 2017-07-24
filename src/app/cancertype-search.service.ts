@@ -3,7 +3,7 @@
  * populates the dropdown list for the available options.
  */
 
-import { FilterableSearchService } from './filterable-search.service';
+import { FilterableSearchService } from './filterable-search.service.interface';
 
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
@@ -20,9 +20,7 @@ export class CancerTypeSearchService implements FilterableSearchService {
 
   public availableCancerTypes: CancerType[] = [];
 
-  constructor(private http: Http) {
-    // ALTHOUGH TEMPTING, according to Angular docs DON'T put any logic in the constructor.
-  }
+  constructor(private http: Http) {}
 
   /**
    * OK SO here's the thing: TypeScript is weird and to preserve 'this' context, you have to do one of three
@@ -66,9 +64,5 @@ export class CancerTypeSearchService implements FilterableSearchService {
       }
     }
     return Observable.of(applicableCancerTypes);
-
-    // return this.http
-    //   .get(`api/heroes/?name=${term}`)
-    //   .map(response => response.json().data as CancerType[]);
   }
 }

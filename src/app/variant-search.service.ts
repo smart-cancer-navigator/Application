@@ -8,7 +8,7 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { FilterableSearchService } from './filterable-search.service';
+import { FilterableSearchService } from './filterable-search.service.interface';
 import { Gene, Variant } from './genomic-data';
 
 @Injectable()

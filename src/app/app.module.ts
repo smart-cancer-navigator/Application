@@ -16,12 +16,12 @@ import { FilterableSearchComponent } from './filterable-search.component';
 import { GeneDataRowComponent } from './gene-data-row.component';
 
 // Services
-import { SingleDatabaseService } from './single-database.service';
 import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
 import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
 import { VariantTypeSearchService } from './variant-type-search.service';
+import { CIViCSearchService } from './civic-search.service';
 
 @NgModule({
   imports:      [
@@ -41,12 +41,12 @@ import { VariantTypeSearchService } from './variant-type-search.service';
     GeneDataRowComponent
   ],
   providers: [
-    SingleDatabaseService,
     CancerTypeSearchService,
     SMARTReferenceService,
     GeneSearchService,
     VariantSearchService,
-    VariantTypeSearchService
+    VariantTypeSearchService,
+    CIViCSearchService
   ],
   bootstrap: [
     AppComponent
