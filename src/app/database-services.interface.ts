@@ -11,7 +11,6 @@ export interface GeneDataProvider {
   /**
    * Send precursory get requests, etc.
    */
-  initializeDatabase(): void;
   provideGenes: (searchTerm: string) => Observable <Gene[]>;
 }
 

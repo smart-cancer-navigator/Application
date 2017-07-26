@@ -31,34 +31,44 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
         const genes: Gene[] = [];
         // For every gene
         for (const record of responseJSON.records) {
-          // Construct a new gene.
-          const gene: Gene = new Gene(record.name, record.id);
+          // Construct a new gene (CIViC doesn't have all fields)
+          const gene: Gene = new Gene();
+          gene.optionName = record.name;
+          gene.symbol = record.name;
+          gene.id = record.id;
 
           // Construct variant array
           const geneVariants: Variant[] = [];
           for (const variant of record.variants) {
-            const currentVariant: Variant = new Variant(variant.name, gene, variant.id);
+            // Construct the new variant.
+            const currentVariant: Variant = new Variant();
+            currentVariant.origin = gene;
+            currentVariant.optionName = variant.name;
+            currentVariant.id = variant.id;
 
             // Construct the Observable which will provide variant types
-            const variantTypeObservable: Observable<VariantType[]> = this.http.get('https://civic.genome.wustl.edu/api/variants/' + currentVariant.id)
+            currentVariant.variantTypes = this.http.get('https://civic.genome.wustl.edu/api/variants/' + currentVariant.id)
               .map(response => response.json())
               .map(variantTypeResponseJSON => {
                 const variantTypes: VariantType[] = [];
 
                 for (const variantTypeJSON of variantTypeResponseJSON.variant_types) {
-                  variantTypes.push(new VariantType(variantTypeJSON.display_name, currentVariant));
+                  // Construct the new variant type.
+                  const currentVariantType: VariantType = new VariantType();
+                  currentVariantType.optionName = variantTypeJSON.display_name;
+                  currentVariantType.origin = currentVariant;
+
+                  variantTypes.push();
                 }
 
                 return variantTypes;
               });
 
-            currentVariant.setVariantTypes(variantTypeObservable);
-
             geneVariants.push(currentVariant);
           }
 
           // Add the variants array to the gene.
-          gene.setVariants(Observable.of(geneVariants));
+          gene.variants = Observable.of(geneVariants);
 
           genes.push(gene);
         }
