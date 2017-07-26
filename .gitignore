@@ -40,3 +40,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Compiled TypeScript
+.js
+.js.map
+!karma.conf.js
+!protractor.conf.js
