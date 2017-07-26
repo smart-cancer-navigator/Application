@@ -11,7 +11,10 @@
  * interface through which the user can accomplish this.
  */
 
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output,
+  ViewChild
+} from '@angular/core';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -39,10 +42,10 @@ export interface FilterableSearchOption {
   selector: 'filterable-search',
   template: `    
     <!-- If form control name is provided vs. not -->
-    <button #FilterPopupControl id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
-    <button #FilterPopupControl id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
+    <button #PopupToggle id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
+    <button #PopupToggle id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
     
-    <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered">
+    <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
       <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
       <div class="suggestions">
         <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
@@ -114,8 +117,8 @@ export interface FilterableSearchOption {
       margin: 0;
       padding: 5px;
       width: 100%;
-      height: 28px;
-      font-size: 14px;
+      height: 30px;
+      font-size: 18px;
       background-color: white;
       text-align: center;
     }
@@ -130,7 +133,27 @@ export interface FilterableSearchOption {
     }
   `],
 })
-export class FilterableSearchComponent implements OnInit {
+export class FilterableSearchComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('PopupToggle') popupToggle: any;
+
+  // Since the panel is absolutely positioned, it would be sized oddly if not for this code.
+  @ViewChild('PopupPanel') popupPanel: any;
+  desiredPopupWidth: number;
+
+  ngAfterViewInit() {
+    this.recalculatePopupWidth();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.recalculatePopupWidth();
+  }
+
+  recalculatePopupWidth = () => {
+    this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
+    console.log('Set to ' + (this.popupToggle.nativeElement.offsetWidth - 12));
+  }
 
   public elementRef;
 
@@ -141,8 +164,8 @@ export class FilterableSearchComponent implements OnInit {
   // For when the user clicks outside of the dropdown.
   @HostListener('document:click', ['$event'])
   handleClick(event) {
-    var clickedComponent = event.target;
-    var inside = false;
+    let clickedComponent = event.target;
+    let inside = false;
     do {
       if (clickedComponent === this.elementRef.nativeElement) {
         inside = true;
