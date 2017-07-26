@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { FilterableSearchService } from './filterable-search.service.interface';
+import { FilterableSearchService } from './filterable-search.component';
 import { VariantType, Variant, Gene } from './genomic-data';
 import { CIViCSearchService } from './civic-search.service';
 import { VariantTypeDataProvider } from './database-services.interface';

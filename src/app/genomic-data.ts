@@ -1,4 +1,4 @@
-import { FilterableSearchOption } from './filterable-search-option.interface';
+import { FilterableSearchOption } from './filterable-search.component';
 import {Observable} from 'rxjs/Observable';
 
 /**
@@ -52,20 +52,5 @@ export class VariantType implements FilterableSearchOption {
   constructor(optionNameParam: string, originParam: Variant) {
     this.optionName = optionNameParam;
     this.origin = originParam;
-  }
-}
-
-/**
- * Wrapper class for 3 given instances of genes, variants, and variant types respectively.
- */
-export class GeneVariantType {
-  gene: Gene;
-  variant: Variant;
-  type: VariantType;
-
-  constructor(geneParam: Gene, variantParam: Variant, typeParam: VariantType) {
-    this.gene = geneParam;
-    this.variant = variantParam;
-    this.type = typeParam;
   }
 }

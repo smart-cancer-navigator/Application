@@ -3,7 +3,7 @@
  * populates the dropdown list for the available options.
  */
 
-import { FilterableSearchService } from './filterable-search.service.interface';
+import { FilterableSearchService } from './filterable-search.component';
 
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';

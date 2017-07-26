@@ -7,33 +7,35 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
-import { Gene, GeneVariantType } from './genomic-data';
+import {Gene, Variant, VariantType} from './genomic-data';
+import {Observable} from 'rxjs/Observable';
+
+export class GeneDataRow {
+  arrayIndex: number;
+  gene: Gene;
+  variant: Variant;
+  type: VariantType;
+
+  constructor (arrayIndexParam: number) {
+    this.arrayIndex = arrayIndexParam;
+  }
+}
 
 @Component({
   selector: 'data-entry',
   template: `
-    <form [formGroup]="myForm" novalidate (ngSubmit)="save(myForm)">
-      <!-- Gene Variation List -->
-      <div formArrayName="geneVariations">
-        <div *ngFor="let geneVariation of myForm.controls['geneVariations'].controls; let i=index" class="entryPanel">
-          <div class="panel-heading">
-            <p>Variation {{i + 1}}</p>
-            <button class="clickable" *ngIf="myForm.controls['geneVariations'].controls.length > 1" (click)="removeRow(i)">X</button>
-          </div>
-          <div class="panel-body" [formGroupName]="i">
-            <data-entry-row [geneDataFormGroup]="geneVariation"></data-entry-row>
-          </div>
-        </div>
+    <!-- Gene Variation List -->
+    <div *ngFor="let geneVariation of geneVariations; let i=index;" class="entryPanel">
+      <div class="panel-heading">
+        <p>Variation {{i + 1}}</p>
+        <button class="clickable" (click)="removeRow(i)">X</button>
       </div>
+      <div class="panel-body">
+        <data-entry-row [geneDataRow]="geneVariation"></data-entry-row>
+      </div>
+    </div>
 
-      <button type="button" (click)="addRow()" style="cursor: default" class="finalizeButton clickable">Add Row</button>
-      <button type="submit" [disabled]="!myForm.valid" class="finalizeButton clickable">Submit</button>
-
-      <p>myForm details:-</p>
-      <pre>Is myForm valid?: <br>{{myForm.valid | json}}</pre>
-      <pre>form value: <br>{{myForm.value | json}}</pre>
-    </form>
+    <button type="button" (click)="addRow()" class="finalizeButton clickable">Add Row</button>
   `,
   styles: [`
     .entryPanel {
@@ -91,6 +93,7 @@ import { Gene, GeneVariantType } from './genomic-data';
 
     .panel-body {
       width: 100%;
+      height: 40px;
     }
 
     address {
@@ -98,7 +101,7 @@ import { Gene, GeneVariantType } from './genomic-data';
     }
 
     .finalizeButton {
-      width: calc(50% - 2px);
+      width: calc(100% - 2px);
       height: 30px;
       border: 1px solid black;
       border-radius: 10px;
@@ -108,50 +111,31 @@ import { Gene, GeneVariantType } from './genomic-data';
     }
   `]
 })
-
 export class DataEntryComponent implements OnInit {
-  public myForm: FormGroup;
 
-  constructor(private _fb: FormBuilder) { }
+  geneVariations: GeneDataRow[] = [];
+
+  constructor() { }
 
   ngOnInit() {
-    this.myForm = this._fb.group({
-      geneVariations: this._fb.array([])
-    });
-
-    // add row
     this.addRow();
-
-    console.log(this.myForm);
-
-    /* subscribe to addresses value changes */
-    // this.myForm.controls['addresses'].valueChanges.subscribe(x => {
-    //   console.log(x);
-    // })
   }
 
   addRow() {
-    const control = <FormArray>this.myForm.controls['geneVariations'];
-    const newRow = this._fb.group({
-      gene: ['', Validators.required],
-      variant: ['', Validators.required],
-      type: ['']
-    });
-
-    control.push(newRow);
-
-    /* subscribe to individual address value changes */
-    // addrCtrl.valueChanges.subscribe(x => {
-    //   console.log(x);
-    // })
+    this.geneVariations.push(new GeneDataRow(this.geneVariations.length + 1));
   }
 
-  removeRow(i: number) {
-    const control = <FormArray>this.myForm.controls['geneVariations'];
-    control.removeAt(i);
+  removeRow(arrayIndex: number) {
+    if (arrayIndex > -1 && arrayIndex < this.geneVariations.length) {
+      this.geneVariations.splice(arrayIndex, 1);
+    }
+
+    for (let i = 0; i < this.geneVariations.length; i++) {
+      this.geneVariations[i].arrayIndex = i;
+    }
   }
 
-  save(model: GeneVariantType[]) {
+  save(model: any) {
     // call API to save
     // ...
     console.log(model);

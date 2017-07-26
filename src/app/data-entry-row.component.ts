@@ -6,40 +6,30 @@
 import { Component, Injectable, Input} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { Gene } from './genomic-data';
+import {Gene, Variant, VariantType} from './genomic-data';
 import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
 import { VariantTypeSearchService } from './variant-type-search.service';
+import {GeneDataRow} from './data-entry.component';
 
 @Component({
   selector: 'data-entry-row',
   template: `
-    <div id="rowContainer">
-      <div>
-        <filterable-search [formGroupReference]="geneDataFormGroup" [searchService]="geneSearchService"
-                           [formComponentName]="'gene'" [placeholderString]="'Gene'"
-                           (onSelected)="variantSearchService.onGeneChosen($event)"></filterable-search>
-      </div>
-      <div>
-        <filterable-search [formGroupReference]="geneDataFormGroup" [searchService]="variantSearchService"
-                           [formComponentName]="'variant'" [placeholderString]="'Variant'"
-                           (onSelected)="variantTypeSearchService.onVariantChosen($event)"></filterable-search>
-      </div>
-      <div>
-        <filterable-search [formGroupReference]="geneDataFormGroup" [searchService]="variantTypeSearchService"
-                           [formComponentName]="'type'" [placeholderString]="'Variant Type'"></filterable-search>
-      </div>
+    <div>
+      <filterable-search #GeneFilter [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField(); TypeFilter.clearField();"></filterable-search>
+    </div>
+    <div>
+      <filterable-search #VariantFilter [searchService]="variantSearchService" [placeholderString]="'Variant'" (onSelected)="onVariantSelected($event); TypeFilter.clearField()"></filterable-search>
+    </div>
+    <div>
+      <filterable-search #TypeFilter [searchService]="variantTypeSearchService" [placeholderString]="'Variant Type'" (onSelected)="onVariantTypeSelected($event)"></filterable-search>
     </div>
   `,
-  styles: [`   
-    #rowContainer {
-      height: 120px;
-    }
-    
-    #rowContainer div {
+  styles: [`    
+    div {
       float: left;
       margin: 4px;
-      width: calc(33.333% - 10px);
+      width: calc(33.333% - 8px);
     }
   `],
   providers: [GeneSearchService, VariantSearchService, VariantTypeSearchService]
@@ -47,7 +37,21 @@ import { VariantTypeSearchService } from './variant-type-search.service';
 
 @Injectable()
 export class DataEntryRowComponent {
-  @Input() public geneDataFormGroup: FormGroup;
+  @Input() geneDataRow: GeneDataRow;
+
+  onGeneSelected = (gene: Gene) => {
+    this.geneDataRow.gene = gene;
+    this.variantSearchService.onGeneChosen(gene);
+  }
+
+  onVariantSelected = (variant: Variant) => {
+    this.geneDataRow.variant = variant;
+    this.variantTypeSearchService.onVariantChosen(variant);
+  }
+
+  onVariantTypeSelected = (type: VariantType) => {
+    this.geneDataRow.type = type;
+  }
 
   constructor (public geneSearchService: GeneSearchService, public variantSearchService: VariantSearchService, public variantTypeSearchService: VariantTypeSearchService) {}
 }

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/forkJoin';
 
-import { FilterableSearchService } from './filterable-search.service.interface';
+import { FilterableSearchService } from './filterable-search.component';
 import { Gene } from './genomic-data';
 import { CIViCSearchService } from './civic-search.service';
 import { GeneDataProvider } from './database-services.interface';

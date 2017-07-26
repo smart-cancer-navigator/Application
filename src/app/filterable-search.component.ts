@@ -11,10 +11,7 @@
  * interface through which the user can accomplish this.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FilterableSearchService } from './filterable-search.service.interface';
-import { FilterableSearchOption } from './filterable-search-option.interface';
-import { FormGroup } from '@angular/forms';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -27,52 +24,82 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 
+// Extension classes must be Injectable.
+export interface FilterableSearchService {
+  // TODO: Figure out how to convert jQuery Deferred object to an Observable
+  // Must either return an async Observable (i.e. GET requests must be sent), or simply an array of applicable options.
+  search: (term: string) => Observable <FilterableSearchOption[]>;
+}
+
+export interface FilterableSearchOption {
+  optionName: string;
+}
+
 @Component({
   selector: 'filterable-search',
   template: `    
     <!-- If form control name is provided vs. not -->
-    <ng-container *ngIf="formGroupReference !== undefined" [formGroup]="formGroupReference">
-      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholderString}}"/>
+    <button id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
+    <button id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
+    
+    <ng-container *ngIf="currentlyBeingFiltered" class="filterPanel">
+      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
+      <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
     </ng-container>
-    <ng-container *ngIf="formGroupReference === undefined">
-      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholderString}}"/>
-    </ng-container>
-    <div class="suggestions">
-      <div *ngFor="let option of options | async" (click)="onSelection(option)">
-        <p>{{option.optionName}}</p>
-      </div>
-    </div>
   `,
   styles: [`
-    input {
+    #nothingSelected {
+      font-style: italic;
+    }
+
+    #optionSelected {
+      font-weight: bold;
+    }
+
+    #nothingSelected:hover, #optionSelected:hover {
+      background-color: #3679af;
+      color: white;
+    }
+
+    input, button {
+      outline: none;
+    }
+
+    .filterToggle {
       margin: 0;
       padding: 0;
       width: calc(100% - 2px);
       height: 30px;
       font-size: 20px;
       text-align: center;
+      background-color: white;
+      border: 1px solid black;
+      border-radius: 5px;
     }
 
-    .suggestions {
-      height: 75px;
-      width: 100%;
-      overflow: scroll;
+    .filterInput {
+      margin: 0;
+      padding: 0;
+      width: calc(100% - 4px);
+      height: 30px;
+      font-size: 20px;
+      text-align: center;
     }
-    
-    .suggestions div {
+
+    .selectableOption {
+      display: block;
       float: left;
       border: 0.5px solid #a8a8a8;
       margin: 0;
       padding: 5px;
-      width: calc(100% - 12px);
-      height: 20px;
+      width: 100%;
+      height: 40px;
       font-size: 18px;
       background-color: white;
-      cursor: pointer;
       text-align: center;
     }
 
-    .suggestions div:hover {
+    .selectableOption:hover {
       color: #eee;
       background-color: #3b8b18;
     }
@@ -80,31 +107,27 @@ import 'rxjs/add/operator/switchMap';
     p {
       margin: 0;
     }
-  `]
+  `],
 })
 
 export class FilterableSearchComponent implements OnInit {
 
+  // Used to toggle between display and filter mode.
+  currentlyBeingFiltered = false;
+
   // Provide the component with the appropriate search service on instantiation.
   @Input() searchService: FilterableSearchService;
 
-  // In case this search component is part of a form.
-  @Input() formComponentName: string;
+  // Other available inputs.
   @Input() placeholderString: string;
-  @Input() formGroupReference: FormGroup;
 
   // Provide the component with a callback for when an option is selected.
-  @Output() onSelected: EventEmitter<any> = new EventEmitter();
-  @ViewChild('searchBox')searchBox: any = null; // Update text box on selection as well.
+  currentlySelected: FilterableSearchOption = null;
+  @Output() onSelected: EventEmitter<FilterableSearchOption> = new EventEmitter();
   onSelection(option: FilterableSearchOption): void {
-    this.searchBox.nativeElement.value = option.optionName;
+    this.currentlySelected = option;
+    this.currentlyBeingFiltered = false;
     this.onSelected.emit(option);
-
-    // In case a user selects something from the dropdown, ensure that the form value is updated without any user input into the box.
-    if (this.formGroupReference !== undefined) {
-      this.formGroupReference.controls[this.formComponentName].patchValue(option.optionName);
-    }
-
     this.searchTerms.next(option.optionName);
   }
 
@@ -118,7 +141,7 @@ export class FilterableSearchComponent implements OnInit {
   }
 
   clearField = () => {
-    this.searchBox.nativeElement.value = '';
+    this.currentlySelected = null;
   }
 
   ngOnInit(): void {

@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancerTypeSearchService } from './cancertype-search.service';
-import { FilterableSearchOption } from './filterable-search-option.interface';
+import { FilterableSearchOption } from './filterable-search.component';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
