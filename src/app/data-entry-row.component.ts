@@ -33,7 +33,7 @@ import { VariantTypeSearchService } from './variant-type-search.service';
   `,
   styles: [`   
     #rowContainer {
-      height: 300px;
+      height: 120px;
     }
     
     #rowContainer div {

@@ -30,36 +30,41 @@ import 'rxjs/add/operator/switchMap';
 @Component({
   selector: 'filterable-search',
   template: `    
-    <div>
-      <!-- If form control name is provided vs. not -->
-      <div *ngIf="formGroupReference !== undefined" [formGroup]="formGroupReference">
-        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholderString}}"/>
-      </div>
-      <div *ngIf="formGroupReference === undefined">
-        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholderString}}"/>
-      </div>
-      <div>
-        <div *ngFor="let option of options | async" (click)="onSelection(option)" class="search-result">
-          <p>{{option.optionName}}</p>
-        </div>
+    <!-- If form control name is provided vs. not -->
+    <ng-container *ngIf="formGroupReference !== undefined" [formGroup]="formGroupReference">
+      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" formControlName="{{formComponentName}}" placeholder="{{placeholderString}}"/>
+    </ng-container>
+    <ng-container *ngIf="formGroupReference === undefined">
+      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="{{placeholderString}}"/>
+    </ng-container>
+    <div class="suggestions">
+      <div *ngFor="let option of options | async" (click)="onSelection(option)">
+        <p>{{option.optionName}}</p>
       </div>
     </div>
   `,
   styles: [`
     input {
-      width: 100%;
+      margin: 0;
+      padding: 0;
+      width: calc(100% - 2px);
       height: 30px;
       font-size: 20px;
       text-align: center;
     }
 
-    .search-result {
+    .suggestions {
+      height: 75px;
+      width: 100%;
+      overflow: scroll;
+    }
+    
+    .suggestions div {
       float: left;
-      border: 1px solid #a8a8a8;
-      border-radius: 5px;
-      margin: 3px;
+      border: 0.5px solid #a8a8a8;
+      margin: 0;
       padding: 5px;
-      width: calc(50% - 18px);
+      width: calc(100% - 12px);
       height: 20px;
       font-size: 18px;
       background-color: white;
@@ -67,11 +72,11 @@ import 'rxjs/add/operator/switchMap';
       text-align: center;
     }
 
-    .search-result:hover {
+    .suggestions div:hover {
       color: #eee;
-      background-color: #607D8B;
+      background-color: #3b8b18;
     }
-    
+
     p {
       margin: 0;
     }
@@ -110,6 +115,10 @@ export class FilterableSearchComponent implements OnInit {
   // Push a search term into the observable stream.
   search(term: string): void {
     this.searchTerms.next(term);
+  }
+
+  clearField = () => {
+    this.searchBox.nativeElement.value = '';
   }
 
   ngOnInit(): void {
