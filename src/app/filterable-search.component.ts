@@ -11,7 +11,7 @@
  * interface through which the user can accomplish this.
  */
 
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -39,13 +39,15 @@ export interface FilterableSearchOption {
   selector: 'filterable-search',
   template: `    
     <!-- If form control name is provided vs. not -->
-    <button id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
-    <button id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
+    <button #FilterPopupControl id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
+    <button #FilterPopupControl id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
     
-    <ng-container *ngIf="currentlyBeingFiltered" class="filterPanel">
+    <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered">
       <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
-      <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
-    </ng-container>
+      <div class="suggestions">
+        <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
+      </div>
+    </div>
   `,
   styles: [`
     #nothingSelected {
@@ -76,6 +78,17 @@ export interface FilterableSearchOption {
       border: 1px solid black;
       border-radius: 5px;
     }
+    
+    .filterPanel {
+      display: block;
+      position: absolute;
+      height: 130px;
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 5px;
+      width: 300px;
+      background-color: white;
+    }
 
     .filterInput {
       margin: 0;
@@ -85,16 +98,24 @@ export interface FilterableSearchOption {
       font-size: 20px;
       text-align: center;
     }
+    
+    .suggestions {
+      height: 100px;
+      overflow: scroll;
+    }
 
     .selectableOption {
       display: block;
       float: left;
-      border: 0.5px solid #a8a8a8;
+      border-left: 0.5px solid #a8a8a8;
+      border-right: 0.5px solid #a8a8a8;
+      border-bottom: 0.5px solid #a8a8a8;
+      border-top: 0;
       margin: 0;
       padding: 5px;
       width: 100%;
-      height: 40px;
-      font-size: 18px;
+      height: 28px;
+      font-size: 14px;
       background-color: white;
       text-align: center;
     }
@@ -109,8 +130,32 @@ export interface FilterableSearchOption {
     }
   `],
 })
-
 export class FilterableSearchComponent implements OnInit {
+
+  public elementRef;
+
+  constructor(myElement: ElementRef) {
+    this.elementRef = myElement;
+  }
+
+  // For when the user clicks outside of the dropdown.
+  @HostListener('document:click', ['$event'])
+  handleClick(event) {
+    var clickedComponent = event.target;
+    var inside = false;
+    do {
+      if (clickedComponent === this.elementRef.nativeElement) {
+        inside = true;
+      }
+      clickedComponent = clickedComponent.parentNode;
+    } while (clickedComponent);
+    if (inside) {
+      console.log('inside');
+    } else {
+      console.log('outside');
+      this.currentlyBeingFiltered = false;
+    }
+  }
 
   // Used to toggle between display and filter mode.
   currentlyBeingFiltered = false;
