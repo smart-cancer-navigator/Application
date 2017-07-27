@@ -8,8 +8,9 @@ import { Gene, Variant } from './genomic-data';
 import { Http } from '@angular/http';
 import {Injectable} from '@angular/core';
 
+// TODO: Make it work with the new specification (no Observable in gene which symbolizes variants).  MyGene.info already includes this
 @Injectable()
-export class CIViCSearchService implements GeneDataProvider, VariantDataProvider {
+export class CIViCSearchService {
 
   constructor(private http: Http) {
     this.initializeDatabase();
@@ -19,58 +20,60 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
   civicGenes: Observable<Gene[]>;
 
   public initializeDatabase = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('page', '1');
-    params.set('count', '1000');
-
-    this.civicGenes = this.http
-      .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
-      .map(response => response.json())
-      .map(responseJSON => {
-        const genes: Gene[] = [];
-        // For every gene
-        for (const record of responseJSON.records) {
-          // Construct a new gene (CIViC doesn't have all fields)
-          const gene: Gene = new Gene();
-          gene.optionName = record.name;
-          gene.symbol = record.name;
-          gene.id = record.id;
-
-          // Construct variant array
-          const geneVariants: Variant[] = [];
-          for (const variant of record.variants) {
-            // Construct the new variant.
-            const currentVariant: Variant = new Variant();
-            currentVariant.origin = gene;
-            currentVariant.optionName = variant.name;
-            currentVariant.id = variant.id;
-
-            geneVariants.push(currentVariant);
-          }
-
-          // Add the variants array to the gene.
-          gene.variants = Observable.of(geneVariants);
-
-          genes.push(gene);
-        }
-        return genes;
-      });
+  //   const params: URLSearchParams = new URLSearchParams();
+  //   params.set('page', '1');
+  //   params.set('count', '1000');
+  //
+  //   this.civicGenes = this.http
+  //     .get(`https://civic.genome.wustl.edu/api/genes`, {search: params})
+  //     .map(response => response.json())
+  //     .map(responseJSON => {
+  //       const genes: Gene[] = [];
+  //       // For every gene
+  //       for (const record of responseJSON.records) {
+  //         // Construct a new gene (CIViC doesn't have all fields)
+  //         const gene: Gene = new Gene();
+  //         gene.optionName = record.name;
+  //         gene.entrez_name = record.name;
+  //         gene.symbol = record.name;
+  //         gene.entrez_id = record.id;
+  //
+  //         // Construct variant array
+  //         const geneVariants: Variant[] = [];
+  //         for (const variant of record.variants) {
+  //           // Construct the new variant.
+  //           const currentVariant: Variant = new Variant();
+  //           currentVariant.origin = gene;
+  //           currentVariant.optionName = variant.name;
+  //           currentVariant.entrez_id = variant.id;
+  //
+  //           geneVariants.push(currentVariant);
+  //         }
+  //
+  //         // Add the variants array to the gene.
+  //         gene.variants = Observable.of(geneVariants);
+  //
+  //         genes.push(gene);
+  //       }
+  //       return genes;
+  //     });
   }
 
   /**
    * The genes for the CIViC search service.
    */
   public provideGenes = (searchTerm: string): Observable<Gene[]> => {
-    return this.civicGenes
-      .map(genes => {
-        const applicableGenes: Gene[] = [];
-        for (const gene of genes) {
-          if (gene.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-            applicableGenes.push(gene);
-          }
-        }
-        return applicableGenes;
-      });
+    // return this.civicGenes
+    //   .map(genes => {
+    //     const applicableGenes: Gene[] = [];
+    //     for (const gene of genes) {
+    //       if (gene.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+    //         applicableGenes.push(gene);
+    //       }
+    //     }
+    //     return applicableGenes;
+    //   });
+    return null;
   }
 
 
@@ -78,20 +81,22 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
    * The variants for the CIViC Search Service
    */
   public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
-    if (additionalContext.variants) {
-      return additionalContext.variants.map(unfilteredVariants => {
-        const applicableVariants: Variant[] = [];
-        for (const variant of unfilteredVariants) {
-          if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-            applicableVariants.push(variant);
-          }
-        }
-        return applicableVariants;
-      });
+    // if (additionalContext.variants) {
+    //   return additionalContext.variants.map(unfilteredVariants => {
+    //     const applicableVariants: Variant[] = [];
+    //     for (const variant of unfilteredVariants) {
+    //       if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+    //         applicableVariants.push(variant);
+    //       }
+    //     }
+    //     return applicableVariants;
+    //   });
+    //
+    // } else {
+    //   // Return empty if no variants are provided in this gene.
+    //   return Observable.of<Variant[]>([]);
+    // }
 
-    } else {
-      // Return empty if no variants are provided in this gene.
-      return Observable.of<Variant[]>([]);
-    }
+    return null;
   }
 }

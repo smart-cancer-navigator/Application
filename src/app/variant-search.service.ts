@@ -10,15 +10,15 @@ import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search.component';
 import { Gene, Variant } from './genomic-data';
-import { CIViCSearchService } from './civic-search.service';
 import { VariantDataProvider } from './database-services.interface';
+import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
 
 @Injectable()
 export class VariantSearchService implements FilterableSearchService {
 
-  constructor(private civicSearchService: CIViCSearchService) {}
+  constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
 
-  variantDataProviders: VariantDataProvider[] = [this.civicSearchService];
+  variantDataProviders: VariantDataProvider[] = [this.myvariantinfoSearchService];
 
   // Provided by the gene search filterable dropdown on selection.
   geneContext: Gene;
@@ -33,11 +33,11 @@ export class VariantSearchService implements FilterableSearchService {
       return Observable.of <Variant[]> ([]);
     }
 
+    console.log('Searching');
+
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDataProviders
-      .map(
-        searchService => searchService.provideVariants(term, this.geneContext)
-      )
+      .map(searchService => searchService.provideVariants(term, this.geneContext))
     ).map((variantArrays: Variant[][]) => {
         // TODO: Prevent gene overlap, as in CADD submits a gene which CIViC already had.  They should be merged.
         const massiveVariantArray: Variant[] = [];
@@ -47,14 +47,26 @@ export class VariantSearchService implements FilterableSearchService {
             massiveVariantArray.push(variant);
           }
         }
-
         return massiveVariantArray;
       }
     );
   }
 
-  // TODO: Figure out how to implement
-  public validateHGVSID = (hgvsID: string): boolean => {
-    return hgvsID.startsWith('a');
+  // Used to check the validity of a given HGVS ID.
+  public validateHGVSID = (hgvsID: string): Observable<boolean> => {
+    // If any of them validate it successfully, it's a valid ID.
+    return Observable.forkJoin(this.variantDataProviders
+      .map(searchService => searchService.validateHGVSID(hgvsID))
+    ).map((resultArray: boolean[]) => {
+      console.log('Got result array');
+      for (const result of resultArray) {
+        if (result) {
+          console.log('Valid');
+          return true;
+        }
+      }
+      console.log('Invalid');
+      return false;
+    });
   }
 }

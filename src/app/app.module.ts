@@ -22,6 +22,7 @@ import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
 import { CIViCSearchService } from './civic-search.service';
 import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
+import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
 
 @NgModule({
   imports:      [
@@ -47,7 +48,8 @@ import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
     GeneSearchService,
     VariantSearchService,
     CIViCSearchService,
-    MyGeneInfoSearchService
+    MyGeneInfoSearchService,
+    MyVariantInfoSearchService
   ],
   bootstrap: [
     AppComponent

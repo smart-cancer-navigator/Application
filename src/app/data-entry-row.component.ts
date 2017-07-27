@@ -5,10 +5,10 @@
 
 import {Component, Injectable, Input, ViewChild} from '@angular/core';
 
-import {Gene, Variant} from './genomic-data';
+import { Gene, Variant } from './genomic-data';
 import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
-import {GeneDataRow} from './data-entry.component';
+import { GeneDataRow } from './data-entry.component';
 
 @Component({
   selector: 'data-entry-row',
@@ -17,15 +17,15 @@ import {GeneDataRow} from './data-entry.component';
       <select #GeneInputType>
         <option selected>Entrez Symbol</option>
       </select>
-      <filterable-search *ngIf="GeneInputType.selectedIndex === 0" #GeneFilter [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
+      <filterable-search #GeneFilter *ngIf="GeneInputType.selectedIndex === 0" [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
     <div>
-      <select [hidden]="variantSearchService.geneContext === undefined" #VariantInputType (change)="'this makes ngIf evaluate (keep it here!)'">
+      <select #VariantInputType [hidden]="variantSearchService.geneContext === undefined" (change)="'this makes ngIf evaluate (keep it here!)'">
         <option selected>Entrez Symbol</option>
         <option>HGVS ID</option>
       </select>
       <filterable-search #VariantFilter [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 0" [searchService]="variantSearchService" [placeholderString]="'Variant'" (onSelected)="onVariantSelected($event);"></filterable-search>
-      <input #VariantHGVSInput [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 1" type="text" id="variantHGVSInput" autofocus (keyup)="'this makes something happen'" [style.background-color]="variantSearchService.validateHGVSID(VariantHGVSInput.value) ? 'green' : 'red'">
+      <input #VariantHGVSIDInput [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 1" type="text" id="hgvsInput" (input)="validate(VariantHGVSIDInput.value)" [style.background-color]="hgvsInputValid ? 'rgba(0, 128, 0, 0.31)' : 'rgba(128, 0, 0, 0.4)'">
     </div>
   `,
   styles: [`
@@ -46,7 +46,7 @@ import {GeneDataRow} from './data-entry.component';
       font-size: 20px;
     }
 
-    #variantHGVSInput {
+    #hgvsInput {
       height: 16px;
       width: calc(100% - 16px);
       font-size: 18px;
@@ -62,6 +62,8 @@ import {GeneDataRow} from './data-entry.component';
 
 @Injectable()
 export class DataEntryRowComponent {
+  hgvsInputValid: boolean;
+
   @Input() geneDataRow: GeneDataRow;
 
   onGeneSelected = (gene: Gene) => {
@@ -71,6 +73,10 @@ export class DataEntryRowComponent {
 
   onVariantSelected = (variant: Variant) => {
     this.geneDataRow.variant = variant;
+  }
+
+  validate = (value: string) => {
+    this.variantSearchService.validateHGVSID(value).subscribe(result => this.hgvsInputValid = result);
   }
 
   constructor (public geneSearchService: GeneSearchService, public variantSearchService: VariantSearchService) {}

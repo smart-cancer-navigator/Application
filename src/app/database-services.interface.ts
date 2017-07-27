@@ -15,5 +15,6 @@ export interface GeneDataProvider {
 }
 
 export interface VariantDataProvider {
+  validateHGVSID: (hgvsID: string) => Observable<boolean>;
   provideVariants: (searchTerm: string, additionalContext: Gene) => Observable <Variant[]>;
 }

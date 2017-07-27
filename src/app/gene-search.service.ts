@@ -17,16 +17,18 @@ import {MyGeneInfoSearchService} from './mygeneinfo-search.service';
 @Injectable()
 export class GeneSearchService implements FilterableSearchService {
 
-  geneSearchServices: GeneDataProvider[] = [this.mygeneinfoSearchService, this.civicSearchService];
+  geneSearchServices: GeneDataProvider[] = [this.mygeneinfoSearchService];
 
-  constructor(private civicSearchService: CIViCSearchService, private mygeneinfoSearchService: MyGeneInfoSearchService) {}
+  constructor(private mygeneinfoSearchService: MyGeneInfoSearchService) {}
 
   public search = (term: string): Observable<Gene[]> => {
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.geneSearchServices
-        .map(
-          searchService => searchService.provideGenes(term)
-        )
+        .map(searchService => {
+          const genes = searchService.provideGenes(term);
+          console.log('Genes', genes);
+          return genes;
+        })
       ).map((geneArrays: Gene[][]) => {
         const massiveGeneArray: Gene[] = [];
 

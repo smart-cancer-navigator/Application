@@ -11,31 +11,27 @@ export class Gene implements FilterableSearchOption {
   optionName: string;
 
   // Class properties
-  id: number;
   score: number;
-  entrez_gene: string;
+  entrez_id: number;
+  entrez_name: string;
   symbol: string;
-  name: string;
   taxid: number;
 
-  variants: Observable<Variant[]>; // This is classified as an Observable, since they may be stored as GET requests.
-
+  // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeWith = (other: Gene) => {
-    this.id = MergeProperties(this.id, other.id);
-    this.entrez_gene = MergeProperties(this.entrez_gene, other.entrez_gene);
+    this.entrez_id = MergeProperties(this.entrez_id, other.entrez_id);
+    this.entrez_name = MergeProperties(this.entrez_name, other.entrez_name);
     this.taxid = MergeProperties(this.taxid, other.taxid);
     this.optionName = MergeProperties(this.optionName, other.optionName);
     this.symbol = MergeProperties(this.symbol, other.symbol);
-    this.variants = MergeProperties(this.variants, other.variants);
     this.score = MergeProperties(this.score, other.score);
   }
 
   equals = (other: Gene): boolean => {
-    return this.id === other.id
+    return this.entrez_id === other.entrez_id
       && this.score === other.score
-      && this.entrez_gene === other.entrez_gene
+      && this.entrez_name === other.entrez_name
       && this.symbol === other.symbol
-      && this.name === other.name
       && this.taxid === other.taxid;
   }
 }
@@ -49,7 +45,10 @@ export class Variant implements FilterableSearchOption {
   optionName: string;
 
   origin: Gene;
-  id: number;
+  entrez_name: string;
+  entrez_id: number;
+  hgvs_id: string;
+  score: number;
 }
 
 export const MergeProperties = (property1: any, property2: any): any => {
