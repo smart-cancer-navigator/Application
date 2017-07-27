@@ -7,14 +7,12 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import {Gene, Variant, VariantType} from './genomic-data';
-import {Observable} from 'rxjs/Observable';
+import { Gene, Variant } from './genomic-data';
 
 export class GeneDataRow {
   arrayIndex: number;
   gene: Gene;
   variant: Variant;
-  type: VariantType;
 
   constructor (arrayIndexParam: number) {
     this.arrayIndex = arrayIndexParam;
@@ -93,7 +91,7 @@ export class GeneDataRow {
 
     .panel-body {
       width: 100%;
-      height: 40px;
+      height: 80px;
     }
 
     address {

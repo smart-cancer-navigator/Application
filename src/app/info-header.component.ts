@@ -11,46 +11,50 @@ import {SMARTClient} from './smart-reference.service';
 @Component({
   selector: 'info-header',
   template: `
-    <div id="header">
-      <img id="smartLogo" src="assets/smart-logo.png">
-      <p id="patientHeader">{{patientData}}</p>
-      <p id="userHeader">{{practitionerData}}</p>
+    <div id="dataHeading">
+      <div id="patientData" class="headingData">
+        <label for="patientHeader">Patient Context:</label>
+        <p id="patientHeader">{{patientData}}</p>
+      </div>
+      <div id="userData" class="headingData">
+        <label for="userHeader">User Context:</label>
+        <p id="userHeader">{{practitionerData}}</p>
+      </div>
     </div>
   `,
   styles: [`
-    #header {
-      height: 100px;
+    #dataHeading {
+      height: 40px;
       width: 100%;
-      display: flex;
-      align-items: center;
 
-      background-color: #dbdbdb;
+      background-color: #000000;
       padding: 5px;
       text-align: center;
     }
 
-    #header * {
-      margin: 0;
+    #patientData {
       float: left;
+      width: 65%;
+      height: 30px;
+      margin: 0;
     }
 
-    #header p {
-      font-size: 30px;
+    #userData {
+      float: left;
+      width: 35%;
+      height: 30px;
+      margin: 0;
     }
 
-    #smartLogo {
-      width: auto;
-      height: 75%;
+    .headingData * {
+      float: left;
+      font-size: 22px;
+      margin: 9px 0;
+      color: white;
     }
 
-    #patientHeader {
-      width: 60%;
-      color: black;
-    }
-
-    #userHeader {
-      width: 30%;
-      color: black;
+    .headingData label {
+      margin-right: 15px;
     }
   `]
 })

@@ -2,22 +2,21 @@
  * CIViC (Clinical Interpretations of Variants in Cancer) is a database which provides genes, variants,
  * and variant types for a wide variety of cancer-causing factors.
  */
-import { GeneDataProvider, VariantDataProvider, VariantTypeDataProvider } from './database-services.interface';
+import { GeneDataProvider, VariantDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant, VariantType } from './genomic-data';
+import { Gene, Variant } from './genomic-data';
 import { Http } from '@angular/http';
 import {Injectable} from '@angular/core';
 
-
 @Injectable()
-export class CIViCSearchService implements GeneDataProvider, VariantDataProvider, VariantTypeDataProvider {
+export class CIViCSearchService implements GeneDataProvider, VariantDataProvider {
 
-  constructor (private http: Http) {
+  constructor(private http: Http) {
     this.initializeDatabase();
   }
 
   // All of the genes within the CIViC database are contained within this Observable.
-  civicGenes: Observable <Gene[]>;
+  civicGenes: Observable<Gene[]>;
 
   public initializeDatabase = () => {
     const params: URLSearchParams = new URLSearchParams();
@@ -45,24 +44,6 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
             currentVariant.origin = gene;
             currentVariant.optionName = variant.name;
             currentVariant.id = variant.id;
-
-            // Construct the Observable which will provide variant types
-            currentVariant.variantTypes = this.http.get('https://civic.genome.wustl.edu/api/variants/' + currentVariant.id)
-              .map(response => response.json())
-              .map(variantTypeResponseJSON => {
-                const variantTypes: VariantType[] = [];
-
-                for (const variantTypeJSON of variantTypeResponseJSON.variant_types) {
-                  // Construct the new variant type.
-                  const currentVariantType: VariantType = new VariantType();
-                  currentVariantType.optionName = variantTypeJSON.display_name;
-                  currentVariantType.origin = currentVariant;
-
-                  variantTypes.push();
-                }
-
-                return variantTypes;
-              });
 
             geneVariants.push(currentVariant);
           }
@@ -111,28 +92,6 @@ export class CIViCSearchService implements GeneDataProvider, VariantDataProvider
     } else {
       // Return empty if no variants are provided in this gene.
       return Observable.of<Variant[]>([]);
-    }
-  }
-
-
-  /**
-   * The variant types for the CIViC Search Service
-   */
-  public provideVariantTypes = (searchTerm: string, additionalContext: Variant): Observable<VariantType[]> => {
-    if (additionalContext.variantTypes) {
-      return additionalContext.variantTypes.map(unfilteredVariantTypes => {
-        const applicableVariantTypes: VariantType[] = [];
-        for (const variant of unfilteredVariantTypes) {
-          if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-            applicableVariantTypes.push(variant);
-          }
-        }
-        return applicableVariantTypes;
-      });
-
-    } else {
-      // Return empty if no variants are provided in this gene.
-      return Observable.of<VariantType[]>([]);
     }
   }
 }

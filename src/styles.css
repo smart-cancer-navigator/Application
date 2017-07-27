@@ -8,7 +8,7 @@ body {
 }
 
 /** Thin */
-p, h1, input, button, th
+p, h1, input, button, th, label
 {
   font-style: normal;
   font-family: "Helvetica Neue";

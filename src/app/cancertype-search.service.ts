@@ -16,7 +16,7 @@ import { SMARTClient } from './smart-reference.service';
 
 // Since this search service extends the filterable search service, it is applicable to the filterable search component.
 @Injectable()
-export class CancerTypeSearchService implements FilterableSearchService {
+export class CancerTypeSearchService {
 
   public availableCancerTypes: CancerType[] = [];
 
@@ -46,7 +46,7 @@ export class CancerTypeSearchService implements FilterableSearchService {
     });
   }
 
-  public search = (term: string): Observable<CancerType[]> => {
+  public getConditions = (): Observable<CancerType[]> => {
     if (this.availableCancerTypes.length === 0) {
       console.log('No cancer types found!');
       return;
@@ -55,9 +55,7 @@ export class CancerTypeSearchService implements FilterableSearchService {
     // Compile a list of available cancer types which start with the string in question.
     const applicableCancerTypes: CancerType[] = [];
     for (const cancertype of this.availableCancerTypes) {
-      if (cancertype.optionName.toLowerCase().startsWith(term)) {
-        applicableCancerTypes.push(cancertype);
-      }
+      applicableCancerTypes.push(cancertype);
     }
     return Observable.of(applicableCancerTypes);
   }

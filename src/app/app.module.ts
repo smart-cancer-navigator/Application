@@ -20,7 +20,6 @@ import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
 import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
-import { VariantTypeSearchService } from './variant-type-search.service';
 import { CIViCSearchService } from './civic-search.service';
 import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
 
@@ -29,7 +28,8 @@ import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
     BrowserModule,
     ReactiveFormsModule,
     HttpModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   declarations: [
     AppComponent,
@@ -46,7 +46,6 @@ import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
     SMARTReferenceService,
     GeneSearchService,
     VariantSearchService,
-    VariantTypeSearchService,
     CIViCSearchService,
     MyGeneInfoSearchService
   ],

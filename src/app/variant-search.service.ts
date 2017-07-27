@@ -28,7 +28,6 @@ export class VariantSearchService implements FilterableSearchService {
   }
 
   public search = (term: string): Observable<Variant[]> => {
-
     if (!this.geneContext) {
       console.log('Searching with no gene chosen!');
       return Observable.of <Variant[]> ([]);
@@ -54,4 +53,10 @@ export class VariantSearchService implements FilterableSearchService {
     );
   }
 
+  // TODO: Figure out how to implement
+  current = false;
+  public validateHGVSID = (hgvsID: string): boolean => {
+    this.current = !this.current;
+    return this.current;
+  }
 }

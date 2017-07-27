@@ -50,15 +50,6 @@ export class Variant implements FilterableSearchOption {
 
   origin: Gene;
   id: number;
-  variantTypes: Observable<VariantType[]>;
-}
-
-/**
- * The Variant Type of a given variant often defines its pathogenicity.
- */
-export class VariantType implements FilterableSearchOption {
-  optionName: string;
-  origin: Variant;
 }
 
 export const MergeProperties = (property1: any, property2: any): any => {

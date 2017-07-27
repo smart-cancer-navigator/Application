@@ -5,7 +5,7 @@
  * add the full functionality of another database.
  */
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant, VariantType } from './genomic-data';
+import { Gene, Variant } from './genomic-data';
 
 export interface GeneDataProvider {
   /**
@@ -16,8 +16,4 @@ export interface GeneDataProvider {
 
 export interface VariantDataProvider {
   provideVariants: (searchTerm: string, additionalContext: Gene) => Observable <Variant[]>;
-}
-
-export interface VariantTypeDataProvider {
-  provideVariantTypes: (searchTerm: string, additionalContext: Variant) => Observable<VariantType[]>;
 }

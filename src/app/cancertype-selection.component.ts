@@ -24,10 +24,16 @@ import {CancerType} from './cancertype';
   selector: 'cancertype-selection',
   template: `
     <h1>Select Patient Cancer Type</h1>
-    <filterable-search [searchService]="cancertypeSearchService" [placeholderString]="'Cancer Type'" (onSelected)="choose($event)"></filterable-search>
+    <select [(ngModel)]="selected" (ngModelChange)="choose($event)">
+      <option selected></option>
+      <option *ngFor="let condition of cancertypeSearchService.getConditions() | async" [ngValue]="condition">{{condition.optionName}}</option>
+    </select>
   `,
   styles: [`
-    filterable-search {
+    select {
+      text-align: center;
+      font-size: 20px;
+      height: 30px;
       width: 100%;
     }
   `],
@@ -38,14 +44,15 @@ export class CancerTypeSelectionComponent implements OnInit {
 
   constructor(public cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
 
+  selected: CancerType;
+
   ngOnInit(): void {
     // Child class specific
     this.cancertypeSearchService.initialize();
   }
 
-  choose(selection: FilterableSearchOption): void {
+  choose(selection: CancerType): void {
     console.log('Cancer type selection component got choice', selection);
-    const cancertype: CancerType = selection as CancerType;
-    this.router.navigate(['/data-entry', cancertype.fhirID]);
+    this.router.navigate(['/data-entry', selection.fhirID]);
   }
 }

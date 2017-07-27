@@ -2,15 +2,14 @@
  * CIViC (Clinical Interpretations of Variants in Cancer) is a database which provides genes, variants,
  * and variant types for a wide variety of cancer-causing factors.
  */
-import { GeneDataProvider, VariantDataProvider, VariantTypeDataProvider } from './database-services.interface';
+import { GeneDataProvider, VariantDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant, VariantType } from './genomic-data';
+import { Gene, Variant } from './genomic-data';
 import { Http } from '@angular/http';
 import {Injectable} from '@angular/core';
 
-
 @Injectable()
-export class MyGeneInfoSearchService implements GeneDataProvider, VariantDataProvider, VariantTypeDataProvider {
+export class MyGeneInfoSearchService implements GeneDataProvider, VariantDataProvider {
 
   constructor (private http: Http) {}
 
@@ -61,28 +60,6 @@ export class MyGeneInfoSearchService implements GeneDataProvider, VariantDataPro
     } else {
       // Return empty if no variants are provided in this gene.
       return Observable.of<Variant[]>([]);
-    }
-  }
-
-
-  /**
-   * The variant types for the CIViC Search Service
-   */
-  public provideVariantTypes = (searchTerm: string, additionalContext: Variant): Observable<VariantType[]> => {
-    if (additionalContext.variantTypes) {
-      return additionalContext.variantTypes.map(unfilteredVariantTypes => {
-        const applicableVariantTypes: VariantType[] = [];
-        for (const variant of unfilteredVariantTypes) {
-          if (variant.optionName.toLowerCase().startsWith(searchTerm.toLowerCase())) {
-            applicableVariantTypes.push(variant);
-          }
-        }
-        return applicableVariantTypes;
-      });
-
-    } else {
-      // Return empty if no variants are provided in this gene.
-      return Observable.of<VariantType[]>([]);
     }
   }
 }

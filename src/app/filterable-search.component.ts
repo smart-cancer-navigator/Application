@@ -152,7 +152,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
 
   recalculatePopupWidth = () => {
     this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
-    console.log('Set to ' + (this.popupToggle.nativeElement.offsetWidth - 12));
   }
 
   public elementRef;
