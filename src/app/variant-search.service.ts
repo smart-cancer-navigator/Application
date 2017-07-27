@@ -54,9 +54,7 @@ export class VariantSearchService implements FilterableSearchService {
   }
 
   // TODO: Figure out how to implement
-  current = false;
   public validateHGVSID = (hgvsID: string): boolean => {
-    this.current = !this.current;
-    return this.current;
+    return hgvsID.startsWith('a');
   }
 }
