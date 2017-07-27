@@ -22,18 +22,19 @@ export class CancerTypeSearchService implements FilterableSearchService {
 
   constructor(private http: Http) {}
 
-  /**
-   * OK SO here's the thing: TypeScript is weird and to preserve 'this' context, you have to do one of three
-   * things.  I chose the '=>' solution from https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript
-   */
   public initialize = () => {
-    if (!SMARTClient) {
-      console.log('No SMART client available!');
+    SMARTClient.subscribe(smart => this.populatePatientConditions(smart));
+  }
+
+  // Called once client is set.
+  populatePatientConditions = (smartClient: any): void => {
+    if (smartClient === null) {
       return;
     }
 
+    console.log('Populating');
     // Query for available conditions (max of 10)
-    SMARTClient.api.search({type: 'Condition', count: 10}).then((conditions) => {
+    smartClient.patient.api.search({type: 'Condition', count: 10}).then((conditions) => {
       console.log('Conditions', conditions);
       for (const condition of conditions.data.entry)
       {
@@ -46,11 +47,6 @@ export class CancerTypeSearchService implements FilterableSearchService {
   }
 
   public search = (term: string): Observable<CancerType[]> => {
-    if (!SMARTClient) {
-      console.log('No SMART client available!');
-      return Observable.of([new CancerType('NO SMART CLIENT >:(', 1, 1)]);
-    }
-
     if (this.availableCancerTypes.length === 0) {
       console.log('No cancer types found!');
       return;

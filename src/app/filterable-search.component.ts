@@ -46,7 +46,7 @@ export interface FilterableSearchOption {
     <button #PopupToggle id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
     
     <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
-      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
+      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput" autofocus/>
       <div class="suggestions">
         <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
       </div>
@@ -173,9 +173,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
       clickedComponent = clickedComponent.parentNode;
     } while (clickedComponent);
     if (inside) {
-      console.log('inside');
     } else {
-      console.log('outside');
       this.currentlyBeingFiltered = false;
     }
   }

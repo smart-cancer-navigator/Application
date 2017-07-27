@@ -5,15 +5,16 @@
  * data, and the user name.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import {SMARTClient} from './smart-reference.service';
 
 @Component({
   selector: 'info-header',
   template: `
     <div id="header">
       <img id="smartLogo" src="assets/smart-logo.png">
-      <p id="patientHeader">John Smith - Age 42 - Thyroid Cancer</p>
-      <p id="userHeader">Rebecca Cohen, M.D.</p>
+      <p id="patientHeader">{{patientData}}</p>
+      <p id="userHeader">{{practitionerData}}</p>
     </div>
   `,
   styles: [`
@@ -54,5 +55,35 @@ import { Component } from '@angular/core';
   `]
 })
 
-export class InfoHeaderComponent {
+export class InfoHeaderComponent implements OnInit {
+  patientData: string = '';
+  practitionerData: string = '';
+
+  ngOnInit(): void {
+    this.patientData = 'Undefined';
+    this.practitionerData = 'Undefined';
+
+    // Once set, the function will be called.
+    SMARTClient.subscribe(smart => this.setHeaderData(smart));
+  }
+
+  setHeaderData = (smartClient: any) => {
+    if (smartClient === null) {
+      return;
+    }
+
+    console.log('Got ', smartClient);
+
+    smartClient.patient.read().then((p) => {
+      console.log('SMART Patient', p);
+
+      this.patientData = p.name[0].given[0] + ' ' + p.name[0].family;
+    });
+
+    smartClient.user.read().then((u) => {
+      console.log('SMART User', u);
+
+      this.practitionerData = u.name[0].given[0] + ' ' + u.name[0].family;
+    });
+  }
 }
