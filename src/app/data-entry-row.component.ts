@@ -25,7 +25,7 @@ import {GeneDataRow} from './data-entry.component';
         <option>HGVS ID</option>
       </select>
       <filterable-search *ngIf="VariantInputType.selectedIndex === 0" #VariantFilter [searchService]="variantSearchService" [placeholderString]="'Variant'" (onSelected)="onVariantSelected($event);"></filterable-search>
-      <input #VariantHGVSInput *ngIf="VariantInputType.selectedIndex === 1" type="text" id="variantHGVSInput" (keyup)="onValidateVariantHGVS()">
+      <input #VariantHGVSInput *ngIf="VariantInputType.selectedIndex === 1" type="text" id="variantHGVSInput" autofocus (focus)="onValidateVariantHGVS()" (keyup)="onValidateVariantHGVS()">
     </div>
   `,
   styles: [`
