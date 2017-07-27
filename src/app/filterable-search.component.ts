@@ -42,8 +42,8 @@ export interface FilterableSearchOption {
   selector: 'filterable-search',
   template: `    
     <!-- If form control name is provided vs. not -->
-    <button #PopupToggle id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{currentlySelected.optionName}}</button>
-    <button #PopupToggle id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered" class="filterToggle">{{placeholderString}}</button>
+    <button #PopupToggle id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();" class="filterToggle">{{currentlySelected.optionName}}</button>
+    <button #PopupToggle id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();" class="filterToggle">{{placeholderString}}</button>
     
     <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
       <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput" autofocus/>
@@ -85,6 +85,7 @@ export interface FilterableSearchOption {
     .filterPanel {
       display: block;
       position: absolute;
+      
       height: 130px;
       border: 1px solid black;
       border-radius: 5px;
