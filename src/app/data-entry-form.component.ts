@@ -26,10 +26,14 @@ export class GeneDataRow {
     <div *ngFor="let geneVariation of geneVariations; let i=index;" class="entryPanel">
       <div class="panel-heading">
         <p>Variation {{i + 1}}</p>
+        <select #SearchType (change)="'this makes ngIf evaluate (keep it here!)'">
+          <option>Robust Search</option>
+          <option>Plain Search</option>
+        </select>
         <button class="clickable" (click)="removeRow(i)">X</button>
       </div>
       <div class="panel-body">
-        <data-entry-row [geneDataRow]="geneVariation"></data-entry-row>
+        <data-entry-robust *ngIf="SearchType.selectedIndex === 0" [geneDataRow]="geneVariation"></data-entry-robust>
       </div>
     </div>
 
@@ -55,8 +59,16 @@ export class GeneDataRow {
       margin: 5px;
       font-size: 15px;
       text-align: left;
-      width: calc(100% - 40px);
+      width: 80px;
       color: white;
+    }
+    
+    .panel-heading select {
+      width: 200px;
+      margin: 1.5px;
+      height: 25px;
+      font-size: 17px;
+      text-align-last: center;
     }
 
     .panel-heading button {

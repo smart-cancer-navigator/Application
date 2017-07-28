@@ -11,11 +11,11 @@ import { VariantSearchService } from './variant-search.service';
 import { GeneDataRow } from './data-entry-form.component';
 
 @Component({
-  selector: 'data-entry-row',
+  selector: 'data-entry-robust',
   template: `
-    <div>
+    <div [style.width]="variantSearchService.geneContext === undefined ? 'calc(100% - 8px)' : 'calc(50% - 8px)'">
       <select #GeneInputType>
-        <option selected>HUGO Symbol</option>
+        <option selected (change)="'this makes ngIf evaluate (keep it here!)'">HUGO Symbol</option>
       </select>
       <filterable-search #GeneFilter *ngIf="GeneInputType.selectedIndex === 0" [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
