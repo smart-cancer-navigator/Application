@@ -14,8 +14,8 @@ import { GeneDataRow } from './data-entry-form.component';
   selector: 'data-entry-robust',
   template: `
     <div [style.width]="variantSearchService.geneContext === undefined ? 'calc(100% - 8px)' : 'calc(50% - 8px)'">
-      <select #GeneInputType>
-        <option selected (change)="'this makes ngIf evaluate (keep it here!)'">HUGO Symbol</option>
+      <select #GeneInputType  (change)="'this makes ngIf evaluate (keep it here!)'">
+        <option selected>HUGO Symbol</option>
       </select>
       <filterable-search #GeneFilter *ngIf="GeneInputType.selectedIndex === 0" [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
