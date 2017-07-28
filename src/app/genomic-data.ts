@@ -47,13 +47,13 @@ export class Variant implements FilterableSearchOption {
 
   // Class properties
   origin: Gene;
-  hugo_symbol: string;
+  variant_name: string;
   hgvs_id: string;
   score: number;
 
   constructor(origin: Gene, hugo_symbol: string, hgvs_id: string, score: number) {
     this.origin = origin;
-    this.hugo_symbol = hugo_symbol;
+    this.variant_name = hugo_symbol;
     this.hgvs_id = hgvs_id;
     this.score = score;
 
@@ -63,7 +63,7 @@ export class Variant implements FilterableSearchOption {
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeWith = (other: Variant) => {
     this.origin = MergeProperties(this.origin, other.origin);
-    this.hugo_symbol = MergeProperties(this.hugo_symbol, other.hugo_symbol);
+    this.variant_name = MergeProperties(this.variant_name, other.variant_name);
     this.hgvs_id = MergeProperties(this.hgvs_id, other.hgvs_id);
     this.score = MergeProperties(this.score, other.score);
   }

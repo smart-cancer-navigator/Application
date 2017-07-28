@@ -14,6 +14,7 @@ import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
 import { FilterableSearchComponent } from './filterable-search.component';
 import { DataEntryRobustComponent } from './data-entry-robust.component';
+import { DataEntryIntelligentComponent } from './data-entry-intelligent.component';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -40,7 +41,8 @@ import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
-    DataEntryRobustComponent
+    DataEntryRobustComponent,
+    DataEntryIntelligentComponent
   ],
   providers: [
     CancerTypeSearchService,

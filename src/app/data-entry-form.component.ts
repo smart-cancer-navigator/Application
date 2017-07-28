@@ -28,12 +28,13 @@ export class GeneDataRow {
         <p>Variation {{i + 1}}</p>
         <select #SearchType (change)="'this makes ngIf evaluate (keep it here!)'">
           <option>Robust Search</option>
-          <option>Plain Search</option>
+          <option>Intelligent Search</option>
         </select>
         <button class="clickable" (click)="removeRow(i)">X</button>
       </div>
       <div class="panel-body">
         <data-entry-robust *ngIf="SearchType.selectedIndex === 0" [geneDataRow]="geneVariation"></data-entry-robust>
+        <data-entry-intelligent *ngIf="SearchType.selectedIndex === 1" [geneDataRow]="geneVariation"></data-entry-intelligent>
       </div>
     </div>
 

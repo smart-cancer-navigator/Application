@@ -21,7 +21,7 @@ import { GeneDataRow } from './data-entry-form.component';
     </div>
     <div>
       <select #VariantInputType [hidden]="variantSearchService.geneContext === undefined" (change)="'this makes ngIf evaluate (keep it here!)'">
-        <option selected>HUGO Symbol</option>
+        <option selected>Variant Name</option>
         <option>HGVS ID</option>
       </select>
       <filterable-search #VariantFilter [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 0" [searchService]="variantSearchService" [placeholderString]="'Variant'" (onSelected)="onVariantSelected($event);"></filterable-search>

@@ -5,6 +5,7 @@ body {
 *
 {
   user-select: none;
+  outline: none;
 }
 
 /** Thin */
