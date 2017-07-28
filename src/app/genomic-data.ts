@@ -11,28 +11,29 @@ export class Gene implements FilterableSearchOption {
   optionName: string;
 
   // Class properties
+  hugo_symbol: string;
   score: number;
   entrez_id: number;
-  entrez_name: string;
-  symbol: string;
-  taxid: number;
+
+  constructor (hugo_symbol: string, score: number, entrez_id: number) {
+    this.hugo_symbol = hugo_symbol;
+    this.score = score;
+    this.entrez_id = entrez_id;
+
+    this.optionName = hugo_symbol;
+  }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeWith = (other: Gene) => {
     this.entrez_id = MergeProperties(this.entrez_id, other.entrez_id);
-    this.entrez_name = MergeProperties(this.entrez_name, other.entrez_name);
-    this.taxid = MergeProperties(this.taxid, other.taxid);
-    this.optionName = MergeProperties(this.optionName, other.optionName);
-    this.symbol = MergeProperties(this.symbol, other.symbol);
+    this.hugo_symbol = MergeProperties(this.hugo_symbol, other.hugo_symbol);
     this.score = MergeProperties(this.score, other.score);
   }
 
   equals = (other: Gene): boolean => {
     return this.entrez_id === other.entrez_id
       && this.score === other.score
-      && this.entrez_name === other.entrez_name
-      && this.symbol === other.symbol
-      && this.taxid === other.taxid;
+      && this.hugo_symbol === other.hugo_symbol;
   }
 }
 
@@ -44,14 +45,40 @@ export class Variant implements FilterableSearchOption {
   // Interface properties
   optionName: string;
 
+  // Class properties
   origin: Gene;
-  entrez_name: string;
-  entrez_id: number;
+  hugo_symbol: string;
   hgvs_id: string;
   score: number;
+
+  constructor(origin: Gene, hugo_symbol: string, hgvs_id: string, score: number) {
+    this.origin = origin;
+    this.hugo_symbol = hugo_symbol;
+    this.hgvs_id = hgvs_id;
+    this.score = score;
+
+    this.optionName = hugo_symbol;
+  }
+
+  // Merges another gene into this gene (overwriting properties if the property of one is undefined).
+  mergeWith = (other: Variant) => {
+    this.origin = MergeProperties(this.origin, other.origin);
+    this.hugo_symbol = MergeProperties(this.hugo_symbol, other.hugo_symbol);
+    this.hgvs_id = MergeProperties(this.hgvs_id, other.hgvs_id);
+    this.score = MergeProperties(this.score, other.score);
+  }
 }
 
 export const MergeProperties = (property1: any, property2: any): any => {
+  if (typeof property1 !== typeof property2) {
+    console.log(property1 + ' and ' + property2 + ' have a type mismatch!');
+    return property1;
+  }
+
+  if (property1 instanceof Array) {
+    return property1.length > property2.length ? property1 : property2;
+  }
+
   if (property1) {
     if (property2) {
       if (property1 !== property1)  {

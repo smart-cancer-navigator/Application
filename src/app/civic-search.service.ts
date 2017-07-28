@@ -34,7 +34,7 @@ export class CIViCSearchService {
   //         // Construct a new gene (CIViC doesn't have all fields)
   //         const gene: Gene = new Gene();
   //         gene.optionName = record.name;
-  //         gene.entrez_name = record.name;
+  //         gene.hugo_symbol = record.name;
   //         gene.symbol = record.name;
   //         gene.entrez_id = record.id;
   //

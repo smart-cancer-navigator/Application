@@ -32,24 +32,30 @@ export class GeneSearchService implements FilterableSearchService {
       ).map((geneArrays: Gene[][]) => {
         const massiveGeneArray: Gene[] = [];
 
-        const addGene = (toAdd: Gene) => {
-          for (const toCheck of massiveGeneArray) {
-            if (toCheck.optionName === toAdd.optionName) {
-              toCheck.mergeWith(toAdd);
-              console.log('Merged ' + toAdd.symbol);
+        const addGene = (gene: Gene) => {
+          for (let arrayIndex = 0; arrayIndex < massiveGeneArray.length; arrayIndex++) {
+            // Make sure that we are sorting alphabetically.
+            if (massiveGeneArray[arrayIndex].optionName === gene.optionName) {
+              massiveGeneArray[arrayIndex].mergeWith(gene);
+              console.log('Merged ' + gene.optionName);
+              return;
+            } else if (massiveGeneArray[arrayIndex].optionName > gene.optionName) {
+              massiveGeneArray.splice(arrayIndex, 0, gene);
+              console.log('Spliced ' + gene.optionName);
               return;
             }
           }
-          // If this is a distinct option.
-          massiveGeneArray.push(toAdd);
+
+          // It must've not been pushed if we reach here.
+          massiveGeneArray.push(gene);
         }
 
+        // Variant merging/placing loop.
         for (const geneArray of geneArrays) {
           for (const gene of geneArray) {
             addGene(gene);
           }
         }
-
         return massiveGeneArray;
       }
     );

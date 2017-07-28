@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {SMARTReferenceService} from './smart-reference.service';
 
 @Component({
   selector: 'app-root',

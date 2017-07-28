@@ -9,11 +9,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { InfoHeaderComponent } from './info-header.component';
 import { CancerTypeSelectionComponent } from './cancertype-selection.component';
-import { DataEntryComponent } from './data-entry.component';
+import { DataEntryFormComponent } from './data-entry-form.component';
 import { SMARTLaunchComponent } from './smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
 import { FilterableSearchComponent } from './filterable-search.component';
-import { DataEntryRowComponent } from './data-entry-row.component';
+import { DataEntryRobustComponent } from './data-entry-robust.component';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -35,12 +35,12 @@ import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
   declarations: [
     AppComponent,
     InfoHeaderComponent,
-    DataEntryComponent,
+    DataEntryFormComponent,
     CancerTypeSelectionComponent,
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
-    DataEntryRowComponent
+    DataEntryRobustComponent
   ],
   providers: [
     CancerTypeSearchService,

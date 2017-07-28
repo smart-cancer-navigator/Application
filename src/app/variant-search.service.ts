@@ -33,18 +33,39 @@ export class VariantSearchService implements FilterableSearchService {
       return Observable.of <Variant[]> ([]);
     }
 
-    console.log('Searching');
-
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDataProviders
-      .map(searchService => searchService.provideVariants(term, this.geneContext))
+      .map(searchService => {
+        const variants = searchService.provideVariants(term, this.geneContext);
+        console.log('Variants', variants);
+        return variants;
+      })
     ).map((variantArrays: Variant[][]) => {
         // TODO: Prevent gene overlap, as in CADD submits a gene which CIViC already had.  They should be merged.
         const massiveVariantArray: Variant[] = [];
 
+        const addVariant = (variant: Variant) => {
+          for (let arrayIndex = 0; arrayIndex < massiveVariantArray.length; arrayIndex++) {
+            // Make sure that we are sorting alphabetically.
+            if (massiveVariantArray[arrayIndex].optionName === variant.optionName) {
+              massiveVariantArray[arrayIndex].mergeWith(variant);
+              console.log('Merged ' + variant.optionName);
+              return;
+            } else if (massiveVariantArray[arrayIndex].optionName > variant.optionName) {
+              massiveVariantArray.splice(arrayIndex, 0, variant);
+              console.log('Spliced ' + variant.optionName);
+              return;
+            }
+          }
+
+          // It must've not been pushed if we reach here.
+          massiveVariantArray.push(variant);
+        }
+
+        // Variant merging/placing loop.
         for (const variantArray of variantArrays) {
           for (const variant of variantArray) {
-            massiveVariantArray.push(variant);
+            addVariant(variant);
           }
         }
         return massiveVariantArray;

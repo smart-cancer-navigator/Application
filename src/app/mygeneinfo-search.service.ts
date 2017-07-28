@@ -25,15 +25,7 @@ export class MyGeneInfoSearchService implements GeneDataProvider {
         const genes: Gene[] = [];
 
         for (const hit of responseJSON.hits) {
-          const newGene: Gene = new Gene();
-          newGene.optionName = hit.symbol;
-          newGene.score = hit._score;
-          newGene.symbol = hit.symbol;
-          newGene.taxid = hit.taxid;
-          newGene.entrez_id = hit._id;
-          newGene.entrez_name = hit.name; // or hit.entrezgene
-
-          genes.push(newGene);
+          genes.push(new Gene(hit.symbol, hit._score, hit._id));
         }
 
         return genes;

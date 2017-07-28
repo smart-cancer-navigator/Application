@@ -17,19 +17,13 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
    * The variants for the CIViC Search Service
    */
   public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
-    return this.http.get('myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.entrez_name + '%20AND%20civic.name%3A' + searchTerm + '*&fields=civic.entrez_name%2Ccivic.name&size=15')
+    return this.http.get('http://myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.hugo_symbol + '%20AND%20civic.name%3A' + searchTerm + '*&fields=civic.entrez_name%2Ccivic.name&size=15')
       .map(result => result.json())
       .map(resultJSON => {
+        console.log('myVariant response', resultJSON);
         const variantResults: Variant[] = [];
         for (const hit of resultJSON.hits) {
-          const variant: Variant = new Variant();
-          variant.hgvs_id = hit._id;
-          variant.score = hit._score;
-          variant.entrez_name = hit.civic.name;
-          variant.entrez_id = 1; // TODO: add this
-          variant.origin = additionalContext;
-
-          variantResults.push(variant);
+          variantResults.push(new Variant(additionalContext, hit.civic.name, hit._id, hit._score));
         }
 
         return variantResults;

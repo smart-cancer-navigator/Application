@@ -109,7 +109,7 @@ export class GeneDataRow {
     }
   `]
 })
-export class DataEntryComponent implements OnInit {
+export class DataEntryFormComponent implements OnInit {
 
   geneVariations: GeneDataRow[] = [];
 

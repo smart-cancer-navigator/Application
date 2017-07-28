@@ -8,24 +8,24 @@ import {Component, Injectable, Input, ViewChild} from '@angular/core';
 import { Gene, Variant } from './genomic-data';
 import { GeneSearchService } from './gene-search.service';
 import { VariantSearchService } from './variant-search.service';
-import { GeneDataRow } from './data-entry.component';
+import { GeneDataRow } from './data-entry-form.component';
 
 @Component({
   selector: 'data-entry-row',
   template: `
     <div>
       <select #GeneInputType>
-        <option selected>Entrez Symbol</option>
+        <option selected>HUGO Symbol</option>
       </select>
       <filterable-search #GeneFilter *ngIf="GeneInputType.selectedIndex === 0" [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
     <div>
       <select #VariantInputType [hidden]="variantSearchService.geneContext === undefined" (change)="'this makes ngIf evaluate (keep it here!)'">
-        <option selected>Entrez Symbol</option>
+        <option selected>HUGO Symbol</option>
         <option>HGVS ID</option>
       </select>
       <filterable-search #VariantFilter [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 0" [searchService]="variantSearchService" [placeholderString]="'Variant'" (onSelected)="onVariantSelected($event);"></filterable-search>
-      <input #VariantHGVSIDInput [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 1" type="text" id="hgvsInput" (input)="validate(VariantHGVSIDInput.value)" [style.background-color]="hgvsInputValid ? 'rgba(0, 128, 0, 0.31)' : 'rgba(128, 0, 0, 0.4)'">
+      <input #VariantHGVSIDInput autocomplete="false" [hidden]="variantSearchService.geneContext === undefined || VariantInputType.selectedIndex !== 1" type="text" id="hgvsInput" (input)="validate(VariantHGVSIDInput.value)" [style.background-color]="hgvsInputValid ? 'rgba(0, 128, 0, 0.31)' : 'rgba(128, 0, 0, 0.4)'">
     </div>
   `,
   styles: [`
@@ -61,7 +61,7 @@ import { GeneDataRow } from './data-entry.component';
 })
 
 @Injectable()
-export class DataEntryRowComponent {
+export class DataEntryRobustComponent {
   hgvsInputValid: boolean;
 
   @Input() geneDataRow: GeneDataRow;
