@@ -20,6 +20,8 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 import { CancerType } from './cancertype';
 
+export let SELECTED_CANCER_TYPE: CancerType = null;
+
 @Component({
   selector: 'cancertype-selection',
   template: `
@@ -52,6 +54,7 @@ export class CancerTypeSelectionComponent implements OnInit {
 
   choose(selection: CancerType): void {
     console.log('Cancer type selection component got choice', selection);
+    SELECTED_CANCER_TYPE = this.selected;
     this.router.navigate(['/data-entry', selection.fhirID]);
   }
 }

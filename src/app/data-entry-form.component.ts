@@ -2,12 +2,12 @@
  * Data entry is an essential part of the final application that will be built, and it must be built in
  * a way which permits dynamic addition and removal of form elements.  Since Angular makes modularity
  * insanely easy and you can build custom input selectors, this shouldn't require too much code.
- * (Following https://scotch.io/tutorials/how-to-build-nested-model-driven-forms-in-angular-2) to some
- * extent.
  */
 
 import { Component, OnInit } from '@angular/core';
 import { Gene, Variant } from './genomic-data';
+import { SELECTED_CANCER_TYPE } from './cancertype-selection.component';
+import { Router } from '@angular/router';
 
 export class GeneDataRow {
   arrayIndex: number;
@@ -18,6 +18,8 @@ export class GeneDataRow {
     this.arrayIndex = arrayIndexParam;
   }
 }
+
+export let GENE_VARIATIONS: GeneDataRow[] = [];
 
 @Component({
   selector: 'data-entry',
@@ -38,7 +40,8 @@ export class GeneDataRow {
       </div>
     </div>
 
-    <button type="button" (click)="addRow()" class="finalizeButton clickable">Add Row</button>
+    <button type="button" (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
+    <button type="button" (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
   `,
   styles: [`
     .entryPanel {
@@ -63,7 +66,7 @@ export class GeneDataRow {
       width: 80px;
       color: white;
     }
-    
+
     .panel-heading select {
       width: 200px;
       margin: 1.5px;
@@ -115,9 +118,16 @@ export class GeneDataRow {
       height: 30px;
       border: 1px solid black;
       border-radius: 10px;
-      background-color: #718599;
       color: white;
       font-size: 20px;
+    }
+
+    #addRowButton {
+      background-color: #718599;
+    }
+
+    #completeButton {
+      background-color: #779971;
     }
   `]
 })
@@ -125,7 +135,10 @@ export class DataEntryFormComponent implements OnInit {
 
   geneVariations: GeneDataRow[] = [];
 
+  constructor (private router: Router) {}
+
   ngOnInit() {
+    console.log('Selected Cancer Type', SELECTED_CANCER_TYPE);
     this.addRow();
   }
 
@@ -143,9 +156,9 @@ export class DataEntryFormComponent implements OnInit {
     }
   }
 
-  save(model: any) {
-    // call API to save
-    // ...
-    console.log(model);
+  complete(): void {
+    GENE_VARIATIONS = this.geneVariations;
+
+    this.router.navigate(['/visualize-results']);
   }
 }

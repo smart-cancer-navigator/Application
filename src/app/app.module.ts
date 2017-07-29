@@ -15,6 +15,7 @@ import { SMARTTokenReceptionComponent } from './smart-token-reception.component'
 import { FilterableSearchComponent } from './filterable-search.component';
 import { DataEntryRobustComponent } from './data-entry-robust.component';
 import { DataEntryIntelligentComponent } from './data-entry-intelligent.component';
+import { VisualizeResultsComponent } from './visualize-results.component';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-search.service';
@@ -24,6 +25,7 @@ import { RobustVariantSearchService } from './robust-variant-search.service';
 import { CIViCSearchService } from './civic-search.service';
 import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
+import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.service';
 
 @NgModule({
   imports:      [
@@ -42,7 +44,8 @@ import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
     DataEntryRobustComponent,
-    DataEntryIntelligentComponent
+    DataEntryIntelligentComponent,
+    VisualizeResultsComponent
   ],
   providers: [
     CancerTypeSearchService,
@@ -51,7 +54,8 @@ import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
     RobustVariantSearchService,
     CIViCSearchService,
     MyGeneInfoSearchService,
-    MyVariantInfoSearchService
+    MyVariantInfoSearchService,
+    IntelligentGenomicsSearchService
   ],
   bootstrap: [
     AppComponent
