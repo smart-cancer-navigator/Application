@@ -11,10 +11,7 @@
  * interface through which the user can accomplish this.
  */
 
-import {
-  AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -29,7 +26,6 @@ import 'rxjs/add/operator/switchMap';
 
 // Extension classes must be Injectable.
 export interface FilterableSearchService {
-  // TODO: Figure out how to convert jQuery Deferred object to an Observable
   // Must either return an async Observable (i.e. GET requests must be sent), or simply an array of applicable options.
   search: (term: string) => Observable <FilterableSearchOption[]>;
 }
@@ -42,17 +38,25 @@ export interface FilterableSearchOption {
   selector: 'filterable-search',
   template: `    
     <!-- If form control name is provided vs. not -->
-    <button #PopupToggle id="optionSelected" *ngIf="currentlySelected !== null" #selection (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();" class="filterToggle">{{currentlySelected.optionName}}</button>
-    <button #PopupToggle id="nothingSelected" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();" class="filterToggle">{{placeholderString}}</button>
-    
-    <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
-      <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput" autofocus/>
-      <div class="suggestions">
-        <button *ngFor="let option of options | async" (click)="onSelection(option);" class="selectableOption">{{option.optionName}}</button>
+    <div id="fullContainer" [style.height.px]="currentlyBeingFiltered ? 170 : 30">
+      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();">{{currentlySelected.optionName}}</button>
+      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();">{{placeholderString}}</button>
+      
+      <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
+        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput" autofocus/>
+        <div class="suggestions">
+          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName}}</button>
+        </div>
       </div>
     </div>
   `,
   styles: [`
+    #fullContainer {
+      background-color: white;
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+
     #nothingSelected {
       font-style: italic;
     }
@@ -73,22 +77,19 @@ export interface FilterableSearchOption {
     .filterToggle {
       margin: 0;
       padding: 0;
-      width: calc(100% - 2px);
+      width: 100%;
       height: 30px;
       font-size: 20px;
       text-align: center;
+      border: 0;
       background-color: white;
-      border: 1px solid black;
-      border-radius: 5px;
     }
-    
+
     .filterPanel {
       display: block;
       position: absolute;
-      
+
       height: 130px;
-      border: 1px solid black;
-      border-radius: 5px;
       padding: 5px;
       width: 300px;
       background-color: white;
@@ -101,8 +102,10 @@ export interface FilterableSearchOption {
       height: 30px;
       font-size: 20px;
       text-align: center;
+      border: 1px solid #d6d6d6;
+      border-radius: 5px;
     }
-    
+
     .suggestions {
       height: 100px;
       overflow: scroll;
@@ -136,31 +139,20 @@ export interface FilterableSearchOption {
 })
 export class FilterableSearchComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('PopupToggle') popupToggle: any;
-
-  // Since the panel is absolutely positioned, it would be sized oddly if not for this code.
-  @ViewChild('PopupPanel') popupPanel: any;
-  desiredPopupWidth: number;
-
   ngAfterViewInit() {
     this.recalculatePopupWidth();
   }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.recalculatePopupWidth();
-  }
-
-  recalculatePopupWidth = () => {
-    this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
-  }
-
   public elementRef;
 
   constructor(myElement: ElementRef) {
     this.elementRef = myElement;
   }
 
+  /**
+   * Calculating popup width is required, since the popup is absolutely positioned and sized.
+   */
+  @ViewChild('PopupToggle') popupToggle: any;
+  desiredPopupWidth: number; // Set via Angular
   // For when the user clicks outside of the dropdown.
   @HostListener('document:click', ['$event'])
   handleClick(event) {
@@ -177,6 +169,20 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
       this.currentlyBeingFiltered = false;
     }
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.recalculatePopupWidth();
+  }
+
+  recalculatePopupWidth = () => {
+    this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
+  }
+
+  /**
+   * Setting search services and the rest of the required components for this filterable search is important
+   * to its functionality.
+   */
 
   // Used to toggle between display and filter mode.
   currentlyBeingFiltered = false;

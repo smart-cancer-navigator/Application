@@ -53,7 +53,6 @@ export class VariantSearchService implements FilterableSearchService {
               return;
             } else if (massiveVariantArray[arrayIndex].optionName > variant.optionName) {
               massiveVariantArray.splice(arrayIndex, 0, variant);
-              console.log('Spliced ' + variant.optionName);
               return;
             }
           }

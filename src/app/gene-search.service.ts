@@ -41,7 +41,6 @@ export class GeneSearchService implements FilterableSearchService {
               return;
             } else if (massiveGeneArray[arrayIndex].optionName > gene.optionName) {
               massiveGeneArray.splice(arrayIndex, 0, gene);
-              console.log('Spliced ' + gene.optionName);
               return;
             }
           }
