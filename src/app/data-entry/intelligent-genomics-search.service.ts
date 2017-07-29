@@ -68,7 +68,7 @@ export class IntelligentGenomicsSearchService implements FilterableSearchService
       // Figure out the greatest certainty factor for every typed term.
       for (const typedTerm of typedTerms) {
         let greatestCF: number = -10000;
-        if (typedTerm.length <= 2) {
+        if (!typedTerm || typedTerm === '') {
           continue;
         }
 
