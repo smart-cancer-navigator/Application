@@ -13,13 +13,13 @@ import { GeneDataRow } from './data-entry-form.component';
 @Component({
   selector: 'data-entry-robust',
   template: `
-    <div [style.width]="variantSearchService.geneContext === undefined ? 'calc(100% - 8px)' : 'calc(50% - 8px)'">
+    <div id="GeneInputPanel" [style.width]="variantSearchService.geneContext === undefined ? 'calc(100% - 4px)' : 'calc(50% - 4px)'">
       <select #GeneInputType  (change)="'this makes ngIf evaluate (keep it here!)'">
         <option selected>HUGO Symbol</option>
       </select>
       <filterable-search #GeneFilter *ngIf="GeneInputType.selectedIndex === 0" [searchService]="geneSearchService" [placeholderString]="'Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
-    <div>
+    <div id="VariantInputPanel">
       <select #VariantInputType [hidden]="variantSearchService.geneContext === undefined" (change)="'this makes ngIf evaluate (keep it here!)'">
         <option selected>Variant Name</option>
         <option>HGVS ID</option>
@@ -31,13 +31,20 @@ import { GeneDataRow } from './data-entry-form.component';
   styles: [`
     div {
       float: left;
-      margin: 4px;
-      width: calc(50% - 8px);
+      width: calc(50% - 4px);
     }
 
     div * {
       width: 100%;
       margin: 4px 0;
+    }
+
+    #GeneInputPanel {
+      margin: 0 0 0 2px;
+    }
+
+    #VariantInputPanel {
+      margin: 0 2px 0 0;
     }
 
     select {
@@ -51,7 +58,6 @@ import { GeneDataRow } from './data-entry-form.component';
       width: calc(100% - 16px);
       font-size: 18px;
       padding: 5px;
-      margin: 0 2px;
       border: 2px dotted black;
       border-radius: 10px;
       text-align: center;

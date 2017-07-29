@@ -45,11 +45,11 @@ export interface FilterableSearchService {
     <!-- If form control name is provided vs. not -->
     <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
       <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null"
-              (click)="menuCurrentlyOpen = !currentlyBeingFiltered; recalculatePopupWidth();">
+              (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">
         {{currentlySelected.optionName}}
       </button>
       <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null"
-              (click)="menuCurrentlyOpen = !currentlyBeingFiltered; recalculatePopupWidth();">{{placeholderString}}
+              (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">{{placeholderString}}
       </button>
 
       <div #PopupPanel class="filterPanel" *ngIf="menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">

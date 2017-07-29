@@ -105,8 +105,9 @@ export let GENE_VARIATIONS: GeneDataRow[] = [];
     }
 
     .panel-body {
-      width: 100%;
+      width: calc(100% - 8px);
       height: 80px;
+      padding: 4px;
     }
 
     address {
