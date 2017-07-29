@@ -18,7 +18,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
-import {CancerType} from './cancertype';
+import { CancerType } from './cancertype';
 
 @Component({
   selector: 'cancertype-selection',
@@ -36,8 +36,7 @@ import {CancerType} from './cancertype';
       height: 30px;
       width: 100%;
     }
-  `],
-  providers: [CancerTypeSearchService]
+  `]
 })
 
 export class CancerTypeSelectionComponent implements OnInit {

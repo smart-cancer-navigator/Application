@@ -2,11 +2,11 @@
  * CIViC (Clinical Interpretations of Variants in Cancer) is a database which provides genes, variants,
  * and variant types for a wide variety of cancer-causing factors.
  */
-import { GeneDataProvider, VariantDataProvider } from './database-services.interface';
+import { GeneDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant } from './genomic-data';
+import { Gene } from './genomic-data';
 import { Http } from '@angular/http';
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class MyGeneInfoSearchService implements GeneDataProvider {
@@ -23,6 +23,9 @@ export class MyGeneInfoSearchService implements GeneDataProvider {
       .map(responseJSON => {
         console.log('Response JSON', responseJSON);
         const genes: Gene[] = [];
+        if (!responseJSON.hits) {
+          return genes;
+        }
 
         for (const hit of responseJSON.hits) {
           genes.push(new Gene(hit.symbol, hit._score, hit._id));

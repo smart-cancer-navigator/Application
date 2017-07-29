@@ -6,7 +6,7 @@ import { VariantDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant } from './genomic-data';
 import { Http } from '@angular/http';
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class MyVariantInfoSearchService implements VariantDataProvider {
@@ -22,6 +22,10 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
       .map(resultJSON => {
         console.log('myVariant response', resultJSON);
         const variantResults: Variant[] = [];
+        if (!resultJSON.hits) {
+          return variantResults;
+        }
+
         for (const hit of resultJSON.hits) {
           variantResults.push(new Variant(additionalContext, hit.civic.name, hit._id, hit._score));
         }

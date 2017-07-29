@@ -8,8 +8,7 @@
  * https://stackoverflow.com/questions/34714462/updating-variable-changes-in-components-from-a-service-with-angular2
  */
 
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 declare const FHIR: any;
 export const SMARTModule = FHIR;
@@ -17,7 +16,6 @@ export const SMARTModule = FHIR;
 // Make sure to use BehaviorSubject over Subject, since it provides the current value of the object on subscribe()
 export let SMARTClient: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-@Injectable()
 export class SMARTReferenceService {
   ready() {
     SMARTModule.oauth2.ready(function (smart) {

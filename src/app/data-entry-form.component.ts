@@ -73,7 +73,6 @@ export class GeneDataRow {
     }
 
     .panel-heading button {
-      outline: none;
       margin: 0;
       height: 30px;
       width: 30px;
@@ -125,8 +124,6 @@ export class GeneDataRow {
 export class DataEntryFormComponent implements OnInit {
 
   geneVariations: GeneDataRow[] = [];
-
-  constructor() { }
 
   ngOnInit() {
     this.addRow();

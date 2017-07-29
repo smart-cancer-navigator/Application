@@ -6,7 +6,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import {SMARTClient} from './smart-reference.service';
+import { SMARTClient } from './smart-reference.service';
 
 @Component({
   selector: 'info-header',

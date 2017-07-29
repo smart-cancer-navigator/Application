@@ -3,11 +3,11 @@
  * data entry component to populate the form.
  */
 
-import {Component, Injectable, Input, ViewChild} from '@angular/core';
+import { Component, Injectable, Input } from '@angular/core';
 
 import { Gene, Variant } from './genomic-data';
-import { GeneSearchService } from './gene-search.service';
-import { VariantSearchService } from './variant-search.service';
+import { RobustGeneSearchService } from './robust-gene-search.service';
+import { RobustVariantSearchService } from './robust-variant-search.service';
 import { GeneDataRow } from './data-entry-form.component';
 
 @Component({
@@ -57,7 +57,7 @@ import { GeneDataRow } from './data-entry-form.component';
       text-align: center;
     }
   `],
-  providers: [GeneSearchService, VariantSearchService]
+  providers: [RobustGeneSearchService, RobustVariantSearchService]
 })
 
 @Injectable()
@@ -79,5 +79,5 @@ export class DataEntryRobustComponent {
     this.variantSearchService.validateHGVSID(value).subscribe(result => this.hgvsInputValid = result);
   }
 
-  constructor (public geneSearchService: GeneSearchService, public variantSearchService: VariantSearchService) {}
+  constructor (public geneSearchService: RobustGeneSearchService, public variantSearchService: RobustVariantSearchService) {}
 }

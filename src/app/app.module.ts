@@ -19,8 +19,8 @@ import { DataEntryIntelligentComponent } from './data-entry-intelligent.componen
 // Services
 import { CancerTypeSearchService } from './cancertype-search.service';
 import { SMARTReferenceService } from './smart-reference.service';
-import { GeneSearchService } from './gene-search.service';
-import { VariantSearchService } from './variant-search.service';
+import { RobustGeneSearchService } from './robust-gene-search.service';
+import { RobustVariantSearchService } from './robust-variant-search.service';
 import { CIViCSearchService } from './civic-search.service';
 import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
@@ -47,8 +47,8 @@ import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
   providers: [
     CancerTypeSearchService,
     SMARTReferenceService,
-    GeneSearchService,
-    VariantSearchService,
+    RobustGeneSearchService,
+    RobustVariantSearchService,
     CIViCSearchService,
     MyGeneInfoSearchService,
     MyVariantInfoSearchService

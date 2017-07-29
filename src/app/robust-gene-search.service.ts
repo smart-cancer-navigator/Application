@@ -10,12 +10,11 @@ import 'rxjs/add/observable/forkJoin';
 
 import { FilterableSearchService } from './filterable-search.component';
 import { Gene } from './genomic-data';
-import { CIViCSearchService } from './civic-search.service';
 import { GeneDataProvider } from './database-services.interface';
-import {MyGeneInfoSearchService} from './mygeneinfo-search.service';
+import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
 
 @Injectable()
-export class GeneSearchService implements FilterableSearchService {
+export class RobustGeneSearchService implements FilterableSearchService {
 
   geneSearchServices: GeneDataProvider[] = [this.mygeneinfoSearchService];
 

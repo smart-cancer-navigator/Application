@@ -3,7 +3,6 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -14,7 +13,7 @@ import { VariantDataProvider } from './database-services.interface';
 import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
 
 @Injectable()
-export class VariantSearchService implements FilterableSearchService {
+export class RobustVariantSearchService implements FilterableSearchService {
 
   constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
 
@@ -41,7 +40,6 @@ export class VariantSearchService implements FilterableSearchService {
         return variants;
       })
     ).map((variantArrays: Variant[][]) => {
-        // TODO: Prevent gene overlap, as in CADD submits a gene which CIViC already had.  They should be merged.
         const massiveVariantArray: Variant[] = [];
 
         const addVariant = (variant: Variant) => {

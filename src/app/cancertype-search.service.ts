@@ -3,11 +3,7 @@
  * populates the dropdown list for the available options.
  */
 
-import { FilterableSearchService } from './filterable-search.component';
-
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -20,7 +16,7 @@ export class CancerTypeSearchService {
 
   public availableCancerTypes: CancerType[] = [];
 
-  constructor(private http: Http) {}
+  constructor() {}
 
   public initialize = () => {
     SMARTClient.subscribe(smart => this.populatePatientConditions(smart));
@@ -41,17 +37,13 @@ export class CancerTypeSearchService {
         console.log('Condition: ' + condition.resource.code.text);
         this.availableCancerTypes.push(new CancerType(condition.resource.code.text, parseInt(condition.resource.code.coding[0].code), 1));
       }
-    }, function() {
-      console.log('SMART Query Failed!');
+    }, (err) => { // Error callback.
+      console.log('SMART Query Failed!', err);
     });
   }
 
+  // In a separate method because the jQuery object is a deferred object and so it can't be stored as a get request.
   public getConditions = (): Observable<CancerType[]> => {
-    if (this.availableCancerTypes.length === 0) {
-      console.log('No cancer types found!');
-      return;
-    }
-
     // Compile a list of available cancer types which start with the string in question.
     const applicableCancerTypes: CancerType[] = [];
     for (const cancertype of this.availableCancerTypes) {

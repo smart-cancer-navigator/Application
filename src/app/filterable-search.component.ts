@@ -24,28 +24,41 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 
-// Extension classes must be Injectable.
-export interface FilterableSearchService {
-  // Must either return an async Observable (i.e. GET requests must be sent), or simply an array of applicable options.
-  search: (term: string) => Observable <FilterableSearchOption[]>;
-}
-
+/**
+ * Ensure that all options have an accessible name.
+ */
 export interface FilterableSearchOption {
   optionName: string;
 }
 
+/**
+ * A standard for all filterable search services: a single method which returns either a http request, or
+ * an observable of options.
+ */
+export interface FilterableSearchService {
+  search: (term: string) => Observable <FilterableSearchOption[]>;
+}
+
 @Component({
   selector: 'filterable-search',
-  template: `    
+  template: `
     <!-- If form control name is provided vs. not -->
-    <div id="fullContainer" [style.height.px]="currentlyBeingFiltered ? 170 : 30">
-      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();">{{currentlySelected.optionName}}</button>
-      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null" (click)="currentlyBeingFiltered = !currentlyBeingFiltered; recalculatePopupWidth();">{{placeholderString}}</button>
-      
-      <div #PopupPanel class="filterPanel" *ngIf="currentlyBeingFiltered" [style.width.px]="desiredPopupWidth">
-        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput" autofocus/>
+    <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
+      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null"
+              (click)="menuCurrentlyOpen = !currentlyBeingFiltered; recalculatePopupWidth();">
+        {{currentlySelected.optionName}}
+      </button>
+      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null"
+              (click)="menuCurrentlyOpen = !currentlyBeingFiltered; recalculatePopupWidth();">{{placeholderString}}
+      </button>
+
+      <div #PopupPanel class="filterPanel" *ngIf="menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
+        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"
+               autofocus/>
         <div class="suggestions">
-          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName}}</button>
+          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">
+            {{option.optionName}}
+          </button>
         </div>
       </div>
     </div>
@@ -68,10 +81,6 @@ export interface FilterableSearchOption {
     #nothingSelected:hover, #optionSelected:hover {
       background-color: #3679af;
       color: white;
-    }
-
-    input, button {
-      outline: none;
     }
 
     .filterToggle {
@@ -139,20 +148,19 @@ export interface FilterableSearchOption {
 })
 export class FilterableSearchComponent implements OnInit, AfterViewInit {
 
-  ngAfterViewInit() {
-    this.recalculatePopupWidth();
-  }
-  public elementRef;
+  menuCurrentlyOpen = false; // Used to toggle between display and filter mode.
+  @Input() placeholderString: string;
+
+  /**
+   * Automatically close menu upon clicking outside of the item.
+   */
+  elementRef: ElementRef;
+  desiredPopupWidth: number; // Set via Angular
 
   constructor(myElement: ElementRef) {
     this.elementRef = myElement;
   }
 
-  /**
-   * Calculating popup width is required, since the popup is absolutely positioned and sized.
-   */
-  @ViewChild('PopupToggle') popupToggle: any;
-  desiredPopupWidth: number; // Set via Angular
   // For when the user clicks outside of the dropdown.
   @HostListener('document:click', ['$event'])
   handleClick(event) {
@@ -166,8 +174,16 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     } while (clickedComponent);
     if (inside) {
     } else {
-      this.currentlyBeingFiltered = false;
+      this.menuCurrentlyOpen = false;
     }
+  }
+
+
+  /**
+   * Automatically resize the popup menu upon creating the menu or resizing the window.
+   */
+  ngAfterViewInit() {
+    this.recalculatePopupWidth();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -175,47 +191,20 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     this.recalculatePopupWidth();
   }
 
+  @ViewChild('PopupToggle') popupToggle: any;
   recalculatePopupWidth = () => {
     this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
   }
+
 
   /**
    * Setting search services and the rest of the required components for this filterable search is important
    * to its functionality.
    */
-
-  // Used to toggle between display and filter mode.
-  currentlyBeingFiltered = false;
-
-  // Provide the component with the appropriate search service on instantiation.
-  @Input() searchService: FilterableSearchService;
-
-  // Other available inputs.
-  @Input() placeholderString: string;
-
-  // Provide the component with a callback for when an option is selected.
-  currentlySelected: FilterableSearchOption = null;
-  @Output() onSelected: EventEmitter<FilterableSearchOption> = new EventEmitter();
-  onSelection(option: FilterableSearchOption): void {
-    this.currentlySelected = option;
-    this.currentlyBeingFiltered = false;
-    this.onSelected.emit(option);
-    this.searchTerms.next(option.optionName);
-  }
-
-  // Angular components which apparently make filterable searches easier
+  // Available options for given search terms.
+  searchTerms = new Subject<string>();
   options: Observable<FilterableSearchOption[]>;
-  private searchTerms = new Subject<string>();
-
-  // Push a search term into the observable stream.
-  search(term: string): void {
-    this.searchTerms.next(term);
-  }
-
-  clearField = () => {
-    this.currentlySelected = null;
-  }
-
+  // Define the options as based on the search terms.
   ngOnInit(): void {
     /**
      * Refer to https://blog.thoughtram.io/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html.
@@ -232,6 +221,28 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
         console.log('Search Service Error', error);
         return Observable.of<FilterableSearchOption[]>([]);
       });
+  }
+
+  // Provide the component with the appropriate search service on instantiation.
+  @Input() searchService: FilterableSearchService;
+
+  // Provide the component with a callback for when an option is selected.
+  currentlySelected: FilterableSearchOption = null;
+  @Output() onSelected: EventEmitter<FilterableSearchOption> = new EventEmitter();
+  onSelection(option: FilterableSearchOption): void {
+    this.currentlySelected = option;
+    this.menuCurrentlyOpen = false;
+    this.onSelected.emit(option);
+    this.searchTerms.next(option.optionName);
+  }
+
+  // Push a search term into the observable stream.
+  search(term: string): void {
+    this.searchTerms.next(term);
+  }
+
+  clearField = () => {
+    this.currentlySelected = null;
   }
 }
 
