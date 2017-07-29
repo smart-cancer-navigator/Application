@@ -7,10 +7,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { FilterableSearchService } from './filterable-search.component';
-import { Gene, Variant } from './genomic-data';
-import { VariantDataProvider } from './database-services.interface';
-import { MyVariantInfoSearchService } from './myvariantinfo-search.service';
+import { FilterableSearchService } from './filterable-search/filterable-search.component';
+import { Gene, Variant } from '../global/genomic-data';
+import { VariantDataProvider } from './providers/database-services.interface';
+import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
 
 @Injectable()
 export class RobustVariantSearchService implements FilterableSearchService {
@@ -36,7 +36,6 @@ export class RobustVariantSearchService implements FilterableSearchService {
     return Observable.forkJoin(this.variantDataProviders
       .map(searchService => {
         const variants = searchService.provideVariants(term, this.geneContext);
-        console.log('Variants', variants);
         return variants;
       })
     ).map((variantArrays: Variant[][]) => {

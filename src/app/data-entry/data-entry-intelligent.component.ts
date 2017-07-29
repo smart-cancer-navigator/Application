@@ -5,7 +5,7 @@
 
 import { Component, Injectable, Input } from '@angular/core';
 
-import { Gene, Variant } from './genomic-data';
+import { Gene, Variant } from '../global/genomic-data';
 import { RobustGeneSearchService } from './robust-gene-search.service';
 import { RobustVariantSearchService } from './robust-variant-search.service';
 import { GeneDataRow } from './data-entry-form.component';

@@ -5,8 +5,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Gene, Variant } from './genomic-data';
-import { SELECTED_CANCER_TYPE } from './cancertype-selection.component';
+import { Gene, Variant } from '../global/genomic-data';
+import { SELECTED_CANCER_TYPE } from '../cancertype-selection/cancertype-selection.component';
 import { Router } from '@angular/router';
 
 export class GeneDataRow {

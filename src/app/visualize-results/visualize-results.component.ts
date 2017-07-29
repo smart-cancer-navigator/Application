@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GENE_VARIATIONS } from './data-entry-form.component';
+import { GENE_VARIATIONS } from '../data-entry/data-entry-form.component';
 /**
  * This component and its corresponding route is used to display data about the gene and variants selected by
  * the user in the previous step.

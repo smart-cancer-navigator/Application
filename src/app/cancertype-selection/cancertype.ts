@@ -1,4 +1,4 @@
-import { FilterableSearchOption } from './filterable-search.component';
+import { FilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
 
 export class CancerType implements FilterableSearchOption {
   public optionName: string;

@@ -8,10 +8,10 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/forkJoin';
 
-import { FilterableSearchService } from './filterable-search.component';
-import { Gene } from './genomic-data';
-import { GeneDataProvider } from './database-services.interface';
-import { MyGeneInfoSearchService } from './mygeneinfo-search.service';
+import { FilterableSearchService } from './filterable-search/filterable-search.component';
+import { Gene } from '../global/genomic-data';
+import { GeneDataProvider } from './providers/database-services.interface';
+import { MyGeneInfoSearchService } from './providers/mygeneinfo-search.service';
 
 @Injectable()
 export class RobustGeneSearchService implements FilterableSearchService {
@@ -25,7 +25,6 @@ export class RobustGeneSearchService implements FilterableSearchService {
     return Observable.forkJoin(this.geneSearchServices
         .map(searchService => {
           const genes = searchService.provideGenes(term);
-          console.log('Genes', genes);
           return genes;
         })
       ).map((geneArrays: Gene[][]) => {

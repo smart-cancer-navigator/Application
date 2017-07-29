@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { CancerTypeSelectionComponent } from './cancertype-selection.component';
-import { DataEntryFormComponent } from './data-entry-form.component';
-import { SMARTLaunchComponent } from './smart-launch.component';
-import { SMARTTokenReceptionComponent } from './smart-token-reception.component';
-import { VisualizeResultsComponent } from './visualize-results.component';
+import { CancerTypeSelectionComponent } from './cancertype-selection/cancertype-selection.component';
+import { DataEntryFormComponent } from './data-entry/data-entry-form.component';
+import { SMARTLaunchComponent } from './smart-initialization/smart-launch.component';
+import { SMARTTokenReceptionComponent } from './smart-initialization/smart-token-reception.component';
+import { VisualizeResultsComponent } from './visualize-results/visualize-results.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/cancertype-selection', pathMatch: 'full' },

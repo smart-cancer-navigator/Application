@@ -4,7 +4,7 @@
  */
 import { VariantDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant } from './genomic-data';
+import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 
@@ -20,7 +20,6 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
     return this.http.get('http://myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.hugo_symbol + '%20AND%20civic.name%3A' + searchTerm + '*&fields=civic.entrez_name%2Ccivic.name&size=15')
       .map(result => result.json())
       .map(resultJSON => {
-        console.log('myVariant response', resultJSON);
         const variantResults: Variant[] = [];
         if (!resultJSON.hits) {
           return variantResults;

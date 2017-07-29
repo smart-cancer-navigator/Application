@@ -4,7 +4,7 @@
  */
 import { GeneDataProvider, VariantDataProvider } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant } from './genomic-data';
+import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';
 import {Injectable} from '@angular/core';
 

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { CancerType } from './cancertype';
-import { SMARTClient } from './smart-reference.service';
+import { SMARTClient } from '../smart-initialization/smart-reference.service';
 
 // Since this search service extends the filterable search service, it is applicable to the filterable search component.
 @Injectable()
