@@ -39,11 +39,11 @@ import { GeneDataRow } from './data-entry-form.component';
       margin: 4px 0;
     }
 
-    #GeneInputPanel {
+    #VariantInputPanel {
       margin: 0 0 0 2px;
     }
 
-    #VariantInputPanel {
+    #GeneInputPanel {
       margin: 0 2px 0 0;
     }
 

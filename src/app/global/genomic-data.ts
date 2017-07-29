@@ -6,9 +6,6 @@ import { FilterableSearchOption } from '../data-entry/filterable-search/filterab
  * conversion.
  */
 export class Gene implements FilterableSearchOption {
-  // Interface properties
-  optionName: string;
-
   // Class properties
   hugo_symbol: string;
   score: number;
@@ -18,8 +15,6 @@ export class Gene implements FilterableSearchOption {
     this.hugo_symbol = hugo_symbol;
     this.score = score;
     this.entrez_id = entrez_id;
-
-    this.optionName = hugo_symbol;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
@@ -29,10 +24,8 @@ export class Gene implements FilterableSearchOption {
     this.score = MergeProperties(this.score, other.score);
   }
 
-  equals = (other: Gene): boolean => {
-    return this.entrez_id === other.entrez_id
-      && this.score === other.score
-      && this.hugo_symbol === other.hugo_symbol;
+  optionName = () => {
+    return this.hugo_symbol;
   }
 }
 
@@ -41,10 +34,6 @@ export class Gene implements FilterableSearchOption {
  * alongside the genes which they vary from.
  */
 export class Variant implements FilterableSearchOption {
-  // Interface properties
-  optionName: string;
-
-  // Class properties
   origin: Gene;
   variant_name: string;
   hgvs_id: string;
@@ -55,8 +44,6 @@ export class Variant implements FilterableSearchOption {
     this.variant_name = hugo_symbol;
     this.hgvs_id = hgvs_id;
     this.score = score;
-
-    this.optionName = hugo_symbol;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
@@ -65,6 +52,14 @@ export class Variant implements FilterableSearchOption {
     this.variant_name = MergeProperties(this.variant_name, other.variant_name);
     this.hgvs_id = MergeProperties(this.hgvs_id, other.hgvs_id);
     this.score = MergeProperties(this.score, other.score);
+  }
+
+  optionName = () => {
+    return this.variant_name;
+  }
+
+  toIntelligentDisplayRepresentation = () => {
+    return this.origin.hugo_symbol + ' ' + this.variant_name + ' ' + this.origin.entrez_id + ' ' + this.hgvs_id;
   }
 }
 

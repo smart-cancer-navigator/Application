@@ -41,11 +41,11 @@ export class RobustVariantSearchService implements FilterableSearchService {
         const addVariant = (variant: Variant) => {
           for (let arrayIndex = 0; arrayIndex < massiveVariantArray.length; arrayIndex++) {
             // Make sure that we are sorting alphabetically.
-            if (massiveVariantArray[arrayIndex].optionName === variant.optionName) {
+            if (massiveVariantArray[arrayIndex].optionName() === variant.optionName()) {
               massiveVariantArray[arrayIndex].mergeWith(variant);
-              console.log('Merged ' + variant.optionName);
+              console.log('Merged ' + variant.optionName());
               return;
-            } else if (massiveVariantArray[arrayIndex].optionName > variant.optionName) {
+            } else if (massiveVariantArray[arrayIndex].optionName() > variant.optionName()) {
               massiveVariantArray.splice(arrayIndex, 0, variant);
               return;
             }

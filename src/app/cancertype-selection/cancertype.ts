@@ -1,13 +1,17 @@
 import { FilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
 
 export class CancerType implements FilterableSearchOption {
-  public optionName: string;
-  public fhirID: number;
-  public pathogenicity: number;
+  conditionName: string;
+  fhirID: number;
+  pathogenicity: number;
 
-  constructor(optionNameParam: string, fhirIDParam: number, pathogenicityParam: number) {
-    this.optionName = optionNameParam;
-    this.fhirID = fhirIDParam;
-    this.pathogenicity = pathogenicityParam;
+  constructor(_conditionName: string, _fhirID: number, _pathogenicity: number) {
+    this.conditionName = _conditionName;
+    this.fhirID = _fhirID;
+    this.pathogenicity = _pathogenicity;
+  }
+
+  public optionName = () => {
+    return this.conditionName;
   }
 }

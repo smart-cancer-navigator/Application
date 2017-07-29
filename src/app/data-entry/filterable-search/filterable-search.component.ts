@@ -28,7 +28,7 @@ import 'rxjs/add/operator/switchMap';
  * Ensure that all options have an accessible name.
  */
 export interface FilterableSearchOption {
-  optionName: string;
+  optionName: () => string;
 }
 
 /**
@@ -46,7 +46,7 @@ export interface FilterableSearchService {
     <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
       <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null"
               (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">
-        {{currentlySelected.optionName}}
+        {{currentlySelected.optionName()}}
       </button>
       <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null"
               (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">{{placeholderString}}
@@ -57,7 +57,7 @@ export interface FilterableSearchService {
                autofocus/>
         <div class="suggestions">
           <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">
-            {{option.optionName}}
+            {{option.optionName()}}
           </button>
         </div>
       </div>
@@ -155,7 +155,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
    * Automatically close menu upon clicking outside of the item.
    */
   elementRef: ElementRef;
-  desiredPopupWidth: number; // Set via Angular
 
   constructor(myElement: ElementRef) {
     this.elementRef = myElement;
@@ -182,6 +181,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   /**
    * Automatically resize the popup menu upon creating the menu or resizing the window.
    */
+  desiredPopupWidth: number; // Set via Angular
   ngAfterViewInit() {
     this.recalculatePopupWidth();
   }
@@ -233,7 +233,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
     this.onSelected.emit(option);
-    this.searchTerms.next(option.optionName);
+    this.searchTerms.next(option.optionName());
   }
 
   // Push a search term into the observable stream.

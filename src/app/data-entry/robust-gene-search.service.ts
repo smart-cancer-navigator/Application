@@ -30,11 +30,11 @@ export class RobustGeneSearchService implements FilterableSearchService {
         const addGene = (gene: Gene) => {
           for (let arrayIndex = 0; arrayIndex < massiveGeneArray.length; arrayIndex++) {
             // Make sure that we are sorting alphabetically.
-            if (massiveGeneArray[arrayIndex].optionName === gene.optionName) {
+            if (massiveGeneArray[arrayIndex].optionName() === gene.optionName()) {
               massiveGeneArray[arrayIndex].mergeWith(gene);
-              console.log('Merged ' + gene.optionName);
+              console.log('Merged ' + gene.optionName());
               return;
-            } else if (massiveGeneArray[arrayIndex].optionName > gene.optionName) {
+            } else if (massiveGeneArray[arrayIndex].optionName() > gene.optionName()) {
               massiveGeneArray.splice(arrayIndex, 0, gene);
               return;
             }
