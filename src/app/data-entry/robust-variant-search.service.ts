@@ -34,10 +34,7 @@ export class RobustVariantSearchService implements FilterableSearchService {
 
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDataProviders
-      .map(searchService => {
-        const variants = searchService.provideVariants(term, this.geneContext);
-        return variants;
-      })
+      .map(searchService => searchService.provideVariants(term, this.geneContext))
     ).map((variantArrays: Variant[][]) => {
         const massiveVariantArray: Variant[] = [];
 

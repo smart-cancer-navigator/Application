@@ -23,10 +23,7 @@ export class RobustGeneSearchService implements FilterableSearchService {
   public search = (term: string): Observable<Gene[]> => {
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.geneSearchServices
-        .map(searchService => {
-          const genes = searchService.provideGenes(term);
-          return genes;
-        })
+        .map(searchService => searchService.provideGenes(term))
       ).map((geneArrays: Gene[][]) => {
         const massiveGeneArray: Gene[] = [];
 
