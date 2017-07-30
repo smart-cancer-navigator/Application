@@ -2,12 +2,6 @@ body {
   margin: 0;
 }
 
-*
-{
-  user-select: none;
-  outline: none;
-}
-
 /** Thin */
 p, h1, input, button, th, label
 {
