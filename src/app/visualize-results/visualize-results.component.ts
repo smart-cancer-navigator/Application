@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GENE_VARIATIONS } from '../data-entry/data-entry-form.component';
+import { VisualizeResultsService } from './visualize-results.service';
 /**
  * This component and its corresponding route is used to display data about the gene and variants selected by
  * the user in the previous step.
@@ -20,12 +21,17 @@ import { GENE_VARIATIONS } from '../data-entry/data-entry-form.component';
     <div id="tabContentBorder">
       <!-- Drugs Tab -->
       <div id="drugsInfo" class="tabContent" *ngIf="selectedTabIndex === 0">
-        <p>Drugs Info</p>
+        <h1>Drugs Info</h1>
       </div>
 
       <!-- Clinical Trials Tab -->
       <div id="clinicalTrialsInfo" class="tabContent" *ngIf="selectedTabIndex === 1">
-        <p>Clinical Trials Info</p>
+        <h1>Clinical Trials Info</h1>
+      </div>
+      
+      <!-- Variant Types Tab -->
+      <div id="variantTypesTab" class="tabContent" *ngIf="selectedTabIndex === 2">
+        <h1>Variant Types Info</h1>
       </div>
     </div>
   `,
@@ -74,6 +80,8 @@ import { GENE_VARIATIONS } from '../data-entry/data-entry-form.component';
   `]
 })
 export class VisualizeResultsComponent implements OnInit {
+  constructor (visualizeResultsService: VisualizeResultsService) {}
+
   tabChoices: string[] = ['Effective Drugs', 'Clinical Trials', 'Variant Types'];
   selectedTabIndex: number = 0;
 

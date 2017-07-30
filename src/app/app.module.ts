@@ -26,6 +26,8 @@ import { CIViCSearchService } from './data-entry/providers/civic-search.service'
 import { MyGeneInfoSearchService } from './data-entry/providers/mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './data-entry/providers/myvariantinfo-search.service';
 import { IntelligentGenomicsSearchService } from './data-entry/intelligent-genomics-search.service';
+import { VisualizeResultsService } from './visualize-results/visualize-results.service';
+
 
 @NgModule({
   imports:      [
@@ -55,7 +57,8 @@ import { IntelligentGenomicsSearchService } from './data-entry/intelligent-genom
     CIViCSearchService,
     MyGeneInfoSearchService,
     MyVariantInfoSearchService,
-    IntelligentGenomicsSearchService
+    IntelligentGenomicsSearchService,
+    VisualizeResultsService
   ],
   bootstrap: [
     AppComponent

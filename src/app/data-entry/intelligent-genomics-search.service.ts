@@ -29,7 +29,7 @@ export const VARIANT_MAPPINGS: string[] = [
   'ABL1 M351T 25 chr9:g.133748391T>C'
 ];
 
-export class VariantWithCertaintyFactor {
+class VariantWithCertaintyFactor {
   certaintyFactor: number;
   variant: Variant;
 
@@ -125,8 +125,6 @@ export class IntelligentGenomicsSearchService implements FilterableSearchService
         variantSuggestions.splice(maxSuggestions, 1);
       }
     }
-
-    console.log(variantSuggestions);
 
     // Get rid of certainty factors.
     const toReturn: Variant[] = [];

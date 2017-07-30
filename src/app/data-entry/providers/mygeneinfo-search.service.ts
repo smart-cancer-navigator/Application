@@ -27,7 +27,7 @@ export class MyGeneInfoSearchService implements GeneDataProvider {
         }
 
         for (const hit of responseJSON.hits) {
-          genes.push(new Gene(hit.symbol, hit._score, hit._id));
+          genes.push(new Gene(hit.symbol, hit._score, parseInt(hit._id)));
         }
 
         return genes;

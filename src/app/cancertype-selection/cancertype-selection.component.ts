@@ -28,7 +28,7 @@ export let SELECTED_CANCER_TYPE: CancerType = null;
     <h1>Select Patient Cancer Type</h1>
     <select [(ngModel)]="selected" (ngModelChange)="choose($event)">
       <option selected></option>
-      <option *ngFor="let condition of cancertypeSearchService.getConditions() | async" [ngValue]="condition">{{condition.optionName}}</option>
+      <option *ngFor="let condition of cancertypeSearchService.getConditions() | async" [ngValue]="condition">{{condition.optionName()}}</option>
     </select>
   `,
   styles: [`
