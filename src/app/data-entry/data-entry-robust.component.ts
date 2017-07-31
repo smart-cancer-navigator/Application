@@ -3,12 +3,11 @@
  * data entry component to populate the form.
  */
 
-import { Component, Injectable, Input } from '@angular/core';
+import { Component, EventEmitter, Injectable, Output } from '@angular/core';
 
 import { Gene, Variant } from '../global/genomic-data';
 import { RobustGeneSearchService } from './robust-gene-search.service';
 import { RobustVariantSearchService } from './robust-variant-search.service';
-import { GeneDataRow } from './data-entry-form.component';
 
 @Component({
   selector: 'data-entry-robust',
@@ -70,15 +69,15 @@ import { GeneDataRow } from './data-entry-form.component';
 export class DataEntryRobustComponent {
   hgvsInputValid: boolean;
 
-  @Input() geneDataRow: GeneDataRow;
+  @Output() selectNewVariant: EventEmitter<Variant> = new EventEmitter();
 
   onGeneSelected = (gene: Gene) => {
-    this.geneDataRow.gene = gene;
     this.variantSearchService.onGeneChosen(gene);
   }
 
   onVariantSelected = (variant: Variant) => {
-    this.geneDataRow.variant = variant;
+    console.log('Emitting', variant);
+    this.selectNewVariant.emit(variant);
   }
 
   validate = (value: string) => {

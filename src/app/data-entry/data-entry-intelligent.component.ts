@@ -4,10 +4,9 @@
  * this service only works for previously defined data.
  */
 
-import {AfterViewInit, Component, ElementRef, HostListener, Injectable, Input, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Injectable, OnInit, Output, ViewChild } from '@angular/core';
 
-import { Gene, Variant } from '../global/genomic-data';
-import { GeneDataRow } from './data-entry-form.component';
+import { Variant } from '../global/genomic-data';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.service';
@@ -17,7 +16,7 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
   template: `
     <input #MainSearch type="text" placeholder="Type Here" (focus)="suggestionsOpen = true" (keyup)="search(MainSearch.value)">
     <div id="popupSuggestionPanel" [hidden]="suggestionsOpen === false" [style.width.px]="desiredPopupWidth">
-      <button *ngFor="let option of resultOptions | async" (click)="onSelection(option)" class="selectableOption">
+      <button *ngFor="let option of resultOptions | async" (click)="onSelection(option);" class="selectableOption">
         {{option.toIntelligentDisplayRepresentation()}}
       </button>
     </div>
@@ -37,7 +36,7 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
     #popupSuggestionPanel {
       position: absolute;
 
-      height: 300px;
+      height: 200px;
       background-color: white;
       border: 1px solid black;
       border-top: 0;
@@ -74,7 +73,6 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   }
   suggestionsOpen: boolean = false;
 
-  @Input() geneDataRow: GeneDataRow;
   @ViewChild('MainSearch') mainSearch: any;
 
   /**
@@ -103,16 +101,13 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   }
 
   // Provide the component with a callback for when an option is selected.
-  currentlySelected: Variant = null;
-  onSelection(option: Variant): void {
-    this.currentlySelected = option;
+  @Output() selectNewVariant: EventEmitter<Variant> = new EventEmitter();
+  onSelection(variant: Variant): void {
+    this.selectNewVariant.emit(variant);
     this.suggestionsOpen = false;
-    this.searchTerms.next(option.toIntelligentDisplayRepresentation());
-    this.mainSearch.nativeElement.value = option.toIntelligentDisplayRepresentation();
-    console.log('Got chosen', option);
+    this.mainSearch.nativeElement.value = variant.toIntelligentDisplayRepresentation();
 
-    this.geneDataRow.gene = option.origin;
-    this.geneDataRow.variant = option;
+    console.log('Emitting', variant);
   }
 
   /**

@@ -5,13 +5,13 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Gene, Variant } from '../global/genomic-data';
+import { Variant } from '../global/genomic-data';
 import { SELECTED_CANCER_TYPE } from '../cancertype-selection/cancertype-selection.component';
 import { Router } from '@angular/router';
 
+// Wrapper class to maintain indices.
 export class GeneDataRow {
   arrayIndex: number;
-  gene: Gene;
   variant: Variant;
 
   constructor (arrayIndexParam: number) {
@@ -19,7 +19,7 @@ export class GeneDataRow {
   }
 }
 
-export let GENE_VARIATIONS: GeneDataRow[] = [];
+export let USER_SELECTED_VARIANTS: Variant[] = [];
 
 @Component({
   selector: 'data-entry',
@@ -35,8 +35,8 @@ export let GENE_VARIATIONS: GeneDataRow[] = [];
         <button class="clickable" (click)="removeRow(i)">X</button>
       </div>
       <div class="panel-body">
-        <data-entry-robust *ngIf="SearchType.selectedIndex === 0" [geneDataRow]="geneVariation"></data-entry-robust>
-        <data-entry-intelligent *ngIf="SearchType.selectedIndex === 1" [geneDataRow]="geneVariation"></data-entry-intelligent>
+        <data-entry-robust *ngIf="SearchType.selectedIndex === 0" (selectNewVariant)="geneVariation.variant = $event"></data-entry-robust>
+        <data-entry-intelligent *ngIf="SearchType.selectedIndex === 1" (selectNewVariant)="geneVariation.variant = $event"></data-entry-intelligent>
       </div>
     </div>
 
@@ -158,7 +158,15 @@ export class DataEntryFormComponent implements OnInit {
   }
 
   complete(): void {
-    GENE_VARIATIONS = this.geneVariations;
+    const variants: Variant[] = [];
+
+    // Filter variants
+    for (const geneVariation of this.geneVariations) {
+      if (geneVariation.variant) {
+        variants.push(geneVariation.variant);
+      }
+    }
+    USER_SELECTED_VARIANTS = variants;
 
     this.router.navigate(['/visualize-results']);
   }

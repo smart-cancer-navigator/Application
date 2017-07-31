@@ -233,7 +233,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
     this.onSelected.emit(option);
-    this.searchTerms.next(option.optionName());
   }
 
   // Push a search term into the observable stream.

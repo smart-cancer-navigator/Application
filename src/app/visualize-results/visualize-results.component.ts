@@ -4,8 +4,9 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { GENE_VARIATIONS, GeneDataRow } from '../data-entry/data-entry-form.component';
+import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component';
 import { ClinicalTrialReference, ClinicalTrialsSearchService } from './clinical-trials.service';
+import { Variant } from '../global/genomic-data';
 
 @Component({
   selector: 'visualize-results',
@@ -25,8 +26,8 @@ import { ClinicalTrialReference, ClinicalTrialsSearchService } from './clinical-
         <h1>Related Clinical Trials/Drugs</h1>
         
         <!-- New table for each gene/variant -->
-        <div *ngFor="let geneVariation of geneVariants; let i = index;">
-          <h2><i>{{geneVariation.variant.toIntelligentDisplayRepresentation()}}</i></h2>
+        <div *ngFor="let variant of variants; let i = index;">
+          <h2><i>{{variant.toIntelligentDisplayRepresentation()}}</i></h2>
           <table border="1">
             <tr>
               <th>Clinical Trial ID</th>
@@ -101,17 +102,17 @@ export class VisualizeResultsComponent implements OnInit {
   selectedTabIndex: number = 0;
 
   // One set of clinical trials per gene variant.
-  geneVariants: GeneDataRow[];
+  variants: Variant[];
   clinicalTrials: ClinicalTrialReference[][] = [];
 
   ngOnInit(): void {
-    console.log('Gene Variations', GENE_VARIATIONS);
-    this.geneVariants = GENE_VARIATIONS;
+    console.log('Got Gene Variants', USER_SELECTED_VARIANTS);
+    this.variants = USER_SELECTED_VARIANTS;
 
     // Populate clinical trials.
-    for (const geneVariant of this.geneVariants) {
+    for (const variant of this.variants) {
       this.clinicalTrials.push([]);
-      this.clinicalTrialsSearchService.searchClinicalTrials(geneVariant.variant).subscribe(trials => this.clinicalTrials[this.clinicalTrials.length - 1] = trials);
+      this.clinicalTrialsSearchService.searchClinicalTrials(variant).subscribe(trials => this.clinicalTrials[this.clinicalTrials.length - 1] = trials);
     }
   }
 }
