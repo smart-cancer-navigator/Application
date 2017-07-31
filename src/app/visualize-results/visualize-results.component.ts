@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component';
-import { ClinicalTrialReference, ClinicalTrialsSearchService } from './clinical-trials.service';
+import { ClinicalTrial, ClinicalTrialReference, ClinicalTrialsSearchService } from './clinical-trials.service';
 import { Variant } from '../global/genomic-data';
 
 @Component({
@@ -30,7 +30,7 @@ import { Variant } from '../global/genomic-data';
               <th>Brief Title</th>
               <th>Principal Investigator</th>
             </tr>
-            <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow">
+            <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow" (click)="getDataFor(clinicalTrial)">
               <td>{{clinicalTrial.nci_id}}</td>
               <td>{{clinicalTrial.brief_title}}</td>
               <td>{{clinicalTrial.principal_investigator}}</td>
@@ -119,5 +119,9 @@ export class VisualizeResultsComponent implements OnInit {
       this.clinicalTrials.push([]);
       this.clinicalTrialsSearchService.searchClinicalTrials(this.variants[variantIndex]).subscribe(trials => this.clinicalTrials[variantIndex] = trials);
     }
+  }
+
+  getDataFor(reference: ClinicalTrialReference) {
+    this.clinicalTrialsSearchService.getDetailsFor(reference).subscribe(details => console.log(details));
   }
 }

@@ -7,9 +7,15 @@ import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 
-import 'rxjs/add/operator/concatMap';
+/**
+ * Based on the Angular and RxJS documentation, this is the best way to deal with sequential HTTP requests (those
+ * that have results which vary based on the results to prior queries).
+ */
 import 'rxjs/add/operator/mergeMap';
 
+/**
+ * A reference to a given clinical trial, which carries an ID property used to obtain more information about it.
+ */
 export class ClinicalTrialReference {
   nci_id: string;
   brief_title: string;
@@ -22,6 +28,9 @@ export class ClinicalTrialReference {
   }
 }
 
+/**
+ * The extension of a clinical trial reference which provides access to more data about a given trial.
+ */
 export class ClinicalTrial extends ClinicalTrialReference {
   official_title: string;
   brief_summary: string;
@@ -34,6 +43,9 @@ export class ClinicalTrial extends ClinicalTrialReference {
   }
 }
 
+/**
+ * Both searches for and provides data for different clinical trials.
+ */
 @Injectable()
 export class ClinicalTrialsSearchService {
   constructor (public http: Http) {}
@@ -62,7 +74,7 @@ export class ClinicalTrialsSearchService {
     const variantNameQuery: string = 'https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=' + desiredTrials + '&_fulltext=' + variant.variant_name + '&include=brief_title&include=nci_id&include=principal_investigator';
     return this.http
       .get(variantNameQuery)
-      .flatMap(result1 => {
+      .mergeMap(result1 => {
         console.log('1. Got name query', result1);
 
         const result1References = clinicalTrialJSONtoReferences(result1.json());
@@ -103,7 +115,7 @@ export class ClinicalTrialsSearchService {
           return Observable.of(result1References);
         }
       })
-      .flatMap(result2References => {
+      .mergeMap(result2References => {
         if (result2References.length < desiredTrials) {
 
           // 2. Query for the variant HGVS ID in the clinical trials database.
@@ -142,7 +154,12 @@ export class ClinicalTrialsSearchService {
       });
   }
 
-  obtainClinicalTrial = (clinicalTrialReference: ClinicalTrialReference): ClinicalTrial => {
-    return null;
+  getDetailsFor = (clinicalTrialReference: ClinicalTrialReference): Observable<ClinicalTrial> => {
+    return this.http.get('https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=1&include=official_title&include=brief_summary&nci_id=' + clinicalTrialReference.nci_id)
+      .map(response => {
+        const fullTrialData = response.json();
+
+        return new ClinicalTrial(clinicalTrialReference, fullTrialData.trials[0].official_title, fullTrialData.trials[0].brief_summary);
+      });
   }
 }
