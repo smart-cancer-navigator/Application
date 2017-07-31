@@ -3,7 +3,7 @@ body {
 }
 
 /** Thin */
-p, h1, input, button, th, label
+p, h1, input, button, th, td, label
 {
   font-style: normal;
   font-family: "Helvetica Neue";

@@ -8,16 +8,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancerTypeSearchService } from './cancertype-search.service';
-import { FilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
-
-// Observable class extensions
-import 'rxjs/add/observable/of';
-
-// Observable operators
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/switchMap';
 import { CancerType } from './cancertype';
 
 export let SELECTED_CANCER_TYPE: CancerType = null;
@@ -27,8 +17,8 @@ export let SELECTED_CANCER_TYPE: CancerType = null;
   template: `
     <h1>Select Patient Cancer Type</h1>
     <select [(ngModel)]="selected" (ngModelChange)="choose($event)">
-      <option selected></option>
-      <option *ngFor="let condition of cancertypeSearchService.getConditions() | async" [ngValue]="condition">{{condition.optionName()}}</option>
+      <option selected>Choose Option</option>
+      <option *ngFor="let condition of availableConditions" [ngValue]="(condition)">{{condition.optionName()}}</option>
     </select>
   `,
   styles: [`
@@ -37,6 +27,9 @@ export let SELECTED_CANCER_TYPE: CancerType = null;
       font-size: 20px;
       height: 30px;
       width: 100%;
+      
+      /* Safari Bug Fix, otherwise height doesn't change. */
+      line-height: 30px;
     }
   `]
 })
@@ -45,16 +38,17 @@ export class CancerTypeSelectionComponent implements OnInit {
 
   constructor(public cancertypeSearchService: CancerTypeSearchService, private router: Router) {}
 
-  selected: CancerType;
+  selected: CancerType; // This can be ignored, an ngModel is the only way to obtain a value from a select tag.
 
+  // Used to populate available conditions.
+  availableConditions: CancerType[];
   ngOnInit(): void {
-    // Child class specific
-    this.cancertypeSearchService.initialize();
+    this.cancertypeSearchService.patientConditions.subscribe(conditions => this.availableConditions = conditions);
   }
 
   choose(selection: CancerType): void {
     console.log('Cancer type selection component got choice', selection);
-    SELECTED_CANCER_TYPE = this.selected;
+    SELECTED_CANCER_TYPE = selection;
     this.router.navigate(['/data-entry', selection.fhirID]);
   }
 }

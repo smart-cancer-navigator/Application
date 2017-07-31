@@ -134,9 +134,9 @@ export let GENE_VARIATIONS: GeneDataRow[] = [];
 })
 export class DataEntryFormComponent implements OnInit {
 
-  geneVariations: GeneDataRow[] = [];
-
   constructor (private router: Router) {}
+
+  geneVariations: GeneDataRow[] = [];
 
   ngOnInit() {
     console.log('Selected Cancer Type', SELECTED_CANCER_TYPE);

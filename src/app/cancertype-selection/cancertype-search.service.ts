@@ -4,20 +4,23 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
 
 import { CancerType } from './cancertype';
 import { SMARTClient } from '../smart-initialization/smart-reference.service';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 // Since this search service extends the filterable search service, it is applicable to the filterable search component.
 @Injectable()
 export class CancerTypeSearchService {
 
-  public availableCancerTypes: CancerType[] = [];
+  // Updated upon all conditions being entered.
+  public patientConditions: BehaviorSubject <CancerType[]> = new BehaviorSubject<CancerType[]>(null);
 
-  constructor() {}
+  constructor() {
+    this.initialize();
+  }
 
+  // Make sure that we get the smart client whenever it is authenticated.
   public initialize = () => {
     SMARTClient.subscribe(smart => this.populatePatientConditions(smart));
   }
@@ -28,27 +31,19 @@ export class CancerTypeSearchService {
       return;
     }
 
-    console.log('Populating');
     // Query for available conditions (max of 10)
     smartClient.patient.api.search({type: 'Condition', count: 10}).then((conditions) => {
-      console.log('Conditions', conditions);
+      const queriedConditions: CancerType[] = [];
       for (const condition of conditions.data.entry)
       {
-        console.log('Condition: ' + condition.resource.code.text);
-        this.availableCancerTypes.push(new CancerType(condition.resource.code.text, parseInt(condition.resource.code.coding[0].code), 1));
+        console.log('Added new condition: ' + condition.resource.code.text);
+        queriedConditions.push(new CancerType(condition.resource.code.text, parseInt(condition.resource.code.coding[0].code), 1));
       }
+
+      // Update the subject on completion.
+      this.patientConditions.next(queriedConditions);
     }, (err) => { // Error callback.
       console.log('SMART Query Failed!', err);
     });
-  }
-
-  // In a separate method because the jQuery object is a deferred object and so it can't be stored as a get request.
-  public getConditions = (): Observable<CancerType[]> => {
-    // Compile a list of available cancer types which start with the string in question.
-    const applicableCancerTypes: CancerType[] = [];
-    for (const cancertype of this.availableCancerTypes) {
-      applicableCancerTypes.push(cancertype);
-    }
-    return Observable.of(applicableCancerTypes);
   }
 }

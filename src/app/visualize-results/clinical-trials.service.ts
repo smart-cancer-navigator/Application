@@ -5,6 +5,7 @@
 import { Gene, Variant } from '../global/genomic-data';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
+import { Injectable } from '@angular/core';
 
 export class ClinicalTrialReference {
   nci_id: string;
@@ -30,12 +31,18 @@ export class ClinicalTrial extends ClinicalTrialReference {
   }
 }
 
+@Injectable()
 export class ClinicalTrialsSearchService {
   constructor (public http: Http) {}
 
-  searchClinicalTrials = (gene: Gene, variant: Variant): Observable<ClinicalTrialReference[]> => {
-    return this.http.get('https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=10&_fulltext=brca&include=brief_title&include=nci_id&include=principal_investigator')
-      .map(result => result.json())
+  searchClinicalTrials = (variant: Variant): Observable<ClinicalTrialReference[]> => {
+    console.log('Called!');
+
+    return this.http.get('https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=5&_fulltext=' + variant.variant_name + '&include=brief_title&include=nci_id&include=principal_investigator')
+      .map(result => {
+        console.log('Got', result);
+        return result.json();
+      })
       .map(resultJSON => {
         console.log('Clinical Trial JSON', resultJSON);
 
@@ -44,6 +51,8 @@ export class ClinicalTrialsSearchService {
         for (const trial of resultJSON.trials) {
           references.push(new ClinicalTrialReference(trial.nci_id, trial.brief_title, trial.principal_investigator));
         }
+
+        console.log('Got ', references);
 
         return references;
       });

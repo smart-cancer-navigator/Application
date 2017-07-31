@@ -26,7 +26,7 @@ import { CIViCSearchService } from './data-entry/providers/civic-search.service'
 import { MyGeneInfoSearchService } from './data-entry/providers/mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './data-entry/providers/myvariantinfo-search.service';
 import { IntelligentGenomicsSearchService } from './data-entry/intelligent-genomics-search.service';
-import { VisualizeResultsService } from './visualize-results/visualize-results.service';
+import { ClinicalTrialsSearchService } from './visualize-results/clinical-trials.service';
 
 
 @NgModule({
@@ -58,7 +58,7 @@ import { VisualizeResultsService } from './visualize-results/visualize-results.s
     MyGeneInfoSearchService,
     MyVariantInfoSearchService,
     IntelligentGenomicsSearchService,
-    VisualizeResultsService
+    ClinicalTrialsSearchService
   ],
   bootstrap: [
     AppComponent
