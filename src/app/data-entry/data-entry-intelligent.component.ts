@@ -40,6 +40,7 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
       background-color: white;
       border: 1px solid black;
       border-top: 0;
+      overflow: scroll;
     }
     
     .selectableOption {
