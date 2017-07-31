@@ -34,7 +34,7 @@ import { Variant } from '../global/genomic-data';
               <th>Brief Title</th>
               <th>Principal Investigator</th>
             </tr>
-            <tr *ngFor="let clinicalTrial of clinicalTrials[i]">
+            <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow">
               <td>{{clinicalTrial.nci_id}}</td>
               <td>{{clinicalTrial.brief_title}}</td>
               <td>{{clinicalTrial.principal_investigator}}</td>
@@ -93,6 +93,15 @@ import { Variant } from '../global/genomic-data';
     table {
       width: 100%;
     }
+    
+    .variantRow {
+      background-color: white;
+      opacity: 1;
+    }
+    
+    .variantRow:hover {
+      opacity: 0.5;
+    }
   `]
 })
 export class VisualizeResultsComponent implements OnInit {
@@ -110,9 +119,9 @@ export class VisualizeResultsComponent implements OnInit {
     this.variants = USER_SELECTED_VARIANTS;
 
     // Populate clinical trials.
-    for (const variant of this.variants) {
+    for (let variantIndex = 0; variantIndex < this.variants.length; variantIndex++) {
       this.clinicalTrials.push([]);
-      this.clinicalTrialsSearchService.searchClinicalTrials(variant).subscribe(trials => this.clinicalTrials[this.clinicalTrials.length - 1] = trials);
+      this.clinicalTrialsSearchService.searchClinicalTrials(this.variants[variantIndex]).subscribe(trials => this.clinicalTrials[variantIndex] = trials);
     }
   }
 }
