@@ -2,8 +2,14 @@ body {
   margin: 0;
 }
 
-/** Thin */
-p, h1, input, button, th, td, label
+* {
+  /* Ideally both of these would be included for aesthetic purposes, but Safari doesn't support text boxes with these properties. */
+  /*user-select: none;*/
+  /*outline: none;*/
+}
+
+/* Thin */
+p, h1, h2, h3, h4, input, button, th, td, label
 {
   font-style: normal;
   font-family: "Helvetica Neue";

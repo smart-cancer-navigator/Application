@@ -12,11 +12,7 @@ import { Variant } from '../global/genomic-data';
   selector: 'visualize-results',
   template: `
     <div id="tabChoices">
-      <button *ngFor="let tabChoice of tabChoices; let i=index;" (click)="selectedTabIndex = i"
-              [style.background-color]="selectedTabIndex !== i ? '#e9e9e9' : '#ffffff'"
-              [style.border-bottom]="selectedTabIndex === i ? '0' : '1px solid black'"
-              [style.width.%]="100/(tabChoices.length)">{{tabChoice}}
-      </button>
+      <button *ngFor="let tabChoice of tabChoices; let i=index;" (click)="selectedTabIndex = i" [style.background-color]="selectedTabIndex !== i ? '#e9e9e9' : '#ffffff'" [style.border-bottom]="selectedTabIndex === i ? '0' : '1px solid black'" [style.width.%]="100/(tabChoices.length)">{{tabChoice}}</button>
     </div>
 
     <!-- TODO: maybe separate each one of these below into individual components? -->
