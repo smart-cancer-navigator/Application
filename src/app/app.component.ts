@@ -8,10 +8,16 @@ import { Component, OnInit } from '@angular/core';
       <router-outlet></router-outlet>
     </div>
   `,
-  styles: [`
+  styles: [`    
     #content {
-      margin: 0 50px;
-      width: calc(100% - 100px);
+      display: block;
+      margin: 0 20px;
+      width: calc(100% - 40px);
+    }
+    
+    div * {
+      display: block;
+      background-color: blue;
     }
   `]
 })
