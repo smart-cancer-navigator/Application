@@ -54,7 +54,7 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
       padding: 5px;
       width: 100%;
       height: 30px;
-      font-size: 18px;
+      font-size: 15px;
       background-color: white;
       text-align: center;
     }

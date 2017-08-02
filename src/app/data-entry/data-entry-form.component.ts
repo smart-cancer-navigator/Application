@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { Variant } from '../global/genomic-data';
 import { SELECTED_CANCER_TYPE } from '../cancertype-selection/cancertype-selection.component';
 import { Router } from '@angular/router';
+import { NgbTabsetConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // Wrapper class to maintain indices.
 export class GeneDataRow {
@@ -28,20 +29,26 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
     <div *ngFor="let geneVariation of geneVariations; let i=index;" class="entryPanel">
       <div class="panel-heading">
         <p>Variation {{i + 1}}</p>
-        <select #SearchType (change)="'this makes ngIf evaluate (keep it here!)'">
-          <option>Robust Search</option>
-          <option>Intelligent Search</option>
-        </select>
         <button class="clickable" (click)="removeRow(i)">X</button>
       </div>
       <div class="panel-body">
-        <data-entry-robust *ngIf="SearchType.selectedIndex === 0" (selectNewVariant)="geneVariation.variant = $event"></data-entry-robust>
-        <data-entry-intelligent *ngIf="SearchType.selectedIndex === 1" (selectNewVariant)="geneVariation.variant = $event"></data-entry-intelligent>
+        <ngb-tabset>
+          <ngb-tab title="Robust Selection">
+            <ng-template ngbTabContent>
+              <data-entry-robust (selectNewVariant)="geneVariation.variant = $event"></data-entry-robust>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab title="Intelligent Selection">
+            <ng-template ngbTabContent>
+              <data-entry-intelligent (selectNewVariant)="geneVariation.variant = $event"></data-entry-intelligent>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
       </div>
     </div>
 
-    <button type="button" (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
-    <button type="button" (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
+    <button (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
+    <button (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
   `,
   styles: [`
     .entryPanel {
@@ -106,7 +113,7 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
 
     .panel-body {
       width: calc(100% - 8px);
-      height: 80px;
+      height: 120px;
       padding: 4px;
     }
 
@@ -130,11 +137,15 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
     #completeButton {
       background-color: #779971;
     }
-  `]
+  `],
+  providers: [NgbTabsetConfig] // add NgbTabsetConfig to the component providers
 })
 export class DataEntryFormComponent implements OnInit {
-
-  constructor (private router: Router) {}
+  constructor(private router: Router, config: NgbTabsetConfig) {
+    // customize default values of tabsets used by this component tree
+    config.justify = 'center';
+    config.type = 'pills';
+  }
 
   geneVariations: GeneDataRow[] = [];
 
