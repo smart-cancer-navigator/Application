@@ -40,8 +40,8 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
       </div>
     </div>
 
-    <button type="button" (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
-    <button type="button" (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
+    <button (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
+    <button (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
   `,
   styles: [`
     .entryPanel {

@@ -13,60 +13,31 @@ import { Variant } from '../global/genomic-data';
   template: `
     <div class="root">
       <ngb-tabset>
-        <ngb-tab title="Simple">
+        <ngb-tab title="Related Clinical Trials">
           <ng-template ngbTabContent>
             <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
-              <ngb-panel title="Simple">
+              <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
                 <ng-template ngbPanelContent>
-                  <!-- Drugs Tab -->
-                  <div id="drugsInfo" class="tabContent">
-                    <h1>Related Clinical Trials/Drugs</h1>
-  
-                    <!-- New table for each gene/variant -->
-                    <div *ngFor="let variant of variants; let i = index;">
-                      <h2><i>{{variant.toIntelligentDisplayRepresentation()}}</i></h2>
-                      <table border="1">
-                        <tr>
-                          <th>Clinical Trial ID</th>
-                          <th>Brief Title</th>
-                          <th>Principal Investigator</th>
-                        </tr>
-                        <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow" (click)="getDataFor(clinicalTrial)">
-                          <td>{{clinicalTrial.nci_id}}</td>
-                          <td>{{clinicalTrial.brief_title}}</td>
-                          <td>{{clinicalTrial.principal_investigator}}</td>
-                        </tr>
-                      </table>
-                    </div>
-  
-                  </div>
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel>
-                <ng-template ngbPanelTitle>
-                  <span>&#9733; <b>Fancy</b> title &#9733;</span>
-                </ng-template>
-                <ng-template ngbPanelContent>
-                  Accordion 2
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel title="Disabled" [disabled]="true">
-                <ng-template ngbPanelContent>
-                  Accordion 3
+                  <table class="table-hover table-bordered">
+                    <tr>
+                      <th>Clinical Trial ID</th>
+                      <th>Brief Title</th>
+                      <th>Principal Investigator</th>
+                    </tr>
+                    <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow" (click)="getDataFor(clinicalTrial)">
+                      <td>{{clinicalTrial.nci_id}}</td>
+                      <td>{{clinicalTrial.brief_title}}</td>
+                      <td>{{clinicalTrial.principal_investigator}}</td>
+                    </tr>
+                  </table>
                 </ng-template>
               </ngb-panel>
             </ngb-accordion>
           </ng-template>
         </ngb-tab>
-        <ngb-tab>
-          <ng-template ngbTabTitle><b>Fancy</b> title</ng-template>
-          <ng-template ngbTabContent>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.
-            <p>Tab 2 Content</p>
-          </ng-template>
-        </ngb-tab>
-        <ngb-tab title="Disabled" [disabled]="true">
+        <ngb-tab title="Drugs">
           <ng-template ngbTabContent>
-            <p>Tab 3 Content</p>
+            <p>Tab 2 Content</p>
           </ng-template>
         </ngb-tab>
       </ngb-tabset>

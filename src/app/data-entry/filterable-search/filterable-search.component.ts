@@ -87,7 +87,7 @@ export interface FilterableSearchService {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 30px;
+      height: 28px;
       font-size: 20px;
       text-align: center;
       border: 0;
