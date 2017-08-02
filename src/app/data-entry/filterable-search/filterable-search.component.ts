@@ -45,16 +45,15 @@ export interface FilterableSearchService {
     <!-- If form control name is provided vs. not -->
     <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
       <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null"
-              (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">
+              (click)="toggleMenu()">
         {{currentlySelected.optionName()}}
       </button>
       <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null"
-              (click)="menuCurrentlyOpen = !menuCurrentlyOpen; recalculatePopupWidth();">{{placeholderString}}
+              (click)="toggleMenu()">{{placeholderString}}
       </button>
 
-      <div #PopupPanel class="filterPanel" *ngIf="menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"
-               autofocus/>
+      <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
+        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
         <div class="suggestions">
           <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">
             {{option.optionName()}}
@@ -181,9 +180,17 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   /**
    * Automatically resize the popup menu upon creating the menu or resizing the window.
    */
+  @ViewChild('searchBox') searchBox: any;
+  toggleMenu = () => {
+    this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
+    this.recalculatePopupWidth();
+    setTimeout(() => this.searchBox.nativeElement.focus(), 100);
+  }
+
   desiredPopupWidth: number; // Set via Angular
   ngAfterViewInit() {
-    this.recalculatePopupWidth();
+    // Otherwise 'Expression changed after checked error'
+    setTimeout(() => this.recalculatePopupWidth(), 1000);
   }
 
   @HostListener('window:resize', ['$event'])

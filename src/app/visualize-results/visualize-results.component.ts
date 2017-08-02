@@ -15,20 +15,24 @@ import { Variant } from '../global/genomic-data';
       <ngb-tabset>
         <ngb-tab title="Related Clinical Trials">
           <ng-template ngbTabContent>
-            <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+            <ngb-accordion #acc="ngbAccordion">
               <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
                 <ng-template ngbPanelContent>
-                  <table class="table-hover table-bordered">
-                    <tr>
-                      <th>Clinical Trial ID</th>
-                      <th>Brief Title</th>
-                      <th>Principal Investigator</th>
-                    </tr>
-                    <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow" (click)="getDataFor(clinicalTrial)">
-                      <td>{{clinicalTrial.nci_id}}</td>
-                      <td>{{clinicalTrial.brief_title}}</td>
-                      <td>{{clinicalTrial.principal_investigator}}</td>
-                    </tr>
+                  <table class="table table-hover table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Clinical Trial ID</th>
+                        <th>Brief Title</th>
+                        <th>Principal Investigator</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let clinicalTrial of clinicalTrials[i]" class="variantRow" (click)="getDataFor(clinicalTrial)">
+                        <td>{{clinicalTrial.nci_id}}</td>
+                        <td>{{clinicalTrial.brief_title}}</td>
+                        <td>{{clinicalTrial.principal_investigator}}</td>
+                      </tr>
+                    </tbody>
                   </table>
                 </ng-template>
               </ngb-panel>
@@ -43,47 +47,13 @@ import { Variant } from '../global/genomic-data';
       </ngb-tabset>
     </div>
   `,
-  styles: [`
-    #tabChoices {
-      height: 30px;
-      overflow-x: scroll;
-      overflow-y: hidden;
-      width: 100%;
-    }
-
-    ::-webkit-scrollbar {
-      display: none;
-    }
-
-    #tabChoices button {
-      float: left;
-      width: 300px;
-      height: 100%;
-      border: 1px solid black;
-      border-collapse: collapse;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;
-      background-color: white;
-      font-size: 20px;
-      outline: none;
-    }
-    
-    .tabContent {
-      height: 100%;
-      width: 100%;
-    }
-    
+  styles: [`    
     table {
       width: 100%;
     }
     
-    .variantRow {
-      background-color: white;
-      opacity: 1;
-    }
-    
-    .variantRow:hover {
-      opacity: 0.5;
+    th {
+      font-weight: bold;
     }
   `]
 })
