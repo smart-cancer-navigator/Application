@@ -15,11 +15,16 @@ export let SELECTED_CANCER_TYPE: CancerType = null;
 @Component({
   selector: 'cancertype-selection',
   template: `
-    <h1>Select Patient Cancer Type</h1>
-    <select [(ngModel)]="selected" (ngModelChange)="choose($event)">
-      <option selected>Choose Option</option>
-      <option *ngFor="let condition of availableConditions" [ngValue]="(condition)">{{condition.optionName()}}</option>
-    </select>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Select Patient Cancer Type</h1>
+        <br>
+        <select [(ngModel)]="selected" (ngModelChange)="choose($event)">
+          <option selected>Choose Option</option>
+          <option *ngFor="let condition of availableConditions" [ngValue]="(condition)">{{condition.optionName()}}</option>
+        </select>
+      </div>
+    </div>
   `,
   styles: [`
     select {

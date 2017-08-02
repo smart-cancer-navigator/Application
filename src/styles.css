@@ -7,11 +7,3 @@ body {
   /*user-select: none;*/
   /*outline: none;*/
 }
-
-/* Thin */
-p, h1, h2, h3, h4, input, button, th, td, label
-{
-  font-style: normal;
-  font-family: "Helvetica Neue";
-  font-weight: 100;
-}
