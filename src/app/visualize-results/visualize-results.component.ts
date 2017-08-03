@@ -17,7 +17,10 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
               <ng-template ngbTabContent>
                 
                 <br>
-                <h3 class="display-3">{{variant.origin.hugo_symbol}}</h3>
+                <h3 class="display-3">
+                  {{variant.origin.hugo_symbol}}
+                  <small class="text-muted">{{variant.origin.name}}</small>
+                </h3>
                 
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
@@ -94,7 +97,12 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
         </ng-template>
       </ngb-panel>
     </ngb-accordion>
-  `
+  `,
+  styles: [`    
+    small {
+      font-size: 25px;
+    }
+  `]
 })
 export class VisualizeResultsComponent implements OnInit {
   variants: Variant[];

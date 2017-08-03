@@ -8,13 +8,15 @@ import { FilterableSearchOption } from '../data-entry/filterable-search/filterab
 export class Gene implements FilterableSearchOption {
   // Class properties
   hugo_symbol: string;
+  name: string;
   score: number;
   entrez_id: number;
 
-  constructor (hugo_symbol: string, score: number, entrez_id: number) {
-    this.hugo_symbol = hugo_symbol;
-    this.score = score;
-    this.entrez_id = entrez_id;
+  constructor (_hugo_symbol: string, _name: string, _score: number, _entrez_id: number) {
+    this.hugo_symbol = _hugo_symbol;
+    this.name = _name;
+    this.score = _score;
+    this.entrez_id = _entrez_id;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
@@ -44,7 +46,6 @@ export class Variant implements FilterableSearchOption {
   chromosome: number;
   start: number;
   end: number;
-  variation: string;
 
   constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _chromosome: number, _start: number, _end: number) {
     this.origin = _origin;
