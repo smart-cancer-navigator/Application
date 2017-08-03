@@ -39,9 +39,7 @@ import { USER_SELECTED_VARIANTS } from '../../data-entry/data-entry-form.compone
         </ng-template>
       </ngb-panel>
     </ngb-accordion>
-  `,
-  styles: [`
-  `]
+  `
 })
 export class ClinicalTrialsComponent implements OnInit {
   constructor (public clinicalTrialsService: ClinicalTrialsService) {}

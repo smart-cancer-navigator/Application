@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   selector: 'visualize-results',
   template: `
     <div class="root">
-      <ngb-tabset>
+      <ngb-tabset [destroyOnHide]="false" >
         <ngb-tab title="Relevant Clinical Trials">
           <ng-template ngbTabContent>
             <clinical-trials></clinical-trials>
@@ -21,12 +21,7 @@ import { Component } from '@angular/core';
         </ngb-tab>
       </ngb-tabset>
     </div>
-  `,
-  styles: [`    
-    table {
-      width: 100%;
-    }
-  `]
+  `
 })
 export class VisualizeResultsComponent {
 }
