@@ -2,16 +2,14 @@
  * CIViC (Clinical Interpretations of Variants in Cancer) is a database which provides genes, variants,
  * and variant types for a wide variety of cancer-causing factors.
  */
-import { VariantDataProvider } from './database-services.interface';
+import { HGVSIdentifier, SearchableVariantDatabase } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class MyVariantInfoSearchService implements VariantDataProvider {
-
-  includeString: string;
+export class MyVariantInfoSearchService implements SearchableVariantDatabase, HGVSIdentifier {
   constructor(private http: Http) {
     const toInclude = ['civic.entrez_name', 'civic.name', 'civic.description', 'civic.evidence_items', 'civic.variant_types', 'vcf', 'hg19', 'chrom'];
 
@@ -20,10 +18,12 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
     }
   }
 
+  includeString: string;
+
   /**
    * The variants for the CIViC Search Service
    */
-  public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
+  public searchVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
     return this.http.get('http://myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.hugo_symbol + '%20AND%20civic.name%3A' + searchTerm + '*&fields=' + this.includeString + '&size=15')
       .map(result => result.json())
       .map(resultJSON => {
@@ -82,19 +82,19 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
       });
   }
 
-  public validateHGVSID = (hgvsID: string): Observable<boolean> => {
+  public validateHGVS = (hgvsID: string): Observable<Variant> => {
     if (hgvsID === '') {
       console.log('Search is empty');
-      return Observable.of(false);
+      return Observable.of(null);
     }
 
     return this.http.get('http://myvariant.info/v1/variant/' + hgvsID + '?fields=_id')
       .map(result => result.json())
       .map(resultJSON => {
         console.log('Validation JSON:', resultJSON);
-        return true;
+        return null;
       }).catch((err: any) => { // Regardless that this error is being caught, it will still show up in the console.
-        return Observable.of(false);
+        return Observable.of(null);
       });
   }
 }

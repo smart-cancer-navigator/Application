@@ -30,13 +30,13 @@ export const VARIANT_MAPPINGS: string[] = [
 ];
 
 class VariantWithCertaintyFactor {
-  certaintyFactor: number;
-  variant: Variant;
-
   constructor (_certaintyFactor: number, _variant: Variant) {
     this.certaintyFactor = _certaintyFactor;
     this.variant = _variant;
   }
+
+  certaintyFactor: number;
+  variant: Variant;
 }
 
 export class IntelligentGenomicsSearchService implements FilterableSearchService {
@@ -50,7 +50,7 @@ export class IntelligentGenomicsSearchService implements FilterableSearchService
   public initialize = () => {
     for (const variantMap of VARIANT_MAPPINGS) {
       const currentDataset: string[] = variantMap.split(' ');
-      const newVariant: Variant = new Variant(new Gene(currentDataset[0], -1, parseInt(currentDataset[2])), currentDataset[1], currentDataset[3], -1, '', true, [], 1, 1, 1);
+      const newVariant: Variant = new Variant(new Gene(currentDataset[0], '', -1, parseInt(currentDataset[2])), currentDataset[1], currentDataset[3], -1, '', true, [], 1, 1, 1);
       this.variantData.push(newVariant);
     }
   }

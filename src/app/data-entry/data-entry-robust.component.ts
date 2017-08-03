@@ -32,6 +32,7 @@ import { RobustVariantSearchService } from './robust-variant-search.service';
 
 @Injectable()
 export class DataEntryRobustComponent {
+
   constructor (public geneSearchService: RobustGeneSearchService, public variantSearchService: RobustVariantSearchService) {}
 
   hgvsInputValid: boolean;
@@ -45,11 +46,5 @@ export class DataEntryRobustComponent {
   onVariantSelected = (variant: Variant) => {
     console.log('Emitting', variant);
     this.selectNewVariant.emit(variant);
-  }
-
-  validate = (value: string) => {
-    this.variantSearchService.validateHGVSID(value).subscribe(result => {
-      this.hgvsInputValid = result;
-    });
   }
 }

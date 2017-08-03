@@ -12,12 +12,12 @@ import { NgbTabsetConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // Wrapper class to maintain indices.
 export class GeneDataRow {
-  arrayIndex: number;
-  variant: Variant;
-
   constructor (arrayIndexParam: number) {
     this.arrayIndex = arrayIndexParam;
   }
+
+  arrayIndex: number;
+  variant: Variant;
 }
 
 export let USER_SELECTED_VARIANTS: Variant[] = [];

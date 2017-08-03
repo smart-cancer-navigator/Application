@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
 
 import { FilterableSearchService } from './filterable-search/filterable-search.component';
 import { Gene, Variant } from '../global/genomic-data';
-import { VariantDataProvider } from './providers/database-services.interface';
+import { SearchableVariantDatabase } from './providers/database-services.interface';
 import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class RobustVariantSearchService implements FilterableSearchService {
 
   constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
 
-  variantDataProviders: VariantDataProvider[] = [this.myvariantinfoSearchService];
+  variantDataProviders: SearchableVariantDatabase[] = [this.myvariantinfoSearchService];
 
   // Provided by the gene search filterable dropdown on selection.
   geneContext: Gene;
@@ -29,12 +29,12 @@ export class RobustVariantSearchService implements FilterableSearchService {
   public search = (term: string): Observable<Variant[]> => {
     if (!this.geneContext) {
       console.log('Searching with no gene chosen!');
-      return Observable.of <Variant[]> ([]);
+      return Observable.of <Variant[]>([]);
     }
 
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDataProviders
-      .map(searchService => searchService.provideVariants(term, this.geneContext))
+      .map(searchService => searchService.searchVariants(term, this.geneContext))
     ).map((variantArrays: Variant[][]) => {
         const massiveVariantArray: Variant[] = [];
 
@@ -64,23 +64,5 @@ export class RobustVariantSearchService implements FilterableSearchService {
         return massiveVariantArray;
       }
     );
-  }
-
-  // Used to check the validity of a given HGVS ID.
-  public validateHGVSID = (hgvsID: string): Observable<boolean> => {
-    // If any of them validate it successfully, it's a valid ID.
-    return Observable.forkJoin(this.variantDataProviders
-      .map(searchService => searchService.validateHGVSID(hgvsID))
-    ).map((resultArray: boolean[]) => {
-      console.log('Got result array');
-      for (const result of resultArray) {
-        if (result) {
-          console.log('Valid');
-          return true;
-        }
-      }
-      console.log('Invalid');
-      return false;
-    });
   }
 }

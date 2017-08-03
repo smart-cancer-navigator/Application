@@ -2,7 +2,7 @@
  * CIViC (Clinical Interpretations of Variants in Cancer) is a database which provides genes, variants,
  * and variant types for a wide variety of cancer-causing factors.
  */
-import { GeneDataProvider, VariantDataProvider } from './database-services.interface';
+import { SearchableGeneDatabase, SearchableVariantDatabase } from './database-services.interface';
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';

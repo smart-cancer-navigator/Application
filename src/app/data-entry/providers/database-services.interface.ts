@@ -7,14 +7,31 @@
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant } from '../../global/genomic-data';
 
-export interface GeneDataProvider {
-  /**
-   * Send precursory get requests, etc.
-   */
-  provideGenes: (searchTerm: string) => Observable <Gene[]>;
+/**
+ * Used for mygene.info, where you can query the string prefixes and obtain lists of genes in response.
+ */
+export interface SearchableGeneDatabase {
+  searchGenes: (searchTerm: string) => Observable <Gene[]>;
 }
 
-export interface VariantDataProvider {
-  validateHGVSID: (hgvsID: string) => Observable<boolean>;
-  provideVariants: (searchTerm: string, additionalContext: Gene) => Observable <Variant[]>;
+/**
+ * Used for myvariant.info, where you can query the string prefixes and obtain lists of variants in response.
+ */
+export interface SearchableVariantDatabase {
+  searchVariants: (searchTerm: string, additionalContext: Gene) => Observable <Variant[]>;
+}
+
+/**
+ * Used for databases like CIViC, where you just query all the genes and then return the database.  Extends
+ * the SearchableVariantDatabase since it should be able to search through its own variants easily.
+ */
+export interface SingleMapDatabase extends SearchableVariantDatabase {
+  mapDatabase: () => Observable <Variant[]>;
+}
+
+/**
+ * Used when the user inputs an HGVS ID instead of robust or intelligent search.
+ */
+export interface HGVSIdentifier {
+  validateHGVS: (hgvsID: string) => Observable <Variant>;
 }

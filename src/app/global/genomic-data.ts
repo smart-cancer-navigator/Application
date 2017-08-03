@@ -6,18 +6,18 @@ import { FilterableSearchOption } from '../data-entry/filterable-search/filterab
  * conversion.
  */
 export class Gene implements FilterableSearchOption {
-  // Class properties
-  hugo_symbol: string;
-  name: string;
-  score: number;
-  entrez_id: number;
-
   constructor (_hugo_symbol: string, _name: string, _score: number, _entrez_id: number) {
     this.hugo_symbol = _hugo_symbol;
     this.name = _name;
     this.score = _score;
     this.entrez_id = _entrez_id;
   }
+
+  // Class properties
+  hugo_symbol: string;
+  name: string;
+  score: number;
+  entrez_id: number;
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeWith = (other: Gene) => {
@@ -36,17 +36,6 @@ export class Gene implements FilterableSearchOption {
  * alongside the genes which they vary from.
  */
 export class Variant implements FilterableSearchOption {
-  origin: Gene;
-  variant_name: string;
-  hgvs_id: string;
-  score: number;
-  description: string;
-  somatic: boolean;
-  types: string[];
-  chromosome: number;
-  start: number;
-  end: number;
-
   constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _chromosome: number, _start: number, _end: number) {
     this.origin = _origin;
     this.variant_name = _hugo_symbol;
@@ -59,6 +48,17 @@ export class Variant implements FilterableSearchOption {
     this.start = _start;
     this.end = _end;
   }
+
+  origin: Gene;
+  variant_name: string;
+  hgvs_id: string;
+  score: number;
+  description: string;
+  somatic: boolean;
+  types: string[];
+  chromosome: number;
+  start: number;
+  end: number;
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeWith = (other: Variant) => {

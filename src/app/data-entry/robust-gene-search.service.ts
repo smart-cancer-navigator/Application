@@ -10,20 +10,20 @@ import 'rxjs/add/observable/forkJoin';
 
 import { FilterableSearchService } from './filterable-search/filterable-search.component';
 import { Gene } from '../global/genomic-data';
-import { GeneDataProvider } from './providers/database-services.interface';
+import { SearchableGeneDatabase } from './providers/database-services.interface';
 import { MyGeneInfoSearchService } from './providers/mygeneinfo-search.service';
 
 @Injectable()
 export class RobustGeneSearchService implements FilterableSearchService {
 
-  geneSearchServices: GeneDataProvider[] = [this.mygeneinfoSearchService];
-
   constructor(private mygeneinfoSearchService: MyGeneInfoSearchService) {}
+
+  geneSearchServices: SearchableGeneDatabase[] = [this.mygeneinfoSearchService];
 
   public search = (term: string): Observable<Gene[]> => {
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.geneSearchServices
-        .map(searchService => searchService.provideGenes(term))
+        .map(searchService => searchService.searchGenes(term))
       ).map((geneArrays: Gene[][]) => {
         const massiveGeneArray: Gene[] = [];
 
