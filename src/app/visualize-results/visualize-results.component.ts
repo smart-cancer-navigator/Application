@@ -15,6 +15,10 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
           <ngb-tabset [destroyOnHide]="false" >
             <ngb-tab title="Gene">
               <ng-template ngbTabContent>
+                
+                <br>
+                <h3 class="display-3">{{variant.origin.hugo_symbol}}</h3>
+                
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
                   <thead>
@@ -47,6 +51,10 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
             
             <ngb-tab title="Variant">
               <ng-template ngbTabContent>
+                
+                <br>
+                <h3 class="display-3">{{variant.variant_name}}</h3>
+                
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
                   <thead>

@@ -87,7 +87,6 @@ export interface FilterableSearchService {
 
       height: 130px;
       padding: 5px;
-      width: 300px;
       background-color: white;
     }
 
@@ -104,6 +103,7 @@ export interface FilterableSearchService {
 
     .suggestions {
       height: 100px;
+      width: 100%;
       overflow: scroll;
     }
 
@@ -195,7 +195,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
 
   @ViewChild('PopupToggle') popupToggle: any;
   recalculatePopupWidth = () => {
-    this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth - 12;
+    this.desiredPopupWidth = this.popupToggle.nativeElement.offsetWidth;
   }
 
 
