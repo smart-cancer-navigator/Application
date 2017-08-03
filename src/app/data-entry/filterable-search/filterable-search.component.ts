@@ -37,14 +37,17 @@ export interface FilterableSearchService {
   selector: 'filterable-search',
   template: `
     <!-- If form control name is provided vs. not -->
-    <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
+    <div id="root" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
       <!-- Switches once an option picked -->
-      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null" (click)="toggleMenu()">{{currentlySelected.optionName()}}</button>
-      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null" (click)="toggleMenu()">{{placeholderString}}</button>
+      <div #PopupToggle class="filterToggle" (click)="toggleMenu()">
+        <p *ngIf="currentlySelected !== null" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
+        <p *ngIf="currentlySelected === null" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
+        <img src="/assets/dropdown.png"/>
+      </div>
 
       <!-- Suggestions for potential selections -->
       <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput"/>
+        <input autocomplete="off" #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput"/>
         <div class="suggestions">
           <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName()}}</button>
         </div>
@@ -52,23 +55,10 @@ export interface FilterableSearchService {
     </div>
   `,
   styles: [`
-    #fullContainer {
-      background-color: white;
-      border: 1px solid black;
+    #root {
+      border: 1px solid #989898;
       border-radius: 5px;
-    }
-
-    #nothingSelected {
-      font-style: italic;
-    }
-
-    #optionSelected {
-      font-weight: bold;
-    }
-
-    #nothingSelected:hover, #optionSelected:hover {
-      background-color: #3679af;
-      color: white;
+      background-color: white;
     }
 
     .filterToggle {
@@ -77,9 +67,25 @@ export interface FilterableSearchService {
       width: 100%;
       height: 28px;
       font-size: 20px;
-      text-align: center;
       border: 0;
-      background-color: white;
+      cursor: pointer;
+    }
+
+    .filterToggle:hover {
+      background-color: #efefef;
+    }
+
+    .filterToggle p {
+      float: left;
+      width: calc(80% - 28px);
+      margin-left: 10px;
+    }
+
+    .filterToggle img {
+      float: right;
+      width: 20px;
+      height: 20px;
+      margin: 4px;
     }
 
     .filterPanel {

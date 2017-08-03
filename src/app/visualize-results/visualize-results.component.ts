@@ -28,24 +28,8 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
                   </thead>
                   <tbody>
                   <tr>
-                    <td>Description</td>
-                    <td>{{variant.description}}</td>
-                  </tr>
-                  <tr>
                     <td>Score</td>
-                    <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
-                  </tr>
-                  <tr>
-                    <td>Variant Origin</td>
-                    <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
-                  </tr>
-                  <tr>
-                    <td>Variant Type</td>
-                    <td>{{variant.types}}</td>
-                  </tr>
-                  <tr>
-                    <td>Gene Location</td>
-                    <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
+                    <td ngbPopover="Gene Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.origin.score}}</td>
                   </tr>
                   </tbody>
                 </table>
