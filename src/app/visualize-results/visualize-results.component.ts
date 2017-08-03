@@ -64,8 +64,8 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
                     <td>{{variant.types}}</td>
                   </tr>
                   <tr>
-                    <td>Gene Location</td>
-                    <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
+                    <td>Variant Location</td>
+                    <td>Chromosome {{variant.chromosome}}, {{variant.start !== variant.end ? 'Nucleotides ' +  variant.start + ' to ' + variant.end : 'Nucleotide ' + variant.start}}</td>
                   </tr>
                   </tbody>
                 </table>
