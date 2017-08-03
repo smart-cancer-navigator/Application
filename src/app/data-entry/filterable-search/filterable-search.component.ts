@@ -38,17 +38,15 @@ export interface FilterableSearchService {
   template: `
     <!-- If form control name is provided vs. not -->
     <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
-      <!-- Swaps when an option is selected from the placeholder to the option name.  -->
-      <button *ngIf="currentlySelected !== null" #PopupToggle id="optionSelected" class="filterToggle" (click)="toggleMenu()">{{currentlySelected.optionName()}}</button>
-      <button *ngIf="currentlySelected === null" #PopupToggle id="nothingSelected" class="filterToggle" (click)="toggleMenu()">{{placeholderString}}</button>
+      <!-- Switches once an option picked -->
+      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null" (click)="toggleMenu()">{{currentlySelected.optionName()}}</button>
+      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null" (click)="toggleMenu()">{{placeholderString}}</button>
 
-      <!-- The popup suggestion panel -->
-      <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input #SearchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
+      <!-- Suggestions for potential selections -->
+      <div #PopupPanel class="filterPanel" *ngIf="menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
+        <input #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput"/>
         <div class="suggestions">
-          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">
-            {{option.optionName()}}
-          </button>
+          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName()}}</button>
         </div>
       </div>
     </div>
@@ -175,13 +173,15 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   toggleMenu = () => {
     this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
     this.recalculatePopupWidth();
-    setTimeout(() => this.searchBox.nativeElement.focus(), 100);
+    // Doesn't work without timeout...
+    setTimeout(() => this.searchBox.nativeElement.focus(), 50);
   }
+
 
   desiredPopupWidth: number; // Set via Angular
   ngAfterViewInit() {
     // Otherwise 'Expression changed after checked error'
-    setTimeout(() => this.recalculatePopupWidth(), 1000);
+    setTimeout(() => this.recalculatePopupWidth(), 50);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -199,7 +199,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
    * Setting search services and the rest of the required components for this filterable search is important
    * to its functionality.
    */
-  // Available options for given search terms.
+    // Available options for given search terms.
   searchTerms = new Subject<string>();
   options: Observable<FilterableSearchOption[]>;
   // Define the options as based on the search terms.
@@ -231,6 +231,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
     this.onSelected.emit(option);
+    this.searchTerms.next(option.optionName());
   }
 
   // Push a search term into the observable stream.
