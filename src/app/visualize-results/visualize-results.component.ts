@@ -24,7 +24,7 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
             </tr>
             <tr>
               <td>Score</td>
-              <td>{{variant.score}}</td>
+              <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
             </tr>
             <tr>
               <td>Variant Origin</td>

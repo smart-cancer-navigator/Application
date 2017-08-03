@@ -172,6 +172,11 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   @ViewChild('SearchBox') searchBox: any;
   toggleMenu = () => {
     this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
+
+    if (!this.menuCurrentlyOpen) {
+      return;
+    }
+
     this.recalculatePopupWidth();
     // Doesn't work without timeout...
     setTimeout(() => this.searchBox.nativeElement.focus(), 50);
