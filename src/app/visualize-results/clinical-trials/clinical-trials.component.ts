@@ -12,6 +12,7 @@ import { USER_SELECTED_VARIANTS } from '../../data-entry/data-entry-form.compone
 @Component({
   selector: 'clinical-trials',
   template: `
+    <!-- Thanks to the ng-bootstrap project :) -->
     <ngb-accordion #acc="ngbAccordion">
       <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
         <ng-template ngbPanelContent>

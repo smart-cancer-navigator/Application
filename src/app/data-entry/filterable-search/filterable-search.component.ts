@@ -5,12 +5,6 @@
  * the options access can be delayed in asynchronous fashion.
  */
 
-/**
- * Since the SMART app is unable to figure out which cancer type an oncologist is looking at without
- * any sort of user input (based on the organization of FHIR objects), this component provides an
- * interface through which the user can accomplish this.
- */
-
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 // Observable class extensions
