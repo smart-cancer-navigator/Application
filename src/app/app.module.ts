@@ -17,6 +17,7 @@ import { FilterableSearchComponent } from './data-entry/filterable-search/filter
 import { DataEntryRobustComponent } from './data-entry/data-entry-robust.component';
 import { DataEntryIntelligentComponent } from './data-entry/data-entry-intelligent.component';
 import { VisualizeResultsComponent } from './visualize-results/visualize-results.component';
+import { ClinicalTrialsComponent } from './visualize-results/clinical-trials/clinical-trials.component';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-selection/cancertype-search.service';
@@ -27,7 +28,7 @@ import { CIViCSearchService } from './data-entry/providers/civic-search.service'
 import { MyGeneInfoSearchService } from './data-entry/providers/mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './data-entry/providers/myvariantinfo-search.service';
 import { IntelligentGenomicsSearchService } from './data-entry/intelligent-genomics-search.service';
-import { ClinicalTrialsSearchService } from './visualize-results/clinical-trials.service';
+import { ClinicalTrialsService } from './visualize-results/clinical-trials/clinical-trials.service';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { ClinicalTrialsSearchService } from './visualize-results/clinical-trials
     FilterableSearchComponent,
     DataEntryRobustComponent,
     DataEntryIntelligentComponent,
-    VisualizeResultsComponent
+    VisualizeResultsComponent,
+    ClinicalTrialsComponent
   ],
   providers: [
     CancerTypeSearchService,
@@ -60,7 +62,7 @@ import { ClinicalTrialsSearchService } from './visualize-results/clinical-trials
     MyGeneInfoSearchService,
     MyVariantInfoSearchService,
     IntelligentGenomicsSearchService,
-    ClinicalTrialsSearchService
+    ClinicalTrialsService
   ],
   bootstrap: [
     AppComponent

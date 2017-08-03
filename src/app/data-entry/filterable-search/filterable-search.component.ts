@@ -44,16 +44,13 @@ export interface FilterableSearchService {
   template: `
     <!-- If form control name is provided vs. not -->
     <div id="fullContainer" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
-      <button #PopupToggle id="optionSelected" class="filterToggle" *ngIf="currentlySelected !== null"
-              (click)="toggleMenu()">
-        {{currentlySelected.optionName()}}
-      </button>
-      <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null"
-              (click)="toggleMenu()">{{placeholderString}}
-      </button>
+      <!-- Swaps when an option is selected from the placeholder to the option name.  -->
+      <button *ngIf="currentlySelected !== null" #PopupToggle id="optionSelected" class="filterToggle" (click)="toggleMenu()">{{currentlySelected.optionName()}}</button>
+      <button *ngIf="currentlySelected === null" #PopupToggle id="nothingSelected" class="filterToggle" (click)="toggleMenu()">{{placeholderString}}</button>
 
+      <!-- The popup suggestion panel -->
       <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
+        <input #SearchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" class="filterInput"/>
         <div class="suggestions">
           <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">
             {{option.optionName()}}
@@ -127,7 +124,7 @@ export interface FilterableSearchService {
       border-bottom: 0.5px solid #a8a8a8;
       border-top: 0;
       margin: 0;
-      padding: 5px;
+      padding: 2px;
       width: 100%;
       height: 30px;
       font-size: 18px;
@@ -180,7 +177,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   /**
    * Automatically resize the popup menu upon creating the menu or resizing the window.
    */
-  @ViewChild('searchBox') searchBox: any;
+  @ViewChild('SearchBox') searchBox: any;
   toggleMenu = () => {
     this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
     this.recalculatePopupWidth();
