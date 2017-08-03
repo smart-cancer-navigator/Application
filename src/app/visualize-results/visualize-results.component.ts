@@ -9,48 +9,83 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
 @Component({
   selector: 'visualize-results',
   template: `
-    <ngb-tabset [destroyOnHide]="false" >
-      <ngb-tab *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
-        <ng-template ngbTabContent>
-          
-          <!-- A bit of info about the variant/gene -->
-          <table class="table table-bordered table-striped">
-            <thead>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Description</td>
-              <td>{{variant.description}}</td>
-            </tr>
-            <tr>
-              <td>Score</td>
-              <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
-            </tr>
-            <tr>
-              <td>Variant Origin</td>
-              <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
-            </tr>
-            <tr>
-              <td>Variant Type</td>
-              <td>{{variant.types}}</td>
-            </tr>
-            <tr>
-              <td>Gene Location</td>
-              <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
-            </tr>
-            </tbody>
-          </table>
-          
-          <ngb-accordion #acc="ngbAccordion">
-            <ngb-panel title="Relevant Clinical Trials">
-              <ng-template ngbPanelContent>
+    <ngb-accordion #acc="ngbAccordion">
+      <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
+        <ng-template ngbPanelContent>
+          <ngb-tabset [destroyOnHide]="false" >
+            <ngb-tab title="Gene">
+              <ng-template ngbTabContent>
+                <!-- A bit of info about the variant/gene -->
+                <table class="table table-bordered table-striped">
+                  <thead>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Description</td>
+                    <td>{{variant.description}}</td>
+                  </tr>
+                  <tr>
+                    <td>Score</td>
+                    <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
+                  </tr>
+                  <tr>
+                    <td>Variant Origin</td>
+                    <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
+                  </tr>
+                  <tr>
+                    <td>Variant Type</td>
+                    <td>{{variant.types}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gene Location</td>
+                    <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </ng-template>
+            </ngb-tab>
+            
+            <ngb-tab title="Variant">
+              <ng-template ngbTabContent>
+                <!-- A bit of info about the variant/gene -->
+                <table class="table table-bordered table-striped">
+                  <thead>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Description</td>
+                    <td>{{variant.description}}</td>
+                  </tr>
+                  <tr>
+                    <td>Score</td>
+                    <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
+                  </tr>
+                  <tr>
+                    <td>Variant Origin</td>
+                    <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
+                  </tr>
+                  <tr>
+                    <td>Variant Type</td>
+                    <td>{{variant.types}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gene Location</td>
+                    <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </ng-template>
+            </ngb-tab>
+
+            <ngb-tab title="Clinical Trials">
+              <ng-template ngbTabContent>
                 <clinical-trials [forVariant]="variant"></clinical-trials>
               </ng-template>
-            </ngb-panel>
-          </ngb-accordion>
+            </ngb-tab>
+          </ngb-tabset>
         </ng-template>
-      </ngb-tab>
-    </ngb-tabset>
+      </ngb-panel>
+    </ngb-accordion>
   `
 })
 export class VisualizeResultsComponent implements OnInit {
