@@ -22,6 +22,7 @@ import { USER_SELECTED_VARIANTS } from '../../data-entry/data-entry-form.compone
               <th>Clinical Trial ID</th>
               <th>Phase</th>
               <th>Brief Title</th>
+              <th>Drugs</th>
               <th>Principal Investigator</th>
             </tr>
             </thead>
@@ -30,6 +31,7 @@ import { USER_SELECTED_VARIANTS } from '../../data-entry/data-entry-form.compone
               <td>{{clinicalTrial.nci_id}}</td>
               <td>{{clinicalTrial.phase}}</td>
               <td>{{clinicalTrial.brief_title}}</td>
+              <td>{{clinicalTrial.drugsToString()}}</td>
               <td>{{clinicalTrial.principal_investigator}}</td>
             </tr>
             </tbody>

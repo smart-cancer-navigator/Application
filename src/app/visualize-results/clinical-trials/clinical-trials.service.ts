@@ -6,13 +6,13 @@ import { Variant } from '../../global/genomic-data';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
+import { ClinicalTrialReference, ClinicalTrial, Drug } from './clinical-trials';
 
 /**
  * Based on the Angular and RxJS documentation, this is the best way to deal with sequential HTTP requests (those
  * that have results which vary based on the results to prior queries).
  */
 import 'rxjs/add/operator/mergeMap';
-import { ClinicalTrialReference, ClinicalTrial } from './clinical-trials';
 
 /**
  * Both searches for and provides data for different clinical trials.
@@ -20,6 +20,9 @@ import { ClinicalTrialReference, ClinicalTrial } from './clinical-trials';
 @Injectable()
 export class ClinicalTrialsService {
   constructor (public http: Http) {}
+
+  // Reduces typing involved :P
+  queryEndpoint = 'https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?';
 
   /**
    * What I'm trying to do for this method is obtain some examples of clinical trials being carried out on the
@@ -33,18 +36,33 @@ export class ClinicalTrialsService {
     const clinicalTrialJSONtoReferences = (jsonObject: any): ClinicalTrialReference[] => {
       const references: ClinicalTrialReference[] = [];
       for (const trial of jsonObject.trials) {
-        references.push(new ClinicalTrialReference(trial.nci_id, trial.phase.phase, trial.brief_title, trial.principal_investigator));
+        const drugsArray: Drug[] = [];
+        for (const intervention of trial.arms[0].interventions) {
+          if (intervention.intervention_type === 'Drug') {
+            drugsArray.push(new Drug(intervention.intervention_name, intervention.intervention_code, intervention.intervention_description, intervention.synonyms));
+          } else {
+            console.log('Did not add ' + intervention.intervention_name + ' since it isn\'t a drug.');
+          }
+        }
+        references.push(new ClinicalTrialReference(trial.nci_id, trial.phase.phase, trial.brief_title, drugsArray, trial.principal_investigator));
       }
 
       return references;
     }
 
+    // Requirements before constructing queries.
     const desiredTrials: number = 10;
+    const includes: string[] = ['brief_title', 'nci_id', 'principal_investigator', 'phase.phase', 'arms'];
+
+    // Determine includes.
+    let includeString = '';
+    for (const include of includes) {
+      includeString = includeString + '&include=' + include;
+    }
 
     // 1. Query for variant name in the clinical trials database.
-    const variantNameQuery: string = 'https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=' + desiredTrials + '&_fulltext=' + variant.variant_name + '&include=brief_title&include=nci_id&include=principal_investigator';
     return this.http
-      .get(variantNameQuery)
+      .get(this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + variant.variant_name + includeString)
       .mergeMap(result1 => {
         console.log('1. Got name query', result1);
 
@@ -54,9 +72,8 @@ export class ClinicalTrialsService {
         if (result1References.length < desiredTrials) {
 
           // 2. Query for the variant HGVS ID in the clinical trials database.
-          const hgvsQuery = 'https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=' + (desiredTrials - result1References.length) + '&_fulltext=' + variant.hgvs_id + '&include=brief_title&include=nci_id&include=principal_investigator&include=phase.phase';
           return this.http
-            .get(hgvsQuery)
+            .get(this.queryEndpoint + 'size=' + (desiredTrials - result1References.length) + '&_fulltext=' + variant.hgvs_id + includeString)
             .map(result2 => {
               console.log('2. Got HGVS query', result2);
 
@@ -90,9 +107,8 @@ export class ClinicalTrialsService {
         if (result2References.length < desiredTrials) {
 
           // 2. Query for the variant HGVS ID in the clinical trials database.
-          const hugoQuery: string = 'https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=' + (desiredTrials - result2References.length) + '&_fulltext=' + variant.origin.hugo_symbol + '&include=brief_title&include=nci_id&include=principal_investigator';
           return this.http
-            .get(hugoQuery)
+            .get(this.queryEndpoint + 'size=' + (desiredTrials - result2References.length) + '&_fulltext=' + variant.origin.hugo_symbol + includeString)
             .map(result3 => {
               console.log('3. Got HUGO query', result3);
 
@@ -126,7 +142,7 @@ export class ClinicalTrialsService {
   }
 
   getDetailsFor = (clinicalTrialReference: ClinicalTrialReference): Observable<ClinicalTrial> => {
-    return this.http.get('https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?size=1&include=official_title&include=brief_summary&nci_id=' + clinicalTrialReference.nci_id)
+    return this.http.get(this.queryEndpoint + 'size=1&include=official_title&include=brief_summary&nci_id=' + clinicalTrialReference.nci_id)
       .map(response => {
         const fullTrialData = response.json();
 

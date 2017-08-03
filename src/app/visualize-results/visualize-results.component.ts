@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
   template: `
     <div class="root">
       <ngb-tabset>
-        <ngb-tab title="Related Clinical Trials">
+        <ngb-tab title="Relevant Clinical Trials">
           <ng-template ngbTabContent>
             <clinical-trials></clinical-trials>
           </ng-template>
@@ -25,10 +25,6 @@ import { Component } from '@angular/core';
   styles: [`    
     table {
       width: 100%;
-    }
-    
-    th {
-      font-weight: bold;
     }
   `]
 })
