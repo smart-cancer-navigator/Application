@@ -11,13 +11,20 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class MyVariantInfoSearchService implements VariantDataProvider {
 
-  constructor(private http: Http) {}
+  includeString: string;
+  constructor(private http: Http) {
+    const toInclude = ['civic.entrez_name', 'civic.name', 'civic.description', 'civic.evidence_items', 'civic.variant_types', 'vcf', 'hg19', 'chrom'];
+
+    for (const itemToInclude of toInclude) {
+      this.includeString = this.includeString + '%2C' + itemToInclude;
+    }
+  }
 
   /**
    * The variants for the CIViC Search Service
    */
   public provideVariants = (searchTerm: string, additionalContext: Gene): Observable<Variant[]> => {
-    return this.http.get('http://myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.hugo_symbol + '%20AND%20civic.name%3A' + searchTerm + '*&fields=civic.entrez_name%2Ccivic.name%2Ccivic.description%2Ccivic.evidence_items%2Ccivic.variant_types&size=15')
+    return this.http.get('http://myvariant.info/v1/query?q=civic.entrez_name%3A' + additionalContext.hugo_symbol + '%20AND%20civic.name%3A' + searchTerm + '*&fields=' + this.includeString + '&size=15')
       .map(result => result.json())
       .map(resultJSON => {
         const variantResults: Variant[] = [];
@@ -50,8 +57,25 @@ export class MyVariantInfoSearchService implements VariantDataProvider {
             }
           }
 
+          // Figure out item location.
+          let chromosome = -1;
+          let start = -1;
+          let end = -1;
+
+          if (hit.chrom) {
+            chromosome = hit.chrom;
+          }
+
+          if (hit.vcf) {
+            start = hit.vcf.position;
+            end = hit.vcf.position;
+          } else if (hit.hg19) {
+            start = hit.hg19.start;
+            end = hit.hg19.end;
+          }
+
           // Add constructed variant to the array.
-          variantResults.push(new Variant(additionalContext, hit.civic.name, hit._id, hit._score, description, somatic, types));
+          variantResults.push(new Variant(additionalContext, hit.civic.name, hit._id, hit._score, description, somatic, types, chromosome, start, end));
         }
 
         return variantResults;

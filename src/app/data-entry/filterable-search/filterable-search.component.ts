@@ -43,7 +43,7 @@ export interface FilterableSearchService {
       <button #PopupToggle id="nothingSelected" class="filterToggle" *ngIf="currentlySelected === null" (click)="toggleMenu()">{{placeholderString}}</button>
 
       <!-- Suggestions for potential selections -->
-      <div #PopupPanel class="filterPanel" *ngIf="menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
+      <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
         <input #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput"/>
         <div class="suggestions">
           <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName()}}</button>
@@ -83,7 +83,6 @@ export interface FilterableSearchService {
     }
 
     .filterPanel {
-      display: block;
       position: absolute;
 
       height: 130px;

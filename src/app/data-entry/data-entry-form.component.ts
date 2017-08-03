@@ -43,6 +43,11 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
               <data-entry-intelligent (selectNewVariant)="geneVariation.variant = $event"></data-entry-intelligent>
             </ng-template>
           </ngb-tab>
+          <ngb-tab title="Direct HGVS Input">
+            <ng-template ngbTabContent>
+              <p>Not yet implemented :(</p>
+            </ng-template>
+          </ngb-tab>
         </ngb-tabset>
       </div>
     </div>

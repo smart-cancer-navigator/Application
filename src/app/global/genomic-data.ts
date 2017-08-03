@@ -41,8 +41,12 @@ export class Variant implements FilterableSearchOption {
   description: string;
   somatic: boolean;
   types: string[];
+  chromosome: number;
+  start: number;
+  end: number;
+  variation: string;
 
-  constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[]) {
+  constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _chromosome: number, _start: number, _end: number) {
     this.origin = _origin;
     this.variant_name = _hugo_symbol;
     this.hgvs_id = _hgvs_id;
@@ -50,6 +54,9 @@ export class Variant implements FilterableSearchOption {
     this.description = _description;
     this.somatic = _somatic;
     this.types = _types;
+    this.chromosome = _chromosome;
+    this.start = _start;
+    this.end = _end;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).

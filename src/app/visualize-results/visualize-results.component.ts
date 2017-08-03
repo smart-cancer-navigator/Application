@@ -34,6 +34,10 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
               <td>Variant Type</td>
               <td>{{variant.types}}</td>
             </tr>
+            <tr>
+              <td>Gene Location</td>
+              <td>Chromosome {{variant.chromosome}}, Nucleotides {{variant.start}} to {{variant.end}}</td>
+            </tr>
             </tbody>
           </table>
           
