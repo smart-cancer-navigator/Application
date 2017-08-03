@@ -40,8 +40,6 @@ export class ClinicalTrialsService {
         for (const intervention of trial.arms[0].interventions) {
           if (intervention.intervention_type === 'Drug') {
             drugsArray.push(new Drug(intervention.intervention_name, intervention.intervention_code, intervention.intervention_description, intervention.synonyms));
-          } else {
-            console.log('Did not add ' + intervention.intervention_name + ' since it isn\'t a drug.');
           }
         }
         references.push(new ClinicalTrialReference(trial.nci_id, trial.phase.phase, trial.brief_title, drugsArray, trial.principal_investigator));
