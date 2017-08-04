@@ -13,10 +13,10 @@ import { RobustVariantSearchService } from './robust-variant-search.service';
   selector: 'data-entry-robust',
   template: `
     <div id="GeneInputPanel" [style.width]="variantSearchService.geneContext === undefined ? 'calc(100% - 8px)' : 'calc(50% - 8px)'">
-      <filterable-search #GeneFilter [searchService]="geneSearchService" [placeholderString]="'Click to select Gene'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
+      <filterable-search #GeneFilter [searchService]="geneSearchService" [placeholderString]="'Search Genes'" (onSelected)="onGeneSelected($event); VariantFilter.clearField()"></filterable-search>
     </div>
     <div id="VariantInputPanel" [hidden]="variantSearchService.geneContext === undefined" >
-      <filterable-search #VariantFilter [searchService]="variantSearchService" [placeholderString]="'Click to select Variant'" (onSelected)="onVariantSelected($event);"></filterable-search>
+      <filterable-search #VariantFilter [searchService]="variantSearchService" [placeholderString]="'Search Variants'" (onSelected)="onVariantSelected($event);"></filterable-search>
     </div>
   `,
   styles: [`

@@ -37,7 +37,7 @@ export interface FilterableSearchService {
   selector: 'filterable-search',
   template: `
     <!-- If form control name is provided vs. not -->
-    <div id="root" [style.height.px]="menuCurrentlyOpen ? 180 : 30">
+    <div id="root" [style.height.px]="menuCurrentlyOpen ? 180 : 40">
       <!-- Switches once an option picked -->
       <div #PopupToggle class="filterToggle" (click)="toggleMenu()">
         <p *ngIf="currentlySelected !== null" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
@@ -69,9 +69,9 @@ export interface FilterableSearchService {
 
     .filterToggle {
       margin: 0;
-      padding: 0;
+      padding: 5px;
       width: 100%;
-      height: 28px;
+      height: 38px;
       font-size: 20px;
       border: 0;
       cursor: pointer;
@@ -98,6 +98,7 @@ export interface FilterableSearchService {
       position: absolute;
 
       padding: 5px;
+      height: 138px;
       background-color: white;
     }
 
@@ -106,22 +107,16 @@ export interface FilterableSearchService {
     }
 
     .suggestions {
-      height: 100px;
+      height: 95px;
       width: 100%;
       overflow: scroll;
-    }
-
-    .selectableOption:hover {
-      color: #eee;
-      background-color: #3b8b18;
-    }
-
-    p {
-      margin: 0;
     }
   `],
 })
 export class FilterableSearchComponent implements OnInit, AfterViewInit {
+  constructor(myElement: ElementRef) {
+    this.elementRef = myElement;
+  }
 
   menuCurrentlyOpen = false; // Used to toggle between display and filter mode.
   @Input() placeholderString: string;
@@ -130,10 +125,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
    * Automatically close menu upon clicking outside of the item.
    */
   elementRef: ElementRef;
-
-  constructor(myElement: ElementRef) {
-    this.elementRef = myElement;
-  }
 
   // For when the user clicks outside of the dropdown.
   @HostListener('document:click', ['$event'])
