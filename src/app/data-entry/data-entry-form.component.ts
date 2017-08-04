@@ -52,10 +52,11 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
       </div>
     </div>
 
-    <button (click)="addRow()" id="addRowButton" class="finalizeButton clickable">Add Row</button>
-    <button (click)="complete()" id="completeButton" class="finalizeButton clickable">Completed</button>
+    <!-- Finalize buttons -->
+    <button (click)="addRow()" style="float: left;" type="button" class="btn btn-primary formButton">Add Row</button>
+    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I'm Done!</button>
   `,
-  styles: [`
+  styles: [`    
     .entryPanel {
       border: 0.5px solid black;
       border-radius: 5px;
@@ -100,47 +101,14 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
       color: white;
     }
 
-    .clickable {
-      opacity: 1;
-    }
-
-    .clickable:hover {
-      opacity: 0.7;
-    }
-
-    .clickable:active {
-      opacity: 0.5;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-    }
-
     .panel-body {
-      width: calc(100% - 8px);
+      width: 100%;
       height: 120px;
       padding: 4px;
     }
 
-    address {
-      width: 100%;
-    }
-
-    .finalizeButton {
-      width: calc(100% - 2px);
-      height: 30px;
-      border: 1px solid black;
-      border-radius: 10px;
-      color: white;
-      font-size: 15px;
-    }
-
-    #addRowButton {
-      background-color: #718599;
-    }
-
-    #completeButton {
-      background-color: #779971;
+    .formButton {
+      width: calc(50% - 10px);
     }
   `],
   providers: [NgbTabsetConfig] // add NgbTabsetConfig to the component providers

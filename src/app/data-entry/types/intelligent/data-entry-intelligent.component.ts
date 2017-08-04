@@ -14,23 +14,25 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
 @Component({
   selector: 'data-entry-intelligent',
   template: `
-    <input #MainSearch type="text" placeholder="Type Here" (focus)="suggestionsOpen = true" (keyup)="search(MainSearch.value)">
-    <div id="popupSuggestionPanel" [hidden]="suggestionsOpen === false" [style.width.px]="desiredPopupWidth">
-      <button *ngFor="let option of resultOptions | async" (click)="onSelection(option);" class="selectableOption">
-        {{option.toIntelligentDisplayRepresentation()}}
-      </button>
+    <div id="root">
+      <input #MainSearch type="text" class="form-control" placeholder="Type Here" (focus)="suggestionsOpen = true" (keyup)="search(MainSearch.value)">
+      <div id="popupSuggestionPanel" [hidden]="suggestionsOpen === false" [style.width.px]="desiredPopupWidth">
+        <table class="table table-hover">
+          <tr *ngFor="let option of resultOptions | async">
+            <td (click)="onSelection(option)">{{option.toIntelligentDisplayRepresentation()}}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   `,
   styles: [`
+    #root {
+      margin-top: 5px;
+    }
+    
     input {
       height: 60px;
       font-size: 40px;
-      text-align: center;
-      border: 1px solid #979797;
-      border-radius: 4px;
-      padding: 0;
-      margin: 10px 0 0;
-      width: calc(100% - 12px);
     }
 
     #popupSuggestionPanel {
@@ -41,27 +43,6 @@ import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.
       border: 1px solid black;
       border-top: 0;
       overflow: scroll;
-    }
-    
-    .selectableOption {
-      display: block;
-      float: left;
-      border-left: 0.5px solid #a8a8a8;
-      border-right: 0.5px solid #a8a8a8;
-      border-bottom: 0.5px solid #a8a8a8;
-      border-top: 0;
-      margin: 0;
-      padding: 5px;
-      width: 100%;
-      height: 30px;
-      font-size: 15px;
-      background-color: white;
-      text-align: center;
-    }
-
-    .selectableOption:hover {
-      color: #eee;
-      background-color: #3b8b18;
     }
   `]
 })

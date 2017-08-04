@@ -37,7 +37,7 @@ export interface FilterableSearchService {
   selector: 'filterable-search',
   template: `
     <!-- If form control name is provided vs. not -->
-    <div id="root" [style.height.px]="menuCurrentlyOpen ? 170 : 30">
+    <div id="root" [style.height.px]="menuCurrentlyOpen ? 180 : 30">
       <!-- Switches once an option picked -->
       <div #PopupToggle class="filterToggle" (click)="toggleMenu()">
         <p *ngIf="currentlySelected !== null" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
@@ -47,9 +47,13 @@ export interface FilterableSearchService {
 
       <!-- Suggestions for potential selections -->
       <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input autocomplete="off" #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput"/>
+        <input autocomplete="off" #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
         <div class="suggestions">
-          <button *ngFor="let option of options | async" (click)="onSelection(option)" class="selectableOption">{{option.optionName()}}</button>
+          <table class="table table-hover">
+            <tr *ngFor="let option of options | async">
+              <td (click)="onSelection(option)">{{option.optionName()}}</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -57,9 +61,10 @@ export interface FilterableSearchService {
   styles: [`
     #root {
       z-index: 1000;
-      border: 1px solid #989898;
+      width: calc(100% - 2px);
       border-radius: 5px;
       background-color: white;
+      border: 1px solid #c9c9c9;
     }
 
     .filterToggle {
@@ -92,42 +97,18 @@ export interface FilterableSearchService {
     .filterPanel {
       position: absolute;
 
-      height: 130px;
       padding: 5px;
       background-color: white;
     }
 
     .filterInput {
-      margin: 0;
-      padding: 0;
-      width: calc(100% - 4px);
-      height: 30px;
-      font-size: 20px;
-      text-align: center;
-      border: 1px solid #d6d6d6;
-      border-radius: 5px;
+      width: 100%;
     }
 
     .suggestions {
       height: 100px;
       width: 100%;
       overflow: scroll;
-    }
-
-    .selectableOption {
-      display: block;
-      float: left;
-      border-left: 0.5px solid #a8a8a8;
-      border-right: 0.5px solid #a8a8a8;
-      border-bottom: 0.5px solid #a8a8a8;
-      border-top: 0;
-      margin: 0;
-      padding: 2px;
-      width: 100%;
-      height: 30px;
-      font-size: 18px;
-      background-color: white;
-      text-align: center;
     }
 
     .selectableOption:hover {

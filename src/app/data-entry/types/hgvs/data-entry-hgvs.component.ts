@@ -13,18 +13,18 @@ import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'data-entry-hgvs',
   template: `
-    <input #HGVSInput type="text" placeholder="Type Here" (input)="search(HGVSInput.value)" [style.background-color]="currentlyValidHGVS ? 'green' : 'red'" >
+    <div id="root">
+      <input #HGVSInput type="text" class="form-control" placeholder="HGVS ID" (input)="search(HGVSInput.value)" [style.border-color]="currentlyValidHGVS ? 'green' : 'red'" >
+    </div>
   `,
   styles: [`
+    #root {
+      margin-top: 5px;
+    }
+    
     input {
       height: 60px;
       font-size: 40px;
-      text-align: center;
-      border: 1px solid #979797;
-      border-radius: 4px;
-      padding: 0;
-      margin: 10px 0 0;
-      width: calc(100% - 12px);
     }
   `]
 })
