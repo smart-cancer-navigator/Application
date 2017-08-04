@@ -23,8 +23,7 @@ import { RobustVariantSearchService } from './robust-variant-search.service';
     div {
       float: left;
       width: calc(50% - 8px);
-      height: 30px;
-      margin: 20px 4px;
+      margin: 15px 4px 0px;
     }
   `],
   providers: [RobustGeneSearchService, RobustVariantSearchService]

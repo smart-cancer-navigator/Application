@@ -36,45 +36,36 @@ export interface FilterableSearchService {
 @Component({
   selector: 'filterable-search',
   template: `
-    <!-- If form control name is provided vs. not -->
-    <div id="root" [style.height.px]="menuCurrentlyOpen ? 180 : 40">
-      <!-- Switches once an option picked -->
-      <div #PopupToggle class="filterToggle" (click)="toggleMenu()">
-        <p *ngIf="currentlySelected !== null" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
-        <p *ngIf="currentlySelected === null" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
-        <img src="/assets/dropdown.png"/>
-      </div>
+    <div #PopupToggle class="filterToggle" (click)="toggleMenu()" [style.border-bottom]="menuCurrentlyOpen ? '0' : '1px solid #dadada'">
+      <p *ngIf="currentlySelected !== null" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
+      <p *ngIf="currentlySelected === null" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
+      <img src="/assets/dropdown.svg"/>
+    </div>
 
-      <!-- Suggestions for potential selections -->
-      <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
-        <input autocomplete="off" #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
-        <div class="suggestions">
-          <table class="table table-hover">
-            <tr *ngFor="let option of options | async">
-              <td (click)="onSelection(option)">{{option.optionName()}}</td>
-            </tr>
-          </table>
-        </div>
+    <!-- Suggestions for potential selections -->
+    <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth">
+      <input autocomplete="off" #SearchBox id="search-box" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
+      <div class="suggestions">
+        <table class="table table-hover">
+          <tr *ngFor="let option of options | async">
+            <td (click)="onSelection(option)">{{option.optionName()}}</td>
+          </tr>
+        </table>
       </div>
     </div>
   `,
   styles: [`
-    #root {
-      z-index: 1000;
-      width: calc(100% - 2px);
-      border-radius: 5px;
-      background-color: white;
-      border: 1px solid #c9c9c9;
-    }
-
     .filterToggle {
-      margin: 0;
-      padding: 5px;
       width: 100%;
       height: 38px;
-      font-size: 20px;
-      border: 0;
+
+      margin: 0;
+      padding: 5px;
+
+      font-size: 18px;
       cursor: pointer;
+
+      border: 1px solid #dadada;
     }
 
     .filterToggle:hover {
@@ -95,11 +86,16 @@ export interface FilterableSearchService {
     }
 
     .filterPanel {
+      display: block;
       position: absolute;
+      z-index: 1000;
 
       padding: 5px;
       height: 138px;
       background-color: white;
+
+      border: 1px solid #dadada;
+      border-top: 0;
     }
 
     .filterInput {
