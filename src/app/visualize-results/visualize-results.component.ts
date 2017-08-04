@@ -9,6 +9,7 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
 @Component({
   selector: 'visualize-results',
   template: `
+    <h2 class="display-2">Results</h2>
     <ngb-accordion #acc="ngbAccordion">
       <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
         <ng-template ngbPanelContent>
@@ -61,7 +62,7 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component'
                   </tr>
                   <tr>
                     <td>Variant Type</td>
-                    <td>{{variant.types}}</td>
+                    <td>{{variant.getTypesString()}}</td>
                   </tr>
                   <tr>
                     <td>Variant Location</td>

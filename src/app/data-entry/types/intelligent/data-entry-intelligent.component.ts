@@ -6,7 +6,7 @@
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Injectable, OnInit, Output, ViewChild } from '@angular/core';
 
-import { Variant } from '../global/genomic-data';
+import { Variant } from '../../../global/genomic-data';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { IntelligentGenomicsSearchService } from './intelligent-genomics-search.service';
@@ -72,9 +72,14 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   constructor (public intelligentSearchService: IntelligentGenomicsSearchService, myElement: ElementRef) {
     this.elementRef = myElement;
   }
+
   suggestionsOpen: boolean = false;
+  elementRef: ElementRef;
+  desiredPopupWidth: number = 0;
 
   @ViewChild('MainSearch') mainSearch: any;
+
+  @Output() selectNewVariant: EventEmitter<Variant> = new EventEmitter();
 
   /**
    * These components make searching easier through RxJS Observables.
@@ -102,7 +107,6 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   }
 
   // Provide the component with a callback for when an option is selected.
-  @Output() selectNewVariant: EventEmitter<Variant> = new EventEmitter();
   onSelection(variant: Variant): void {
     this.selectNewVariant.emit(variant);
     this.suggestionsOpen = false;
@@ -114,7 +118,6 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   /**
    * Automatically close menu upon clicking outside of the item.
    */
-  elementRef: ElementRef;
 
   // For when the user clicks outside of the dropdown.
   @HostListener('document:click', ['$event'])
@@ -136,7 +139,6 @@ export class DataEntryIntelligentComponent implements OnInit, AfterViewInit {
   /**
    * Automatically resize suggestion panel based on text box size.
    */
-  desiredPopupWidth: number = 0;
 
   ngAfterViewInit() {
     setTimeout(() => this.recalculatePopupWidth(), 20);

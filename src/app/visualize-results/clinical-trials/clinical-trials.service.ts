@@ -59,6 +59,7 @@ export class ClinicalTrialsService {
     }
 
     // 1. Query for variant name in the clinical trials database.
+    console.log('Queried ' + this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + variant.variant_name + includeString);
     return this.http
       .get(this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + variant.variant_name + includeString)
       .mergeMap(result1 => {

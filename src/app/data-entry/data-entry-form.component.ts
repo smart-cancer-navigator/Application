@@ -45,7 +45,7 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
           </ngb-tab>
           <ngb-tab title="Direct HGVS Input">
             <ng-template ngbTabContent>
-              <p>Not yet implemented :(</p>
+              <data-entry-hgvs (selectNewVariant)="geneVariation.variant = $event"></data-entry-hgvs>
             </ng-template>
           </ngb-tab>
         </ngb-tabset>
@@ -132,7 +132,7 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
       border: 1px solid black;
       border-radius: 10px;
       color: white;
-      font-size: 20px;
+      font-size: 15px;
     }
 
     #addRowButton {
@@ -178,7 +178,7 @@ export class DataEntryFormComponent implements OnInit {
 
     // Filter variants
     for (const geneVariation of this.geneVariations) {
-      if (geneVariation.variant) {
+      if (geneVariation.variant && geneVariation.variant !== null) {
         variants.push(geneVariation.variant);
       }
     }

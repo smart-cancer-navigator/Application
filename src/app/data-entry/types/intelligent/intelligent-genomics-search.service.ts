@@ -2,9 +2,9 @@
  * The FilterableSearchService for the intelligent search of data entry.
  */
 
-import { FilterableSearchService } from './filterable-search/filterable-search.component';
+import { FilterableSearchService } from '../../filterable-search/filterable-search.component';
 import { Observable } from 'rxjs/Observable';
-import { Gene, Variant } from '../global/genomic-data';
+import { Gene, Variant } from '../../../global/genomic-data';
 
 export const VARIANT_MAPPINGS: string[] = [
   'BRCA1 C61G 672 chr17:g.41258504A>C',

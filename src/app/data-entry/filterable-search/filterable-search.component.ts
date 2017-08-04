@@ -56,6 +56,7 @@ export interface FilterableSearchService {
   `,
   styles: [`
     #root {
+      z-index: 1000;
       border: 1px solid #989898;
       border-radius: 5px;
       background-color: white;

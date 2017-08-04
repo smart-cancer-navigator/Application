@@ -7,10 +7,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { FilterableSearchService } from './filterable-search/filterable-search.component';
-import { Gene, Variant } from '../global/genomic-data';
-import { SearchableVariantDatabase } from './providers/database-services.interface';
-import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
+import { FilterableSearchService } from '../../filterable-search/filterable-search.component';
+import { Gene, Variant } from '../../../global/genomic-data';
+import { SearchableVariantDatabase } from '../../providers/database-services.interface';
+import { MyVariantInfoSearchService } from '../../providers/myvariantinfo-search.service';
 
 @Injectable()
 export class RobustVariantSearchService implements FilterableSearchService {

@@ -3,15 +3,14 @@
  * often is the best way to glean such information.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ClinicalTrialsService } from './clinical-trials.service';
 import { ClinicalTrialReference } from './clinical-trials';
 import { Variant } from '../../global/genomic-data';
 
 @Component({
   selector: 'clinical-trials',
-  template: `
-    <!-- Thanks to the ng-bootstrap project :) -->
+  template: `    
     <table class="table table-hover table-bordered">
       <thead>
       <tr>
@@ -23,13 +22,20 @@ import { Variant } from '../../global/genomic-data';
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let clinicalTrial of clinicalTrials" class="variantRow" (click)="getDataFor(clinicalTrial)">
-        <td>{{clinicalTrial.nci_id}}</td>
-        <td>{{clinicalTrial.phase}}</td>
-        <td>{{clinicalTrial.brief_title}}</td>
-        <td>{{clinicalTrial.drugsToString()}}</td>
-        <td>{{clinicalTrial.principal_investigator}}</td>
-      </tr>
+      <ng-container *ngIf="clinicalTrials.length >= 0" >
+        <tr *ngFor="let clinicalTrial of clinicalTrials" class="variantRow" (click)="getDataFor(clinicalTrial)">
+          <td>{{clinicalTrial.nci_id}}</td>
+          <td>{{clinicalTrial.phase}}</td>
+          <td>{{clinicalTrial.brief_title}}</td>
+          <td>{{clinicalTrial.drugsToString()}}</td>
+          <td>{{clinicalTrial.principal_investigator}}</td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="clinicalTrials.length === 0" >
+        <tr>
+          <td>Loading...</td>
+        </tr>
+      </ng-container>
       </tbody>
     </table>
   `

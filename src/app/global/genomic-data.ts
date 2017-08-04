@@ -66,14 +66,28 @@ export class Variant implements FilterableSearchOption {
     this.variant_name = MergeProperties(this.variant_name, other.variant_name);
     this.hgvs_id = MergeProperties(this.hgvs_id, other.hgvs_id);
     this.score = MergeProperties(this.score, other.score);
+    this.description = MergeProperties(this.description, other.description);
+    this.somatic = MergeProperties(this.somatic, other.somatic);
+    this.types = MergeProperties(this.types, other.types);
+    this.chromosome = MergeProperties(this.chromosome, other.chromosome);
+    this.start = MergeProperties(this.start, other.start);
+    this.end = MergeProperties(this.end, other.end);
   }
 
   optionName = () => {
-    return this.variant_name;
+    return this.variant_name ? this.variant_name : this.hgvs_id;
   }
 
   toIntelligentDisplayRepresentation = () => {
     return this.origin.hugo_symbol + ' ' + this.variant_name + ' ' + this.origin.entrez_id + ' ' + this.hgvs_id;
+  }
+
+  getTypesString = () => {
+    let currentString = '';
+    for (const type of this.types) {
+      currentString = currentString + ', ' + type;
+    }
+    return currentString;
   }
 }
 
