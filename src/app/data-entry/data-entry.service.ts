@@ -11,11 +11,17 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/forkJoin';
 
 // Genomic data stuff.
-import { Gene, Variant } from '../global/genomic-data';
+import { Variant } from '../global/genomic-data';
 
 // Databases.
-import { IDatabase } from './providers/database-services.interface';
 import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
+/**
+ * Very simple and straightforward requirements, the database receives the search term and then just hands back the
+ * results.
+ */
+export interface IDatabase {
+  search: (searchTerm: string) => Observable<Variant[]>;
+}
 
 @Injectable()
 export class DataEntryService implements IFilterableSearchService {

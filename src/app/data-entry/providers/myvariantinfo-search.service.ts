@@ -2,7 +2,7 @@
  * MyVariant.info compiles variant database information from across the web and provides in an easy-to-query
  * online API.
  */
-import { IDatabase } from './database-services.interface';
+import { IDatabase } from '../data-entry.service';
 import { Observable } from 'rxjs/Observable';
 import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';
