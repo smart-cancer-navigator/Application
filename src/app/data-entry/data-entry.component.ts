@@ -9,52 +9,38 @@ import { Variant } from '../global/genomic-data';
 import { SELECTED_CANCER_TYPE } from '../cancertype-selection/cancertype-selection.component';
 import { Router } from '@angular/router';
 import { NgbTabsetConfig } from '@ng-bootstrap/ng-bootstrap';
-
-// Wrapper class to maintain indices.
-export class GeneDataRow {
-  constructor (arrayIndexParam: number) {
-    this.arrayIndex = arrayIndexParam;
-  }
-
-  arrayIndex: number;
-  variant: Variant;
-}
+import { DataEntryService } from './data-entry.service';
 
 export let USER_SELECTED_VARIANTS: Variant[] = [];
+
+class VariantWrapper {
+  constructor(_index: number, _variant: Variant) {
+    this.index = _index;
+    this.variant = _variant;
+  }
+
+  index: number;
+  variant: Variant;
+}
 
 @Component({
   selector: 'data-entry',
   template: `
     <!-- Gene Variation List -->
-    <div *ngFor="let geneVariation of geneVariations; let i=index;" class="entryPanel">
+    <div *ngFor="let variant of variants" class="entryPanel">
       <div class="panel-heading">
-        <p>Variation {{i + 1}}</p>
-        <button class="clickable" (click)="removeRow(i)">X</button>
+        <p>Variation {{variant.index + 1}}</p>
+        <button type="button" class="btn btn-danger" (click)="removeRow(variant.index)">X</button>
       </div>
       <div class="panel-body">
-        <ngb-tabset>
-          <ngb-tab title="Robust Selection">
-            <ng-template ngbTabContent>
-              <data-entry-robust (selectNewVariant)="geneVariation.variant = $event"></data-entry-robust>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab title="Intelligent Selection">
-            <ng-template ngbTabContent>
-              <data-entry-intelligent (selectNewVariant)="geneVariation.variant = $event"></data-entry-intelligent>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab title="Direct HGVS Input">
-            <ng-template ngbTabContent>
-              <data-entry-hgvs (selectNewVariant)="geneVariation.variant = $event"></data-entry-hgvs>
-            </ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variant.variant = $event"></filterable-search>
       </div>
     </div>
 
     <!-- Finalize buttons -->
     <button (click)="addRow()" style="float: left;" type="button" class="btn btn-primary formButton">Add Row</button>
-    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I'm Done!</button>
+    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I'm Done!
+    </button>
   `,
   styles: [`    
     .entryPanel {
@@ -93,17 +79,12 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
       height: 30px;
       width: 30px;
       float: right;
-      background-color: red;
-      border: 1px solid white;
-      border-radius: 5px;
       padding: 0;
-      font-size: 20px;
-      color: white;
     }
 
     .panel-body {
       width: 100%;
-      height: 120px;
+      height: 50px;
       padding: 4px;
     }
 
@@ -114,43 +95,43 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
   providers: [NgbTabsetConfig] // add NgbTabsetConfig to the component providers
 })
 export class DataEntryFormComponent implements OnInit {
-  constructor(private router: Router, config: NgbTabsetConfig) {
-    // customize default values of tabsets used by this component tree
-    config.justify = 'center';
-    config.type = 'pills';
-  }
+  constructor(private router: Router, public dataEntryService: DataEntryService) {}
 
-  geneVariations: GeneDataRow[] = [];
+  variants: VariantWrapper[] = [];
 
+  /**
+   * So typically the DOM would be updated upon changing the variants array (as we do in the form).  However, by
+   * specifying this function, we prevent that from happening.
+   */
   ngOnInit() {
     console.log('Selected Cancer Type', SELECTED_CANCER_TYPE);
     this.addRow();
   }
 
   addRow() {
-    this.geneVariations.push(new GeneDataRow(this.geneVariations.length + 1));
+    this.variants.push(new VariantWrapper(this.variants.length, null)); // Add an empty variant to the variation list.
   }
 
   removeRow(arrayIndex: number) {
-    if (arrayIndex > -1 && arrayIndex < this.geneVariations.length) {
-      this.geneVariations.splice(arrayIndex, 1);
+    if (arrayIndex > -1 && arrayIndex < this.variants.length) {
+      this.variants.splice(arrayIndex, 1);
     }
 
-    for (let i = 0; i < this.geneVariations.length; i++) {
-      this.geneVariations[i].arrayIndex = i;
+    for (let i = 0; i < this.variants.length; i++) {
+      this.variants[i].index = i;
     }
   }
 
   complete(): void {
-    const variants: Variant[] = [];
+    const filteredVariants: Variant[] = [];
 
     // Filter variants
-    for (const geneVariation of this.geneVariations) {
-      if (geneVariation.variant && geneVariation.variant !== null) {
-        variants.push(geneVariation.variant);
+    for (const variantWrapper of this.variants) {
+      if (variantWrapper.variant !== null) {
+        filteredVariants.push(variantWrapper.variant);
       }
     }
-    USER_SELECTED_VARIANTS = variants;
+    USER_SELECTED_VARIANTS = filteredVariants;
 
     this.router.navigate(['/visualize-results']);
   }
