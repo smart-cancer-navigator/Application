@@ -30,7 +30,6 @@ const MY_VARIANT_LOCATIONS = {
     'civic.name',
     'dbnsfp.mutationtaster.AAE',
     'dbnsfp.mutpred.aa_change'/*,
-
     'cgi.protein_change (of format BRAF:p.V600E)',
     'docm.aa_change (p. V600E)',
     'emv.egl_protein (p.Val600Glu | p.V600E)'
@@ -88,15 +87,15 @@ class VariantSearchKeyword {
 @Injectable()
 export class MyVariantInfoSearchService implements IDatabase {
   constructor(private http: Http) {
-    const constructCommaConcatenation = (stringArray: string[]): string => {
-      let commaString = stringArray[0];
-      for (const toInclude of stringArray) {
-        commaString = commaString + ',' + toInclude;
+    // Add all values of the MY_VARIANT_LOCATIONS array to the include string.
+    let currentString: string = '';
+    for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
+      for (const location of MY_VARIANT_LOCATIONS[key]) {
+        currentString = currentString + location + ',';
       }
-      return commaString;
-    };
-
-    this.includeString = constructCommaConcatenation(MY_VARIANT_LOCATIONS.GeneHUGO) + ',' + constructCommaConcatenation(MY_VARIANT_LOCATIONS.VariantName) + ',' + constructCommaConcatenation(MY_VARIANT_LOCATIONS.EntrezID);
+    }
+    // Remove the final comma.
+    this.includeString = currentString.substring(0, currentString.length - 1);
   }
 
   // Create these in the constructor so that we don't constantly re-create them.
