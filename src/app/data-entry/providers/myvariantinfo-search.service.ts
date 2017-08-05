@@ -8,6 +8,9 @@ import { Gene, Variant } from '../../global/genomic-data';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/empty';
+
 /**
  * Since the myvariant.info response JSON is MASSIVE and depends to a large extent on the query, these locations
  * map the keys of the JSON where values may be stored.
@@ -127,14 +130,15 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @returns {Observable<Variant[]>}
    */
   public search = (searchTerm: string): Observable<Variant[]> => {
-    // Special cases in which results cannot be filtered.
-    if (searchTerm.length < 3) {
-      console.log('Search term is not long enough!  Returning empty Variant array');
-      return Observable.of<Variant[]>([]); // Return empty observable array.
-    }
-
     // Get new keywords.
     const newKeywords: string[] = searchTerm.split(' ');
+
+    // Prune out keywords which are less than 3 characters.
+    for (let i = 0; i < newKeywords.length; i++) {
+      if (newKeywords[i].length < 3) {
+        newKeywords.splice(i, 1);
+      }
+    }
 
     /**
      * Figure out conflicts.  This is done by looking through the keyword array for each keyword object.
@@ -147,7 +151,6 @@ export class MyVariantInfoSearchService implements IDatabase {
         if (newKeyword === potentialConflict.keyword) {
           // Remove the potential conflict and its corresponding keyword.
           newKeywords.splice(newKeywords.indexOf(potentialConflict.keyword), 1);
-          console.log(potentialConflict.keyword + ' is not a conflict.');
           return;
         }
       }
@@ -166,61 +169,60 @@ export class MyVariantInfoSearchService implements IDatabase {
 
     // Now the array only has the conflict keywords.
     for (const newKeyword of newKeywords) {
-      // Check if this is an entrez ID (shortcut)
-      if (!isNaN(Number(newKeyword))) {
-        this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.ENTREZ_ID));
-        continue; // Next keyword, please!
-      }
-
-      // Check if this number is an HGVS ID.
-      if (newKeyword.indexOf('chr') >= 0) {
-        this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
-        continue; // Next keyword, please!
-      }
-
       // Since all checks follow same format.
       const determineLikelihoodBasedOnQuery = (queryString: string): Observable <number> => {
         console.log('Querying ' + queryString);
         return this.http.get(queryString)
           .map(result => {
-            console.log('Got ' + result.json() + ' as response');
+            console.log('Got as response', result.json());
             return result.json().hits.length;
           });
       };
 
       const quickQuerySuffix = '&fields=_id&size=15';
 
-      // Determine gene HUGO likelihood.
-      const geneHUGOQuery = this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.GeneHUGO, newKeyword) + quickQuerySuffix;
-
-      // Determine variant name likelihood.
-      const variantNameQuery = this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.VariantName, newKeyword) + quickQuerySuffix;
-
-      // Determine HGVS ID likelihood.
-      const hgvsIDQuery = this.queryEndpoint + this.constructORConcatenation(['_id'], newKeyword) + quickQuerySuffix;
+      // Query for relative likelihoods.
+      const checkQueries: Observable<number>[] = [];
+      if (!isNaN(Number(newKeyword))) {
+        checkQueries.push(Observable.of(-6)); // Reserved value to indicate to the observable that this is an entrez ID.
+      } else if (newKeyword.indexOf('chr') >= 0) {
+        checkQueries.push(Observable.of(-5)); // Reserved value to indicate HGVS ID.
+      } else {
+        // Gene HUGO Query.
+        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.GeneHUGO, newKeyword) + quickQuerySuffix));
+        // Variant Name Query
+        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.VariantName, newKeyword) + quickQuerySuffix));
+      }
 
       // Create large observable fork.
       checkObservables.push(
-        Observable.forkJoin([determineLikelihoodBasedOnQuery(geneHUGOQuery), determineLikelihoodBasedOnQuery(variantNameQuery), determineLikelihoodBasedOnQuery(hgvsIDQuery)])
+        Observable.forkJoin(checkQueries)
           .map((results: number[]) => {
-            console.log('Results were ' + results);
-            if (results[0] > results[1]) {
-              if (results[0] > results[2]) {
-                this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Gene_HUGO_Symbol));
-              } else {
-                this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
-              }
-            } else {
-              if (results[1] > results[2]) {
-                this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Variant_Name));
-              } else {
-                this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
-              }
+            console.log('Results were ', results);
+
+            // Figure out purpose of keyword.
+            const largestValue = Math.max.apply( Math, results );
+            let purpose: KeywordPurpose;
+            switch (largestValue) {
+              case -6:
+                purpose = KeywordPurpose.ENTREZ_ID;
+                break;
+              case -5:
+                purpose = KeywordPurpose.HGVS_ID;
+                break;
+              case results[0]:
+                purpose = KeywordPurpose.Gene_HUGO_Symbol;
+                break;
+              case results[1]:
+                purpose = KeywordPurpose.Variant_Name;
+                break;
             }
+
+            this.currentKeywords.push(new VariantSearchKeyword(newKeyword, purpose));
           }));
     }
 
-    // Fork the array AGAIN.
+    // Map the keywords (has to be done this way based on how Observables work).
     return Observable.forkJoin(checkObservables)
       .map((results: void[]) => {
         console.log('Current keywords are ', this.currentKeywords);
@@ -242,6 +244,8 @@ export class MyVariantInfoSearchService implements IDatabase {
             case KeywordPurpose.HGVS_ID:
               arrayToUse = ['_id'];
               break;
+            case KeywordPurpose.ENTREZ_ID:
+              arrayToUse = MY_VARIANT_LOCATIONS.EntrezID;
           }
 
           finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, keywords[i].keyword);
