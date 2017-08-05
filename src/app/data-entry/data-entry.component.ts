@@ -13,17 +13,27 @@ import { DataEntryService } from './data-entry.service';
 
 export let USER_SELECTED_VARIANTS: Variant[] = [];
 
+class VariantWrapper {
+  constructor(_index: number, _variant: Variant) {
+    this.index = _index;
+    this.variant = _variant;
+  }
+
+  index: number;
+  variant: Variant;
+}
+
 @Component({
   selector: 'data-entry',
   template: `
     <!-- Gene Variation List -->
-    <div *ngFor="let variant of variants; let i = index;" class="entryPanel">
+    <div *ngFor="let variant of variants" class="entryPanel">
       <div class="panel-heading">
-        <p>Variation {{i + 1}}</p>
-        <button type="button" class="btn btn-danger" (click)="removeRow(i)">X</button>
+        <p>Variation {{variant.index + 1}}</p>
+        <button type="button" class="btn btn-danger" (click)="removeRow(variant.index)">X</button>
       </div>
       <div class="panel-body">
-        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variants[i] = $event"></filterable-search>
+        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variant.variant = $event"></filterable-search>
       </div>
     </div>
 
@@ -87,28 +97,28 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
 export class DataEntryFormComponent implements OnInit {
   constructor(private router: Router, public dataEntryService: DataEntryService) {}
 
-  variants: Variant[] = [];
+  variants: VariantWrapper[] = [];
 
   /**
    * So typically the DOM would be updated upon changing the variants array (as we do in the form).  However, by
    * specifying this function, we prevent that from happening.
    */
-  trackByFn(index, item): void {
-    return index;
-  }
-
   ngOnInit() {
     console.log('Selected Cancer Type', SELECTED_CANCER_TYPE);
     this.addRow();
   }
 
   addRow() {
-    this.variants.push(null); // Add an empty variant to the variation list.
+    this.variants.push(new VariantWrapper(this.variants.length, null)); // Add an empty variant to the variation list.
   }
 
   removeRow(arrayIndex: number) {
     if (arrayIndex > -1 && arrayIndex < this.variants.length) {
       this.variants.splice(arrayIndex, 1);
+    }
+
+    for (let i = 0; i < this.variants.length; i++) {
+      this.variants[i].index = i;
     }
   }
 
@@ -116,9 +126,9 @@ export class DataEntryFormComponent implements OnInit {
     const filteredVariants: Variant[] = [];
 
     // Filter variants
-    for (const variant of this.variants) {
-      if (variant !== null) {
-        filteredVariants.push(variant);
+    for (const variantWrapper of this.variants) {
+      if (variantWrapper.variant !== null) {
+        filteredVariants.push(variantWrapper.variant);
       }
     }
     USER_SELECTED_VARIANTS = filteredVariants;
