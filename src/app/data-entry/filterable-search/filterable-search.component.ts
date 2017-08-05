@@ -36,7 +36,7 @@ export interface IFilterableSearchService {
 @Component({
   selector: 'filterable-search',
   template: `
-    <div #PopupToggle class="filterToggle" (click)="toggleMenu()" [style.border-bottom]="menuCurrentlyOpen ? '0' : '1px solid #dadada'">
+    <div #PopupToggle class="filterToggle" (click)="toggleMenu(true)" [style.border-bottom]="menuCurrentlyOpen ? '0' : '1px solid #dadada'">
       <img src="/assets/dropdown.svg"/>
       
       <!-- Display selected option before click -->
@@ -155,14 +155,23 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   /**
    * Automatically resize the popup menu upon creating the menu or resizing the window.
    */
-  toggleMenu = () => {
-    this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
+  toggleMenu (): void;
+  toggleMenu (newState?: boolean): void {
+    if (newState && typeof newState === 'boolean') {
+      if (this.menuCurrentlyOpen === newState) {
+        return;
+      }
+      this.menuCurrentlyOpen = newState;
+    } else {
+      this.menuCurrentlyOpen = !this.menuCurrentlyOpen;
+    }
 
     if (!this.menuCurrentlyOpen) {
       return;
     }
 
     this.recalculatePopupWidth();
+
     // Doesn't work without timeout...
     setTimeout(() => this.searchBox.nativeElement.focus(), 50);
   }
@@ -210,7 +219,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
     this.onSelected.emit(option);
-    this.searchTerms.next(option.optionName());
+    console.log('Got chosen', option);
   }
 
   // Push a search term into the observable stream.

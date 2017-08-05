@@ -11,7 +11,7 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
   template: `
     <h2 class="display-2">Results</h2>
     <ngb-accordion #acc="ngbAccordion">
-      <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.toIntelligentDisplayRepresentation()}}">
+      <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.optionName()}}">
         <ng-template ngbPanelContent>
           <ngb-tabset [destroyOnHide]="false" >
             <ngb-tab title="Gene">

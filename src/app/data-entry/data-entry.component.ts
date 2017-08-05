@@ -23,7 +23,7 @@ export let USER_SELECTED_VARIANTS: Variant[] = [];
         <button type="button" class="btn btn-danger" (click)="removeRow(i)">X</button>
       </div>
       <div class="panel-body">
-        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'"></filterable-search>
+        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variants[i] = $event"></filterable-search>
       </div>
     </div>
 
