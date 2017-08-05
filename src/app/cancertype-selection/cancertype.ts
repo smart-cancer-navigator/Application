@@ -1,6 +1,6 @@
-import { FilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
+import { IFilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
 
-export class CancerType implements FilterableSearchOption {
+export class CancerType implements IFilterableSearchOption {
   conditionName: string;
   fhirID: number;
   pathogenicity: number;

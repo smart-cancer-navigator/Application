@@ -4,7 +4,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Variant } from '../global/genomic-data';
-import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry-form.component';
+import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
 
 @Component({
   selector: 'visualize-results',

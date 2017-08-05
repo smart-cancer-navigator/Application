@@ -1,48 +1,42 @@
 /**
- * Used to query for variants.
+ * Takes care of querying for variants.
  */
+import { IFilterableSearchService } from './filterable-search/filterable-search.component';
 
 import { Injectable } from '@angular/core';
 
+// RxJS stuff.
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/forkJoin';
 
-import { FilterableSearchService } from '../../filterable-search/filterable-search.component';
-import { Gene, Variant } from '../../../global/genomic-data';
-import { SearchableVariantDatabase } from '../../providers/database-services.interface';
-import { MyVariantInfoSearchService } from '../../providers/myvariantinfo-search.service';
+// Genomic data stuff.
+import { Gene, Variant } from '../global/genomic-data';
+
+// Databases.
+import { IDatabase } from './providers/database-services.interface';
+import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
 
 @Injectable()
-export class RobustVariantSearchService implements FilterableSearchService {
-
+export class DataEntryService implements IFilterableSearchService {
   constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
 
-  variantDataProviders: SearchableVariantDatabase[] = [this.myvariantinfoSearchService];
+  // The databases initialized in the constructor.
+  variantDatabases: IDatabase[] = [this.myvariantinfoSearchService];
 
-  // Provided by the gene search filterable dropdown on selection.
-  geneContext: Gene;
-  onGeneChosen(gene: Gene) {
-    console.log('Got gene chosen', gene);
-    this.geneContext = gene;
-  }
-
+  // Merge all variant streams into a single one.
   public search = (term: string): Observable<Variant[]> => {
-    if (!this.geneContext) {
-      console.log('Searching with no gene chosen!');
-      return Observable.of <Variant[]>([]);
-    }
-
     // map them into a array of observables and forkJoin
-    return Observable.forkJoin(this.variantDataProviders
-      .map(searchService => searchService.searchVariants(term, this.geneContext))
+    return Observable.forkJoin(this.variantDatabases
+      .map(searchService => searchService.search(term))
     ).map((variantArrays: Variant[][]) => {
         const massiveVariantArray: Variant[] = [];
 
         const addVariant = (variant: Variant) => {
           for (let arrayIndex = 0; arrayIndex < massiveVariantArray.length; arrayIndex++) {
             // Make sure that we are sorting alphabetically.
-            if (massiveVariantArray[arrayIndex].optionName() === variant.optionName()) {
-              massiveVariantArray[arrayIndex].mergeWith(variant);
+            if (massiveVariantArray[arrayIndex].mergeable(variant)) {
+              massiveVariantArray[arrayIndex].merge(variant);
               console.log('Merged ' + variant.optionName());
               return;
             } else if (massiveVariantArray[arrayIndex].optionName() > variant.optionName()) {

@@ -10,27 +10,19 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { InfoHeaderComponent } from './global/info-header.component';
 import { CancerTypeSelectionComponent } from './cancertype-selection/cancertype-selection.component';
-import { DataEntryFormComponent } from './data-entry/data-entry-form.component';
+import { DataEntryFormComponent } from './data-entry/data-entry.component';
 import { SMARTLaunchComponent } from './smart-initialization/smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-initialization/smart-token-reception.component';
 import { FilterableSearchComponent } from './data-entry/filterable-search/filterable-search.component';
-import { DataEntryRobustComponent } from './data-entry/types/robust/data-entry-robust.component';
-import { DataEntryIntelligentComponent } from './data-entry/types/intelligent/data-entry-intelligent.component';
 import { VisualizeResultsComponent } from './visualize-results/visualize-results.component';
 import { ClinicalTrialsComponent } from './visualize-results/clinical-trials/clinical-trials.component';
-import { DataEntryHGVSComponent } from './data-entry/types/hgvs/data-entry-hgvs.component';
-import { HGVSValidatorService } from './data-entry/types/hgvs/hgvs-validator.service';
 
 // Services
 import { CancerTypeSearchService } from './cancertype-selection/cancertype-search.service';
 import { SMARTReferenceService } from './smart-initialization/smart-reference.service';
-import { RobustGeneSearchService } from './data-entry/types/robust/robust-gene-search.service';
-import { RobustVariantSearchService } from './data-entry/types/robust/robust-variant-search.service';
-import { CIViCSearchService } from './data-entry/providers/civic-search.service';
-import { MyGeneInfoSearchService } from './data-entry/providers/mygeneinfo-search.service';
 import { MyVariantInfoSearchService } from './data-entry/providers/myvariantinfo-search.service';
-import { IntelligentGenomicsSearchService } from './data-entry/types/intelligent/intelligent-genomics-search.service';
 import { ClinicalTrialsService } from './visualize-results/clinical-trials/clinical-trials.service';
+import { DataEntryService } from './data-entry/data-entry.service';
 
 
 @NgModule({
@@ -50,23 +42,15 @@ import { ClinicalTrialsService } from './visualize-results/clinical-trials/clini
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
-    DataEntryRobustComponent,
-    DataEntryIntelligentComponent,
     VisualizeResultsComponent,
     ClinicalTrialsComponent,
-    DataEntryHGVSComponent
   ],
   providers: [
     CancerTypeSearchService,
     SMARTReferenceService,
-    RobustGeneSearchService,
-    RobustVariantSearchService,
-    CIViCSearchService,
-    MyGeneInfoSearchService,
     MyVariantInfoSearchService,
-    IntelligentGenomicsSearchService,
     ClinicalTrialsService,
-    HGVSValidatorService
+    DataEntryService
   ],
   bootstrap: [
     AppComponent
