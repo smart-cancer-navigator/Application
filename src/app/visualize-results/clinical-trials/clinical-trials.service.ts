@@ -59,11 +59,10 @@ export class ClinicalTrialsService {
     }
 
     // 1. Query for variant name in the clinical trials database.
-    console.log('Queried ' + this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + variant.variant_name + includeString);
     return this.http
-      .get(this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + variant.variant_name + includeString)
+      .get(this.queryEndpoint + 'size=' + desiredTrials + '&_fulltext=' + encodeURIComponent(variant.variant_name) + includeString)
       .mergeMap(result1 => {
-        console.log('1. Got name query', result1);
+        console.log('1. Got name query results:', result1);
 
         const result1References = clinicalTrialJSONtoReferences(result1.json());
 
@@ -74,7 +73,7 @@ export class ClinicalTrialsService {
           return this.http
             .get(this.queryEndpoint + 'size=' + (desiredTrials - result1References.length) + '&_fulltext=' + variant.hgvs_id + includeString)
             .map(result2 => {
-              console.log('2. Got HGVS query', result2);
+              console.log('2. Got HGVS query results:', result2);
 
               const referenceArray2: ClinicalTrialReference[] = result1References;
 
@@ -109,7 +108,7 @@ export class ClinicalTrialsService {
           return this.http
             .get(this.queryEndpoint + 'size=' + (desiredTrials - result2References.length) + '&_fulltext=' + variant.origin.hugo_symbol + includeString)
             .map(result3 => {
-              console.log('3. Got HUGO query', result3);
+              console.log('3. Got HUGO query results:', result3);
 
               const referenceArray3: ClinicalTrialReference[] = result2References;
               const result3References = clinicalTrialJSONtoReferences(result3.json());
