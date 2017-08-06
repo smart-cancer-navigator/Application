@@ -42,7 +42,10 @@ const MY_VARIANT_LOCATIONS = {
   'Drug': [
     'cgi.drug',
     'cgi[].drug',
-    'civic.drugs[].name'
+    'civic.evidence_items[].drugs[].name'
+  ],
+  'Disease': [
+    'civic.evidence_items'
   ],
   'Description': [
     'civic.description'
@@ -95,7 +98,10 @@ export class MyVariantInfoSearchService implements IDatabase {
       for (let i = 0; i < MY_VARIANT_LOCATIONS[key].length; i++) {
         const currentFocus = MY_VARIANT_LOCATIONS[key][i];
         if (currentFocus.indexOf('[') >= 0) {
-          const scrubbedString = currentFocus.substring(0, currentFocus.indexOf('[')) + currentFocus.substring(currentFocus.indexOf(']') + 1);
+
+          // REGULAR EXPRESSIONS AHHHHH (test here: http://regexr.com/)
+          const scrubbedString = currentFocus.replace(/[\[\]]+/g, '');
+
           console.log('Scrubbed ' + currentFocus + ' to ' + scrubbedString);
           compilation.push(scrubbedString);
         } else {
@@ -131,8 +137,7 @@ export class MyVariantInfoSearchService implements IDatabase {
    *
    * @param jsonToSearch   The JSON to parse through.
    * @param {string} path   The path to search for.
-   * @returns {string | Array<string>}  The array or string to return.  Note that currently only one set of []
-   * is supported.
+   * @returns {string | Array<string>}  The array or string to return.  
    */
   private navigateToPath(inJSON: any, path: string): any {
     let current = inJSON;
@@ -147,7 +152,7 @@ export class MyVariantInfoSearchService implements IDatabase {
     }
     return current;
   }
-  private parseLocationPath(jsonToSearch: any, path: string): string | Array<string> {
+  private parseLocationPath(jsonToSearch: any, path: string): string | string[] {
     // Figure out whether the user added any [] in.
     if (path.indexOf('[') >= 0 && path.indexOf(']') >= 0) {
       // Figure out the array stuff.
@@ -170,16 +175,26 @@ export class MyVariantInfoSearchService implements IDatabase {
       if (index === -1) { // Will return array
         let compilation: string[] = [];
         for (const subJSON of current) {
-          const subJSONValue = this.navigateToPath(subJSON, postPath);
-          compilation.push(subJSONValue);
+          // Recursive call (in case more [] are included)
+          const subJSONValue = this.parseLocationPath(subJSON, postPath);
+          if (subJSONValue === null) {
+            return null;
+          }
+
+          if (subJSONValue instanceof Array) {
+            for (const subJSONArrayValue of subJSONValue) {
+              compilation.push(subJSONArrayValue);
+            }
+          } else {
+            compilation.push(subJSONValue);
+          }
         }
         compilation = compilation.filter(function (filterItem) {
           return filterItem !== null && filterItem !== '';
         });
         return compilation;
-      } else { // Will return single value.
-        const subJSON = current[index];
-        return this.navigateToPath(subJSON, postPath);
+      } else {
+        return this.parseLocationPath(current[index], postPath);
       }
     } else {
       return this.navigateToPath(jsonToSearch, path);
