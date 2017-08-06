@@ -123,9 +123,9 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   }
 
   getTypesString = () => {
-    let currentString = '';
-    for (const type of this.types) {
-      currentString = currentString + ', ' + type;
+    let currentString = this.types[0];
+    for (let i = 1; i < this.types.length; i++) {
+      currentString = currentString + ', ' + this.types[i];
     }
     return currentString;
   }

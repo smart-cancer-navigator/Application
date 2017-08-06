@@ -47,7 +47,7 @@ const MY_VARIANT_LOCATIONS = {
     'civic.description'
   ],
   'Somatic': [
-    'civic.evidence_items.variant_origin'
+    'civic.evidence_items[0].variant_origin'
   ],
   'ChromosomePos': [
     'chrom'
@@ -61,7 +61,8 @@ const MY_VARIANT_LOCATIONS = {
     'hg19.end'
   ],
   'VariantTypes': [
-    'civic.variant_types'
+    'civic.variant_types.display_name',
+    'civic.variant_types[].display_name'
   ]
 };
 
@@ -87,10 +88,26 @@ class VariantSearchKeyword {
 @Injectable()
 export class MyVariantInfoSearchService implements IDatabase {
   constructor(private http: Http) {
+    // Scrub the locations of all bracket indicators.
+    for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
+      const compilation: string[] = [];
+      for (let i = 0; i < MY_VARIANT_LOCATIONS[key].length; i++) {
+        const currentFocus = MY_VARIANT_LOCATIONS[key][i];
+        if (currentFocus.indexOf('[') >= 0) {
+          const scrubbedString = currentFocus.substring(0, currentFocus.indexOf('[')) + currentFocus.substring(currentFocus.indexOf(']') + 1);
+          console.log('Scrubbed ' + currentFocus + ' to ' + scrubbedString);
+          compilation.push(scrubbedString);
+        } else {
+          compilation.push(currentFocus);
+        }
+      }
+      this.scrubbedLocations[key] = compilation;
+    }
+
     // Add all values of the MY_VARIANT_LOCATIONS array to the include string.
     let currentString: string = '';
-    for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
-      for (const location of MY_VARIANT_LOCATIONS[key]) {
+    for (const key of Object.keys(this.scrubbedLocations)) {
+      for (const location of this.scrubbedLocations[key]) {
         currentString = currentString + location + ',';
       }
     }
@@ -100,10 +117,93 @@ export class MyVariantInfoSearchService implements IDatabase {
 
   // Create these in the constructor so that we don't constantly re-create them.
   includeString: string = '';
+  scrubbedLocations: any = {};
 
   queryEndpoint = 'http://myvariant.info/v1/query?q=';
 
   currentKeywords: VariantSearchKeyword[] = [];
+
+  /**
+   * Allows users to pass the string 'civic.evidence_items[0].display_name' and this method to interpret it.
+   *
+   * If the user passes civic.evidence_items[].display_name, they want a string array of all display_names.
+   * If the user passes civic.evidence_items[0].display_name, they want a single string.
+   *
+   * @param jsonToSearch   The JSON to parse through.
+   * @param {string} path   The path to search for.
+   * @returns {string | Array<string>}  The array or string to return.  Note that currently only one set of []
+   * is supported.
+   */
+  private findValueOfJSONPath(jsonToSearch: any, path: string): string | Array<string> {
+    // Figure out whether the user added any [] in.
+    if (path.indexOf('[') >= 0 && path.indexOf(']') >= 0) {
+      // Figure out the array stuff.
+      const prePath = path.substring(0, path.indexOf('['));
+      // Navigate to prePath.
+      let current = jsonToSearch;
+      for (const key of prePath.split('.')) {
+        if (current instanceof Array) {
+          return null;
+        }
+        if (!current.hasOwnProperty(key)) {
+          return null;
+        }
+        current = current[key];
+      }
+
+      if (!(current instanceof Array)) {
+        return null;
+      }
+
+      // Post path.
+      let index = Number(path[path.indexOf('[') + 1]);
+      if (isNaN(index)) {
+        index = -1;
+      }
+      const postPath = path.substring(path.indexOf(']') + 2);
+
+      if (index === -1) { // Will return array
+        const compilation: string[] = [];
+        for (let currentArrayItem of current) {
+          for (const key of postPath.split('.')) {
+            if (currentArrayItem instanceof Array) {
+              return null;
+            }
+            if (!currentArrayItem.hasOwnProperty(key)) {
+              return null;
+            }
+            currentArrayItem = currentArrayItem[key];
+          }
+          compilation.push(currentArrayItem);
+        }
+        return compilation;
+      } else { // Will return single value.
+        let postCurrent = current[index];
+        for (const key of postPath.split('.')) {
+          if (postCurrent instanceof Array) {
+            return null;
+          }
+          if (!postCurrent.hasOwnProperty(key)) {
+            return null;
+          }
+          postCurrent = postCurrent[key];
+        }
+        return postCurrent;
+      }
+    } else {
+      let current = jsonToSearch;
+      for (const key of path.split('.')) {
+        if (current instanceof Array) {
+          return null;
+        }
+        if (!current.hasOwnProperty(key)) {
+          return null;
+        }
+        current = current[key];
+      }
+      return current;
+    }
+  }
 
   /**
    * Utility method to query in accordance with myvariant.info API.
@@ -188,9 +288,9 @@ export class MyVariantInfoSearchService implements IDatabase {
         checkQueries.push(Observable.of(-5)); // Reserved value to indicate HGVS ID.
       } else {
         // Gene HUGO Query.
-        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.GeneHUGO, newKeyword) + quickQuerySuffix));
+        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword) + quickQuerySuffix));
         // Variant Name Query
-        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(MY_VARIANT_LOCATIONS.VariantName, newKeyword) + quickQuerySuffix));
+        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword) + quickQuerySuffix));
       }
 
       // Create large observable fork.
@@ -235,16 +335,16 @@ export class MyVariantInfoSearchService implements IDatabase {
         for (let i = 0; i < keywords.length; i++) {
           switch (keywords[i].purpose) {
             case KeywordPurpose.Gene_HUGO_Symbol:
-              arrayToUse = MY_VARIANT_LOCATIONS.GeneHUGO;
+              arrayToUse = this.scrubbedLocations.GeneHUGO;
               break;
             case KeywordPurpose.Variant_Name:
-              arrayToUse = MY_VARIANT_LOCATIONS.VariantName;
+              arrayToUse = this.scrubbedLocations.VariantName;
               break;
             case KeywordPurpose.HGVS_ID:
               arrayToUse = ['_id'];
               break;
             case KeywordPurpose.ENTREZ_ID:
-              arrayToUse = MY_VARIANT_LOCATIONS.EntrezID;
+              arrayToUse = this.scrubbedLocations.EntrezID;
           }
 
           finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, keywords[i].keyword);
@@ -264,37 +364,18 @@ export class MyVariantInfoSearchService implements IDatabase {
           .map(result => {
             const mappedJSON = result.json();
 
+            console.log('Final Query result:', mappedJSON);
+
             const variantResults: Variant[] = [];
 
             if (!mappedJSON.hits) {
               return variantResults;
             }
 
-            console.log('Got Result JSON from myvariant', mappedJSON);
-
             // Used to check whether a given property exists in the mapped JSON.
-            const verifyKeyValue = (jsonToSearch: any, header: string): any => {
-              let obj = jsonToSearch;
-              for (const subHeader of header.split('.')) {
-                if (obj instanceof Array) {
-                  if (obj.length > 0) {
-                    obj = obj[0];
-                  } else {
-                    return null;
-                  }
-                }
-
-                if (!obj.hasOwnProperty(subHeader)) {
-                  return null;
-                }
-
-                obj = obj[subHeader];
-              }
-              return obj;
-            };
-            const findValue = (jsonToSearch: any, potentialHeaders: string[]): any => {
+            const searchPotentialFields = (jsonToSearch: any, potentialHeaders: string[]): any => {
               for (const potentialHeader of potentialHeaders) {
-                const potentialValue = verifyKeyValue(jsonToSearch, potentialHeader);
+                const potentialValue = this.findValueOfJSONPath(jsonToSearch, potentialHeader);
                 if (potentialValue !== null) {
                   return potentialValue;
                 }
@@ -305,21 +386,28 @@ export class MyVariantInfoSearchService implements IDatabase {
             // For every result.
             for (const hit of mappedJSON.hits) {
               // Gene construction.
-              const geneHUGO: string = findValue(hit, MY_VARIANT_LOCATIONS.GeneHUGO);
-              const geneEntrez: number = Number(findValue(hit, MY_VARIANT_LOCATIONS.EntrezID));
+              const geneHUGO: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO);
+              const geneEntrez: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EntrezID));
               const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
 
               // Variant construction
-              const variantName: string = findValue(hit, MY_VARIANT_LOCATIONS.VariantName);
-              const variantDescription: string = findValue(hit, MY_VARIANT_LOCATIONS.Description);
-              const somatic: boolean = findValue(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
-              const chromPos: number = Number(findValue(hit, MY_VARIANT_LOCATIONS.ChromosomePos));
-              const startPos: number = Number(findValue(hit, MY_VARIANT_LOCATIONS.StartPos));
-              const endPos: number = Number(findValue(hit, MY_VARIANT_LOCATIONS.EndPos));
-              const types: string[] = findValue(hit, MY_VARIANT_LOCATIONS.VariantTypes);
+              const variantName: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName);
+              const variantDescription: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Description);
+              const somatic: boolean = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
+              const chromPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.ChromosomePos));
+              const startPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.StartPos));
+              const endPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EndPos));
+
+              const types: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes);
+              let actualTypes: string[];
+              if (!(types instanceof Array)) {
+                actualTypes = [types];
+              } else {
+                actualTypes = types;
+              }
 
               // Construct variant.
-              variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, types, chromPos, startPos, endPos));
+              variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, actualTypes, chromPos, startPos, endPos));
             }
 
             return variantResults;
