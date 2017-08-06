@@ -36,24 +36,24 @@ export class DataEntryService implements IFilterableSearchService {
     return Observable.forkJoin(this.variantDatabases
       .map(searchService => searchService.search(term))
     ).map((variantArrays: Variant[][]) => {
-        const massiveVariantArray: Variant[] = [];
+        const mergedVariants: Variant[] = [];
 
         const addVariant = (variant: Variant) => {
-          for (let arrayIndex = 0; arrayIndex < massiveVariantArray.length; arrayIndex++) {
+          for (let arrayIndex = 0; arrayIndex < mergedVariants.length; arrayIndex++) {
             // Make sure that we are sorting alphabetically.
-            if (massiveVariantArray[arrayIndex].mergeable(variant)) {
-              massiveVariantArray[arrayIndex].merge(variant);
+            if (mergedVariants[arrayIndex].mergeable(variant)) {
+              mergedVariants[arrayIndex].merge(variant);
               console.log('Merged ' + variant.optionName());
               return;
-            } else if (massiveVariantArray[arrayIndex].optionName() > variant.optionName()) {
-              massiveVariantArray.splice(arrayIndex, 0, variant);
+            } else if (mergedVariants[arrayIndex].optionName() > variant.optionName()) {
+              mergedVariants.splice(arrayIndex, 0, variant);
               return;
             }
           }
 
           // It must've not been pushed if we reach here.
-          massiveVariantArray.push(variant);
-        }
+          mergedVariants.push(variant);
+        };
 
         // Variant merging/placing loop.
         for (const variantArray of variantArrays) {
@@ -61,7 +61,7 @@ export class DataEntryService implements IFilterableSearchService {
             addVariant(variant);
           }
         }
-        return massiveVariantArray;
+        return mergedVariants;
       }
     );
   }

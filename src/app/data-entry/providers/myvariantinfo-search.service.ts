@@ -28,7 +28,7 @@ const MY_VARIANT_LOCATIONS = {
   ],
   'VariantName': [
     'civic.name',
-    'dbnsfp.mutationtaster.AAE',
+    'dbnsfp.mutationtaster.AAE[0]',
     'dbnsfp.mutpred.aa_change'/*,
     'cgi.protein_change (of format BRAF:p.V600E)',
     'docm.aa_change (p. V600E)',
@@ -41,7 +41,8 @@ const MY_VARIANT_LOCATIONS = {
   ],
   'Drug': [
     'cgi.drug',
-    'civic.drugs.name'
+    'cgi[].drug',
+    'civic.drugs[].name'
   ],
   'Description': [
     'civic.description'
@@ -71,10 +72,10 @@ const enum KeywordPurpose {
   Gene_HUGO_Symbol,
   Variant_Name,
   HGVS_ID,
-  ENTREZ_ID,
-  Unknown
+  ENTREZ_ID
 }
 
+// Stores the keyword string and the purpose enum.
 class VariantSearchKeyword {
   constructor (_keyword: string, _purpose: KeywordPurpose) {
     this.keyword = _keyword;
@@ -119,7 +120,7 @@ export class MyVariantInfoSearchService implements IDatabase {
   includeString: string = '';
   scrubbedLocations: any = {};
 
-  queryEndpoint = 'http://myvariant.info/v1/query?q=';
+  queryEndpoint: string = 'http://myvariant.info/v1/query?q=';
 
   currentKeywords: VariantSearchKeyword[] = [];
 
@@ -134,22 +135,30 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @returns {string | Array<string>}  The array or string to return.  Note that currently only one set of []
    * is supported.
    */
-  private findValueOfJSONPath(jsonToSearch: any, path: string): string | Array<string> {
+  private navigateToPath(inJSON: any, path: string): any {
+    const log = path === 'cgi.drug';
+    let current = inJSON;
+    for (const key of path.split('.')) {
+      if (current instanceof Array) {
+        return null;
+      }
+      if (!current.hasOwnProperty(key)) {
+        return null;
+      }
+      current = current[key];
+    }
+    if (log) {
+      console.log('Returning ' + current)
+    }
+    return current;
+  }
+  private parseLocationPath(jsonToSearch: any, path: string): string | Array<string> {
     // Figure out whether the user added any [] in.
     if (path.indexOf('[') >= 0 && path.indexOf(']') >= 0) {
       // Figure out the array stuff.
       const prePath = path.substring(0, path.indexOf('['));
       // Navigate to prePath.
-      let current = jsonToSearch;
-      for (const key of prePath.split('.')) {
-        if (current instanceof Array) {
-          return null;
-        }
-        if (!current.hasOwnProperty(key)) {
-          return null;
-        }
-        current = current[key];
-      }
+      const current = this.navigateToPath(jsonToSearch, prePath);
 
       if (!(current instanceof Array)) {
         return null;
@@ -162,46 +171,21 @@ export class MyVariantInfoSearchService implements IDatabase {
       }
       const postPath = path.substring(path.indexOf(']') + 2);
 
+      // User wrote civic.evidence_items[] not [0]
       if (index === -1) { // Will return array
         const compilation: string[] = [];
-        for (let currentArrayItem of current) {
-          for (const key of postPath.split('.')) {
-            if (currentArrayItem instanceof Array) {
-              return null;
-            }
-            if (!currentArrayItem.hasOwnProperty(key)) {
-              return null;
-            }
-            currentArrayItem = currentArrayItem[key];
-          }
-          compilation.push(currentArrayItem);
+        for (const subJSON of current) {
+          const subJSONValue = this.navigateToPath(subJSON, postPath);
+          compilation.push(subJSONValue);
         }
+        // TODO: Add filter call to function to take all null values out.  (Have to check stackoverflow)
         return compilation;
       } else { // Will return single value.
-        let postCurrent = current[index];
-        for (const key of postPath.split('.')) {
-          if (postCurrent instanceof Array) {
-            return null;
-          }
-          if (!postCurrent.hasOwnProperty(key)) {
-            return null;
-          }
-          postCurrent = postCurrent[key];
-        }
-        return postCurrent;
+        const subJSON = current[index];
+        return this.navigateToPath(subJSON, postPath);
       }
     } else {
-      let current = jsonToSearch;
-      for (const key of path.split('.')) {
-        if (current instanceof Array) {
-          return null;
-        }
-        if (!current.hasOwnProperty(key)) {
-          return null;
-        }
-        current = current[key];
-      }
-      return current;
+      return this.navigateToPath(jsonToSearch, path);
     }
   }
 
@@ -212,6 +196,7 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @returns {string}
    */
   public constructORConcatenation(stringArray: string[], desiredVal: string): string {
+    desiredVal = encodeURIComponent(desiredVal);
     let currentString = stringArray[0] + ':' + desiredVal + '*';
     for (let i = 1; i < stringArray.length; i++) {
       currentString = currentString + '%20OR%20' + stringArray[i] + ':' + desiredVal + '*';
@@ -228,6 +213,7 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @param {string} searchTerm
    * @returns {Observable<Variant[]>}
    */
+  lastSuggestionSet: Observable<Variant[]> = Observable.of<Variant[]>([]);
   public search = (searchTerm: string): Observable<Variant[]> => {
     // Get new keywords.
     const newKeywords: string[] = searchTerm.split(' ');
@@ -263,10 +249,15 @@ export class MyVariantInfoSearchService implements IDatabase {
       managePotentialConflict(potentialConflict);
     }
 
+    if (newKeywords.length === 0) {
+      console.log('Returning last suggestion set', this.lastSuggestionSet);
+      return this.lastSuggestionSet;
+    }
+
     // Gets populated, forked, and then mapped.
     const checkObservables: Observable <void>[] = [];
 
-    // Now the array only has the conflict keywords.
+    // Now the array only has the conflict keywords, so we can classify the purposes of the other keywords.
     for (const newKeyword of newKeywords) {
       // Since all checks follow same format.
       const determineLikelihoodBasedOnQuery = (queryString: string): Observable <number> => {
@@ -280,138 +271,160 @@ export class MyVariantInfoSearchService implements IDatabase {
 
       const quickQuerySuffix = '&fields=_id&size=15';
 
-      // Query for relative likelihoods.
-      const checkQueries: Observable<number>[] = [];
-      if (!isNaN(Number(newKeyword))) {
-        checkQueries.push(Observable.of(-6)); // Reserved value to indicate to the observable that this is an entrez ID.
-      } else if (newKeyword.indexOf('chr') >= 0) {
-        checkQueries.push(Observable.of(-5)); // Reserved value to indicate HGVS ID.
-      } else {
-        // Gene HUGO Query.
-        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword) + quickQuerySuffix));
-        // Variant Name Query
-        checkQueries.push(determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword) + quickQuerySuffix));
-      }
-
-      // Create large observable fork.
-      checkObservables.push(
-        Observable.forkJoin(checkQueries)
-          .map((results: number[]) => {
-            console.log('Results were ', results);
-
-            // Figure out purpose of keyword.
-            const largestValue = Math.max.apply( Math, results );
-            let purpose: KeywordPurpose;
-            switch (largestValue) {
-              case -6:
-                purpose = KeywordPurpose.ENTREZ_ID;
-                break;
-              case -5:
-                purpose = KeywordPurpose.HGVS_ID;
-                break;
-              case results[0]:
-                purpose = KeywordPurpose.Gene_HUGO_Symbol;
-                break;
-              case results[1]:
-                purpose = KeywordPurpose.Variant_Name;
-                break;
-            }
-
-            this.currentKeywords.push(new VariantSearchKeyword(newKeyword, purpose));
-          }));
-    }
-
-    // Map the keywords (has to be done this way based on how Observables work).
-    return Observable.forkJoin(checkObservables)
-      .map((results: void[]) => {
-        console.log('Current keywords are ', this.currentKeywords);
-        return this.currentKeywords;
-      })
-      // Merge map so that we wait for the forked observable to complete.
-      .mergeMap(keywords => {
-        // Apply keywords to query.
-        let finalQuery = this.queryEndpoint;
-        let arrayToUse: string[];
-        for (let i = 0; i < keywords.length; i++) {
-          switch (keywords[i].purpose) {
-            case KeywordPurpose.Gene_HUGO_Symbol:
-              arrayToUse = this.scrubbedLocations.GeneHUGO;
-              break;
-            case KeywordPurpose.Variant_Name:
-              arrayToUse = this.scrubbedLocations.VariantName;
-              break;
-            case KeywordPurpose.HGVS_ID:
-              arrayToUse = ['_id'];
-              break;
-            case KeywordPurpose.ENTREZ_ID:
-              arrayToUse = this.scrubbedLocations.EntrezID;
-          }
-
-          finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, keywords[i].keyword);
-
-          // Add 'AND' requirement
-          if (i < keywords.length - 1) {
-            finalQuery = finalQuery + '%20AND%20';
+      // Don't create duplicate purposes.
+      const purposeAlreadyExists = (purpose: KeywordPurpose): boolean => {
+        for (const keyword of this.currentKeywords) {
+          if (keyword.purpose === purpose) {
+            return true;
           }
         }
+        return false;
+      };
 
-        // Add suffix.
-        finalQuery = finalQuery + '&fields=' + this.includeString + '&size=15';
+      // Query for relative likelihoods.
+      if (!isNaN(Number(newKeyword))) {
+        if (!purposeAlreadyExists(KeywordPurpose.ENTREZ_ID)) {
+          this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.ENTREZ_ID));
+        }
+      } else if (newKeyword.indexOf('chr') >= 0) {
+        if (!purposeAlreadyExists(KeywordPurpose.HGVS_ID)) {
+          this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
+        }
+      } else {
+        const geneHUGOQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword) + quickQuerySuffix);
+        const variantNameQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword) + quickQuerySuffix);
 
-        console.log('To get variants, querying ' + finalQuery);
+        // Create large observable fork.
+        checkObservables.push(
+          Observable.forkJoin([geneHUGOQuery, variantNameQuery])
+            .map((results: number[]) => {
+              console.log('Results were ', results);
 
-        return this.http.get(finalQuery)
-          .map(result => {
-            const mappedJSON = result.json();
-
-            console.log('Final Query result:', mappedJSON);
-
-            const variantResults: Variant[] = [];
-
-            if (!mappedJSON.hits) {
-              return variantResults;
-            }
-
-            // Used to check whether a given property exists in the mapped JSON.
-            const searchPotentialFields = (jsonToSearch: any, potentialHeaders: string[]): any => {
-              for (const potentialHeader of potentialHeaders) {
-                const potentialValue = this.findValueOfJSONPath(jsonToSearch, potentialHeader);
-                if (potentialValue !== null) {
-                  return potentialValue;
+              // Figure out purpose of keyword.
+              if (results[0] > results[1]) {
+                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol)) {
+                  this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Gene_HUGO_Symbol));
+                }
+              } else if (results[0] < results[1]) {
+                if (!purposeAlreadyExists(KeywordPurpose.Variant_Name)) {
+                  this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Variant_Name));
+                }
+              } else { // Results must be equal.
+                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol)) {
+                  this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Gene_HUGO_Symbol));
+                } else if (!purposeAlreadyExists(KeywordPurpose.Variant_Name)) {
+                  this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Variant_Name));
                 }
               }
-              return '';
-            };
+            }));
+      }
+    }
 
-            // For every result.
-            for (const hit of mappedJSON.hits) {
-              // Gene construction.
-              const geneHUGO: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO);
-              const geneEntrez: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EntrezID));
-              const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
+    const getVariantArrayObservable = (): Observable<Variant[]> => {
+      // Apply keywords to query.
+      let finalQuery = this.queryEndpoint;
+      let arrayToUse: string[];
+      for (let i = 0; i < this.currentKeywords.length; i++) {
+        switch (this.currentKeywords[i].purpose) {
+          case KeywordPurpose.Gene_HUGO_Symbol:
+            arrayToUse = this.scrubbedLocations.GeneHUGO;
+            break;
+          case KeywordPurpose.Variant_Name:
+            arrayToUse = this.scrubbedLocations.VariantName;
+            break;
+          case KeywordPurpose.HGVS_ID:
+            arrayToUse = ['_id'];
+            break;
+          case KeywordPurpose.ENTREZ_ID:
+            arrayToUse = this.scrubbedLocations.EntrezID;
+        }
 
-              // Variant construction
-              const variantName: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName);
-              const variantDescription: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Description);
-              const somatic: boolean = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
-              const chromPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.ChromosomePos));
-              const startPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.StartPos));
-              const endPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EndPos));
+        finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, this.currentKeywords[i].keyword);
 
-              const types: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes);
-              let actualTypes: string[];
-              if (!(types instanceof Array)) {
-                actualTypes = [types];
-              } else {
-                actualTypes = types;
+        // Add 'AND' requirement
+        if (i < this.currentKeywords.length - 1) {
+          finalQuery = finalQuery + '%20AND%20';
+        }
+      }
+
+      // Add suffix.
+      finalQuery = finalQuery + '&fields=' + this.includeString + '&size=15';
+
+      console.log('To get variants, querying ' + finalQuery);
+
+      return this.http.get(finalQuery)
+        .map(result => {
+          const mappedJSON = result.json();
+
+          console.log('Final Query result:', mappedJSON);
+
+          const variantResults: Variant[] = [];
+
+          if (!mappedJSON.hits) {
+            return variantResults;
+          }
+
+          // Used to check whether a given property exists in the mapped JSON.
+          const searchPotentialFields = (jsonToSearch: any, potentialHeaders: string[]): any => {
+            for (const potentialHeader of potentialHeaders) {
+              const potentialValue = this.parseLocationPath(jsonToSearch, potentialHeader);
+              if (potentialValue !== null) {
+                return potentialValue;
               }
+            }
+            return '';
+          };
 
-              // Construct variant.
-              variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, actualTypes, chromPos, startPos, endPos));
+          // For every result.
+          for (const hit of mappedJSON.hits) {
+            // Gene construction.
+            const geneHUGO: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO);
+            const geneEntrez: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EntrezID));
+            const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
+
+            // Variant construction
+            const variantName: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName);
+            const variantDescription: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Description);
+            const somatic: boolean = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
+            const chromosome: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.ChromosomePos); // Can be 'X' or 'Y'
+            const startPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.StartPos));
+            const endPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EndPos));
+
+            const drugs: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Drug);
+            let actualDrugs: string[];
+            if (!(drugs instanceof Array)) {
+              actualDrugs = [drugs];
+            } else {
+              actualDrugs = drugs;
             }
 
-            return variantResults;
-          });
-      });
+            const types: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes);
+            let actualTypes: string[];
+            if (!(types instanceof Array)) {
+              actualTypes = [types];
+            } else {
+              actualTypes = types;
+            }
+
+            // Construct variant.
+            variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, actualTypes, actualDrugs, chromosome, startPos, endPos));
+          }
+
+          return variantResults;
+        });
+    };
+
+    if (checkObservables.length > 0) {
+      // Map the keywords (has to be done this way based on how Observables work).
+      return Observable.forkJoin(checkObservables)
+      // Merge map so that we wait for the forked observable to complete.
+        .mergeMap((results: void[]) => {
+          this.lastSuggestionSet = getVariantArrayObservable();
+          return this.lastSuggestionSet;
+        });
+    } else { // If this is an entrez ID or an HGVS ID based on special circumstances.
+      this.lastSuggestionSet = getVariantArrayObservable();
+      return this.lastSuggestionSet;
+    }
   }
 }

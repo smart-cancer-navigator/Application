@@ -28,10 +28,6 @@ export const MergeProperties = (property1: any, property2: any): any => {
       return property1;
     }
   } else {
-    if (!property2) {
-      console.log('Neither property is defined!');
-    }
-
     return property2;
   }
 }
@@ -76,7 +72,7 @@ export class Gene implements IFilterableSearchOption, IMergeable {
  * alongside the genes which they vary from.
  */
 export class Variant implements IFilterableSearchOption, IMergeable {
-  constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _chromosome: number, _start: number, _end: number) {
+  constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _chromosome: string, _start: number, _end: number) {
     this.origin = _origin;
     this.variant_name = _hugo_symbol;
     this.hgvs_id = _hgvs_id;
@@ -84,6 +80,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
     this.description = _description;
     this.somatic = _somatic;
     this.types = _types;
+    this.drugs = _drugs;
     this.chromosome = _chromosome;
     this.start = _start;
     this.end = _end;
@@ -96,7 +93,8 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   description: string;
   somatic: boolean;
   types: string[];
-  chromosome: number;
+  drugs: string[];
+  chromosome: string;
   start: number;
   end: number;
 
@@ -120,13 +118,5 @@ export class Variant implements IFilterableSearchOption, IMergeable {
 
   optionName = () => {
     return this.origin.hugo_symbol + ' ' + this.variant_name + ' ' + this.origin.entrez_id + ' ' + this.hgvs_id;
-  }
-
-  getTypesString = () => {
-    let currentString = this.types[0];
-    for (let i = 1; i < this.types.length; i++) {
-      currentString = currentString + ', ' + this.types[i];
-    }
-    return currentString;
   }
 }

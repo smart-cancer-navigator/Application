@@ -62,7 +62,11 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                   </tr>
                   <tr>
                     <td>Variant Type</td>
-                    <td>{{variant.getTypesString()}}</td>
+                    <td>{{variant.types.join(', ')}}</td>
+                  </tr>
+                  <tr>
+                    <td>Effective Drugs</td>
+                    <td>{{variant.drugs.join(', ')}}</td>
                   </tr>
                   <tr>
                     <td>Variant Location</td>
