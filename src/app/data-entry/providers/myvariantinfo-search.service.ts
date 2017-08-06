@@ -119,10 +119,9 @@ export class MyVariantInfoSearchService implements IDatabase {
   // Create these in the constructor so that we don't constantly re-create them.
   includeString: string = '';
   scrubbedLocations: any = {};
-
   queryEndpoint: string = 'http://myvariant.info/v1/query?q=';
-
   currentKeywords: VariantSearchKeyword[] = [];
+  lastSuggestionSet: Observable<Variant[]> = Observable.of<Variant[]>([]);
 
   /**
    * Allows users to pass the string 'civic.evidence_items[0].display_name' and this method to interpret it.
@@ -136,7 +135,6 @@ export class MyVariantInfoSearchService implements IDatabase {
    * is supported.
    */
   private navigateToPath(inJSON: any, path: string): any {
-    const log = path === 'cgi.drug';
     let current = inJSON;
     for (const key of path.split('.')) {
       if (current instanceof Array) {
@@ -146,9 +144,6 @@ export class MyVariantInfoSearchService implements IDatabase {
         return null;
       }
       current = current[key];
-    }
-    if (log) {
-      console.log('Returning ' + current)
     }
     return current;
   }
@@ -173,12 +168,14 @@ export class MyVariantInfoSearchService implements IDatabase {
 
       // User wrote civic.evidence_items[] not [0]
       if (index === -1) { // Will return array
-        const compilation: string[] = [];
+        let compilation: string[] = [];
         for (const subJSON of current) {
           const subJSONValue = this.navigateToPath(subJSON, postPath);
           compilation.push(subJSONValue);
         }
-        // TODO: Add filter call to function to take all null values out.  (Have to check stackoverflow)
+        compilation = compilation.filter(function (filterItem) {
+          return filterItem !== null && filterItem !== '';
+        });
         return compilation;
       } else { // Will return single value.
         const subJSON = current[index];
@@ -213,7 +210,6 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @param {string} searchTerm
    * @returns {Observable<Variant[]>}
    */
-  lastSuggestionSet: Observable<Variant[]> = Observable.of<Variant[]>([]);
   public search = (searchTerm: string): Observable<Variant[]> => {
     // Get new keywords.
     const newKeywords: string[] = searchTerm.split(' ');
@@ -390,24 +386,23 @@ export class MyVariantInfoSearchService implements IDatabase {
             const startPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.StartPos));
             const endPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EndPos));
 
-            const drugs: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Drug);
-            let actualDrugs: string[];
-            if (!(drugs instanceof Array)) {
-              actualDrugs = [drugs];
-            } else {
-              actualDrugs = drugs;
-            }
-
-            const types: string | string[] = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes);
-            let actualTypes: string[];
-            if (!(types instanceof Array)) {
-              actualTypes = [types];
-            } else {
-              actualTypes = types;
-            }
+            const ensureValidArray = (item: string | string[]): string[] => {
+              let items: string[];
+              if (!(item instanceof Array)) {
+                items = [item];
+              } else {
+                items = item;
+              }
+              items = items.filter(function (filterItem) {
+                return filterItem !== '';
+              });
+              return items;
+            };
+            const drugs: string[] = ensureValidArray(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Drug));
+            const types: string[] = ensureValidArray(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes));
 
             // Construct variant.
-            variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, actualTypes, actualDrugs, chromosome, startPos, endPos));
+            variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, types, drugs, chromosome, startPos, endPos));
           }
 
           return variantResults;

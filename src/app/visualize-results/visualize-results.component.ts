@@ -50,7 +50,8 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                   <tbody>
                   <tr>
                     <td>Description</td>
-                    <td>{{variant.description}}</td>
+                    <td *ngIf="variant.description && variant.description !== ''" >{{variant.description}}</td>
+                    <td *ngIf="!variant.description || variant.description === ''" ><i>Knowledge Base Gap</i></td>
                   </tr>
                   <tr>
                     <td>Score</td>
@@ -62,11 +63,13 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                   </tr>
                   <tr>
                     <td>Variant Type</td>
-                    <td>{{variant.types.join(', ')}}</td>
+                    <td *ngIf="variant.types.length > 0" >{{variant.types.join(', ')}}</td>
+                    <td *ngIf="variant.types.length === 0" ><i>Knowledge Base Gap</i></td>
                   </tr>
                   <tr>
                     <td>Effective Drugs</td>
-                    <td>{{variant.drugs.join(', ')}}</td>
+                    <td *ngIf="variant.drugs.length > 0" >{{variant.drugs.join(', ')}}</td>
+                    <td *ngIf="variant.drugs.length === 0" ><i>Knowledge Base Gap</i></td>
                   </tr>
                   <tr>
                     <td>Variant Location</td>

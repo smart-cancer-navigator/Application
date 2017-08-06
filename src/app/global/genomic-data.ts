@@ -72,9 +72,9 @@ export class Gene implements IFilterableSearchOption, IMergeable {
  * alongside the genes which they vary from.
  */
 export class Variant implements IFilterableSearchOption, IMergeable {
-  constructor(_origin: Gene, _hugo_symbol: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _chromosome: string, _start: number, _end: number) {
+  constructor(_origin: Gene, _variant_name: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _chromosome: string, _start: number, _end: number) {
     this.origin = _origin;
-    this.variant_name = _hugo_symbol;
+    this.variant_name = _variant_name;
     this.hgvs_id = _hgvs_id;
     this.score = _score;
     this.description = _description;

@@ -126,7 +126,6 @@ export class DataEntryFormComponent implements OnInit {
     const filteredVariants: Variant[] = [];
 
     // Filter variants
-    // TODO: Replace with array filter call
     for (const variantWrapper of this.variants) {
       if (variantWrapper.variant !== null) {
         filteredVariants.push(variantWrapper.variant);
