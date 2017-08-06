@@ -134,10 +134,6 @@ export class MyVariantInfoSearchService implements IDatabase {
    *
    * If the user passes civic.evidence_items[].display_name, they want a string array of all display_names.
    * If the user passes civic.evidence_items[0].display_name, they want a single string.
-   *
-   * @param jsonToSearch   The JSON to parse through.
-   * @param {string} path   The path to search for.
-   * @returns {string | Array<string>}  The array or string to return.  
    */
   private navigateToPath(inJSON: any, path: string): any {
     let current = inJSON;
@@ -414,6 +410,16 @@ export class MyVariantInfoSearchService implements IDatabase {
               } else {
                 items = item;
               }
+              // Remove duplicates from array (thanks StackOverflow!)
+              items = items.reduce(function(p, c, i, a){
+                if (p.indexOf(c) === -1) {
+                  p.push(c);
+                } else {
+                  p.push('');
+                }
+                return p;
+              }, []);
+              // Remove all empty strings from array.
               items = items.filter(function (filterItem) {
                 return filterItem !== '';
               });
