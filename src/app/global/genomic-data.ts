@@ -37,7 +37,7 @@ export const MergeProperties = (property1: any, property2: any): any => {
  * variety of databases.  Eventually this class will be made FHIR compliant to speed up FHIR bundle
  * conversion.
  */
-export class Gene implements IFilterableSearchOption, IMergeable {
+export class Gene implements IMergeable {
   constructor (_hugo_symbol: string, _name: string, _score: number, _entrez_id: number) {
     this.hugo_symbol = _hugo_symbol;
     this.name = _name;
@@ -52,6 +52,9 @@ export class Gene implements IFilterableSearchOption, IMergeable {
   entrez_id: number;
 
   mergeable = (other: Gene) => {
+    if (this.hugo_symbol === '' || this.name === '') {
+      return false;
+    }
     return this.hugo_symbol === other.hugo_symbol || this.name === other.name;
   }
 
@@ -60,10 +63,6 @@ export class Gene implements IFilterableSearchOption, IMergeable {
     this.entrez_id = MergeProperties(this.entrez_id, other.entrez_id);
     this.hugo_symbol = MergeProperties(this.hugo_symbol, other.hugo_symbol);
     this.score = MergeProperties(this.score, other.score);
-  }
-
-  optionName = () => {
-    return this.hugo_symbol;
   }
 }
 
@@ -99,7 +98,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   end: number;
 
   mergeable = (other: Variant) => {
-    return this.variant_name === other.variant_name || this.hgvs_id === other.hgvs_id;
+    return this.origin.mergeable(other.origin) || this.hgvs_id === other.hgvs_id;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).

@@ -260,7 +260,6 @@ export class MyVariantInfoSearchService implements IDatabase {
         console.log('Querying ' + queryString);
         return this.http.get(queryString)
           .map(result => {
-            console.log('Got as response', result.json());
             return result.json().hits.length;
           });
       };
@@ -317,9 +316,13 @@ export class MyVariantInfoSearchService implements IDatabase {
     }
 
     const getVariantArrayObservable = (): Observable<Variant[]> => {
+      console.log('Creating final observable with keywords', this.currentKeywords);
       // Apply keywords to query.
       let finalQuery = this.queryEndpoint;
       let arrayToUse: string[];
+      if (this.currentKeywords.length > 1) {
+        finalQuery = finalQuery + '(';
+      }
       for (let i = 0; i < this.currentKeywords.length; i++) {
         switch (this.currentKeywords[i].purpose) {
           case KeywordPurpose.Gene_HUGO_Symbol:
@@ -339,8 +342,11 @@ export class MyVariantInfoSearchService implements IDatabase {
 
         // Add 'AND' requirement
         if (i < this.currentKeywords.length - 1) {
-          finalQuery = finalQuery + '%20AND%20';
+          finalQuery = finalQuery + ')%20AND%20(';
         }
+      }
+      if (this.currentKeywords.length > 1) {
+        finalQuery = finalQuery + ')';
       }
 
       // Add suffix.
