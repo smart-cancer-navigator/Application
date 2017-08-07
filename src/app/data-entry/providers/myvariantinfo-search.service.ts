@@ -427,6 +427,20 @@ export class MyVariantInfoSearchService implements IDatabase {
             const geneHUGO: string = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]);
             const geneEntrez: number = Number(mergePathsData(MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
             const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
+            // Query for gene name.
+            this.http.get('http://mygene.info/v3/query?q=symbol:' + variantGene.hugo_symbol + '%20AND%20_id:' + variantGene.entrez_id + '&fields=name,_score&size=1')
+              .map(response => {
+                const responseJSON = response.json();
+                if (!responseJSON.hits || responseJSON.hits.length === 0) {
+                  return new Gene(geneHUGO, '', 1, geneEntrez);
+                }
+                return new Gene(geneHUGO, responseJSON.hits[0].name, responseJSON.hits[0]._score, geneEntrez);
+              })
+              .subscribe(gene => {
+                // Change by property instead of whole object because otherwise changes don't propagate.
+                variantGene.name = gene.name;
+                variantGene.score = gene.score;
+              });
 
             // Variant construction
             const variantName: string = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.VariantName, false)[0]);
