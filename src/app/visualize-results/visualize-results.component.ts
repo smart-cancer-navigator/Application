@@ -61,20 +61,17 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                     <td>Variant Origin</td>
                     <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
                   </tr>
-                  <tr>
+                  <tr *ngIf="variant.types.length > 0">
                     <td>Variant Type</td>
-                    <td *ngIf="variant.types.length > 0" >{{variant.types.join(', ')}}</td>
-                    <td *ngIf="variant.types.length === 0" ><i>Knowledge Base Gap</i></td>
+                    <td >{{variant.types.join(', ')}}</td>
                   </tr>
-                  <tr>
+                  <tr *ngIf="variant.drugs.length > 0">
                     <td>Effective Drugs</td>
-                    <td *ngIf="variant.drugs.length > 0" >{{variant.drugs.join(', ')}}</td>
-                    <td *ngIf="variant.drugs.length === 0" ><i>Knowledge Base Gap</i></td>
+                    <td>{{variant.drugs.join(', ')}}</td>
                   </tr>
-                  <tr>
+                  <tr  *ngIf="variant.diseases.length > 0" >
                     <td>Known Diseases</td>
-                    <td *ngIf="variant.diseases.length > 0" >{{variant.diseases.join(', ')}}</td>
-                    <td *ngIf="variant.diseases.length === 0" ><i>Knowledge Base Gap</i></td>
+                    <td>{{variant.diseases.join(', ')}}</td>
                   </tr>
                   <tr>
                     <td>Variant Location</td>
