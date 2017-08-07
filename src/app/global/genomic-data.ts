@@ -14,7 +14,7 @@ export const MergeProperties = (property1: any, property2: any): any => {
     return property1;
   }
 
-  // Merge arrays.  
+  // Merge arrays.
   if (property1 instanceof Array) {
     const addToArray = (toAdd: any) => {
       for (const value of mergedArray) {
@@ -124,6 +124,8 @@ export class Variant implements IFilterableSearchOption, IMergeable {
     this.description = MergeProperties(this.description, other.description);
     this.somatic = MergeProperties(this.somatic, other.somatic);
     this.types = MergeProperties(this.types, other.types);
+    this.drugs = MergeProperties(this.drugs, other.drugs);
+    this.diseases = MergeProperties(this.diseases, other.diseases);
     this.chromosome = MergeProperties(this.chromosome, other.chromosome);
     this.start = MergeProperties(this.start, other.start);
     this.end = MergeProperties(this.end, other.end);
