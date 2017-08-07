@@ -227,7 +227,7 @@ export class MyVariantInfoSearchService implements IDatabase {
 
     // Prune out keywords which are less than 3 characters.
     for (let i = 0; i < newKeywords.length; i++) {
-      if (newKeywords[i].length < 3) {
+      if (newKeywords[i].length < 1) {
         newKeywords.splice(i, 1);
       }
     }
