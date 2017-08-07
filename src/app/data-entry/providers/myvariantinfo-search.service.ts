@@ -42,9 +42,11 @@ const MY_VARIANT_LOCATIONS = {
   'Drug': [
     'cgi.drug',
     'cgi[].drug',
-    'civic.evidence_items[].drugs[].name'
+    'civic.evidence_items[].drugs[].name',
+    'civic.evidence_items.drugs[].name'
   ],
   'Disease': [
+    'civic.evidence_items.disease.display_name',
     'civic.evidence_items[].disease.display_name'
   ],
   'Description': [
