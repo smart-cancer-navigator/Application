@@ -14,8 +14,20 @@ export const MergeProperties = (property1: any, property2: any): any => {
     return property1;
   }
 
+  // Merge arrays.  
   if (property1 instanceof Array) {
-    return property1.length > property2.length ? property1 : property2;
+    const addToArray = (toAdd: any) => {
+      for (const value of mergedArray) {
+        if (value === toAdd) {
+          return;
+        }
+      }
+      mergedArray.push(toAdd);
+    };
+    const mergedArray = Array.from(property1);
+    for (const value of property2) {
+      addToArray(value);
+    }
   }
 
   if (property1) {

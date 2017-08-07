@@ -411,7 +411,7 @@ export class MyVariantInfoSearchService implements IDatabase {
                 });
               }
 
-              if (compilation.length === 0) {
+              if (compilation.length === 0 && !searchAll) {
                 compilation.push(''); // Empty string so that errors aren't thrown.
               }
 
