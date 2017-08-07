@@ -30,7 +30,7 @@ export const MergeProperties = (property1: any, property2: any): any => {
   } else {
     return property2;
   }
-}
+};
 
 /**
  * The gene class provides a quick and easy way to obtain gene names, various IDs, and so on from a
@@ -71,7 +71,7 @@ export class Gene implements IMergeable {
  * alongside the genes which they vary from.
  */
 export class Variant implements IFilterableSearchOption, IMergeable {
-  constructor(_origin: Gene, _variant_name: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _chromosome: string, _start: number, _end: number) {
+  constructor(_origin: Gene, _variant_name: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _diseases: string[], _chromosome: string, _start: number, _end: number) {
     this.origin = _origin;
     this.variant_name = _variant_name;
     this.hgvs_id = _hgvs_id;
@@ -80,6 +80,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
     this.somatic = _somatic;
     this.types = _types;
     this.drugs = _drugs;
+    this.diseases = _diseases;
     this.chromosome = _chromosome;
     this.start = _start;
     this.end = _end;
@@ -93,6 +94,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   somatic: boolean;
   types: string[];
   drugs: string[];
+  diseases: string[];
   chromosome: string;
   start: number;
   end: number;

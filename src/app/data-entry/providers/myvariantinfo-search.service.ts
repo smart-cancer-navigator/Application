@@ -45,7 +45,7 @@ const MY_VARIANT_LOCATIONS = {
     'civic.evidence_items[].drugs[].name'
   ],
   'Disease': [
-    'civic.evidence_items'
+    'civic.evidence_items[].disease.display_name'
   ],
   'Description': [
     'civic.description'
@@ -100,7 +100,7 @@ export class MyVariantInfoSearchService implements IDatabase {
         if (currentFocus.indexOf('[') >= 0) {
 
           // REGULAR EXPRESSIONS AHHHHH (test here: http://regexr.com/)
-          const scrubbedString = currentFocus.replace(/[\[\]]+/g, '');
+          const scrubbedString = currentFocus.replace(/\[.*?\]/g, '');
 
           console.log('Scrubbed ' + currentFocus + ' to ' + scrubbedString);
           compilation.push(scrubbedString);
@@ -268,7 +268,6 @@ export class MyVariantInfoSearchService implements IDatabase {
     for (const newKeyword of newKeywords) {
       // Since all checks follow same format.
       const determineLikelihoodBasedOnQuery = (queryString: string): Observable <number> => {
-        console.log('Querying ' + queryString);
         return this.http.get(queryString)
           .map(result => {
             return result.json().hits.length;
@@ -292,7 +291,7 @@ export class MyVariantInfoSearchService implements IDatabase {
         if (!purposeAlreadyExists(KeywordPurpose.ENTREZ_ID)) {
           this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.ENTREZ_ID));
         }
-      } else if (newKeyword.indexOf('chr') >= 0) {
+      } else if (newKeyword.toLowerCase().indexOf('chr') >= 0 || newKeyword.toLowerCase().indexOf('civic') >= 0) {
         if (!purposeAlreadyExists(KeywordPurpose.HGVS_ID)) {
           this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
         }
@@ -304,7 +303,7 @@ export class MyVariantInfoSearchService implements IDatabase {
         checkObservables.push(
           Observable.forkJoin([geneHUGOQuery, variantNameQuery])
             .map((results: number[]) => {
-              console.log('Results were ', results);
+              console.log('Classification results were ', results);
 
               // Figure out purpose of keyword.
               if (results[0] > results[1]) {
@@ -363,76 +362,85 @@ export class MyVariantInfoSearchService implements IDatabase {
       // Add suffix.
       finalQuery = finalQuery + '&fields=' + this.includeString + '&size=15';
 
-      console.log('To get variants, querying ' + finalQuery);
-
       return this.http.get(finalQuery)
         .map(result => {
           const mappedJSON = result.json();
 
-          console.log('Final Query result:', mappedJSON);
-
-          const variantResults: Variant[] = [];
-
+          console.log('Final Query result from ' + finalQuery, mappedJSON);
           if (!mappedJSON.hits) {
-            return variantResults;
+            return [];
           }
 
           // Used to check whether a given property exists in the mapped JSON.
-          const searchPotentialFields = (jsonToSearch: any, potentialHeaders: string[]): any => {
-            for (const potentialHeader of potentialHeaders) {
-              const potentialValue = this.parseLocationPath(jsonToSearch, potentialHeader);
-              if (potentialValue !== null) {
-                return potentialValue;
-              }
-            }
-            return '';
-          };
-
+          const variantResults: Variant[] = [];
           // For every result.
           for (const hit of mappedJSON.hits) {
+            // Looks at all paths and merges the data provided in each one to form a single variant.
+            const mergePathsData = (potentialHeaders: string[], searchAll: boolean): string[] => {
+              let compilation: string[] = [];
+              for (const potentialHeader of potentialHeaders) {
+                const potentialValue = this.parseLocationPath(hit, potentialHeader);
+                if (potentialValue !== null) {
+                  if (potentialValue instanceof Array) {
+                    for (const subValue of potentialValue) {
+                      compilation.push(subValue);
+                    }
+                  } else {
+                    compilation.push(potentialValue);
+                  }
+                  if (!searchAll) {
+                    break;
+                  }
+                }
+              }
+
+              // Don't search for duplicates if there's only one value!
+              if (searchAll) {
+                // Remove duplicates from array (thanks StackOverflow!)
+                compilation = compilation.reduce(function(p, c, i, a){
+                  if (p.indexOf(c) === -1) {
+                    p.push(c);
+                  } else {
+                    p.push('');
+                  }
+                  return p;
+                }, []);
+                // Remove all empty strings from array.
+                compilation = compilation.filter(function (filterItem) {
+                  return filterItem !== '';
+                });
+              }
+
+              if (compilation.length === 0) {
+                compilation.push(''); // Empty string so that errors aren't thrown.
+              }
+
+              return compilation;
+            };
+
+            // Since names, HUGO symbols, and such shouldn't include spaces.
             const ensureValidString = (someString: string): string => {
               return someString.indexOf(' ') >= 0 ? someString.substring(0, someString.indexOf(' ')) : someString;
             };
+
             // Gene construction.
-            const geneHUGO: string = ensureValidString(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO));
-            const geneEntrez: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EntrezID));
+            const geneHUGO: string = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]);
+            const geneEntrez: number = Number(mergePathsData(MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
             const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
 
             // Variant construction
-            const variantName: string = ensureValidString(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName));
-            const variantDescription: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Description);
-            const somatic: boolean = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
-            const chromosome: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.ChromosomePos); // Can be 'X' or 'Y'
-            const startPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.StartPos));
-            const endPos: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EndPos));
-
-            const ensureValidArray = (item: string | string[]): string[] => {
-              let items: string[];
-              if (!(item instanceof Array)) {
-                items = [item];
-              } else {
-                items = item;
-              }
-              // Remove duplicates from array (thanks StackOverflow!)
-              items = items.reduce(function(p, c, i, a){
-                if (p.indexOf(c) === -1) {
-                  p.push(c);
-                } else {
-                  p.push('');
-                }
-                return p;
-              }, []);
-              // Remove all empty strings from array.
-              items = items.filter(function (filterItem) {
-                return filterItem !== '';
-              });
-              return items;
-            };
-            const drugs: string[] = ensureValidArray(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Drug));
-            const types: string[] = ensureValidArray(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantTypes));
+            const variantName: string = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.VariantName, false)[0]);
+            const variantDescription: string = mergePathsData(MY_VARIANT_LOCATIONS.Description, false)[0];
+            const somatic: boolean = mergePathsData(MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf('somatic') >= 0;
+            const chromosome: string = mergePathsData(MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be 'X' or 'Y'
+            const startPos: number = Number(mergePathsData(MY_VARIANT_LOCATIONS.StartPos, false)[0]);
+            const endPos: number = Number(mergePathsData(MY_VARIANT_LOCATIONS.EndPos, false)[0]);
+            const drugs: string[] = mergePathsData(MY_VARIANT_LOCATIONS.Drug, true);
+            const types: string[] = mergePathsData(MY_VARIANT_LOCATIONS.VariantTypes, true);
+            const diseases: string[] = mergePathsData(MY_VARIANT_LOCATIONS.Disease, true);
 
             // Construct variant.
-            variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, types, drugs, chromosome, startPos, endPos));
+            variantResults.push(new Variant(variantGene, variantName, hit._id, hit._score, variantDescription, somatic, types, drugs, diseases, chromosome, startPos, endPos));
           }
 
           return variantResults;

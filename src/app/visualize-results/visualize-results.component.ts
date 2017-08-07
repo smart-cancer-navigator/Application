@@ -72,6 +72,11 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                     <td *ngIf="variant.drugs.length === 0" ><i>Knowledge Base Gap</i></td>
                   </tr>
                   <tr>
+                    <td>Known Diseases</td>
+                    <td *ngIf="variant.diseases.length > 0" >{{variant.diseases.join(', ')}}</td>
+                    <td *ngIf="variant.diseases.length === 0" ><i>Knowledge Base Gap</i></td>
+                  </tr>
+                  <tr>
                     <td>Variant Location</td>
                     <td>Chromosome {{variant.chromosome}}, {{variant.start !== variant.end ? 'Nucleotides ' +  variant.start + ' to ' + variant.end : 'Nucleotide ' + variant.start}}</td>
                   </tr>
