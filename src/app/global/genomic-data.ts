@@ -98,7 +98,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   end: number;
 
   mergeable = (other: Variant) => {
-    return this.origin.mergeable(other.origin) || this.hgvs_id === other.hgvs_id;
+    return this.origin.mergeable(other.origin) && this.hgvs_id === other.hgvs_id;
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).

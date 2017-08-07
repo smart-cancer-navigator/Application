@@ -204,7 +204,7 @@ export class MyVariantInfoSearchService implements IDatabase {
    * @returns {string}
    */
   public constructORConcatenation(stringArray: string[], desiredVal: string): string {
-    desiredVal = encodeURIComponent(desiredVal);
+    desiredVal = desiredVal.replace(/[:]/g, '\\$&');
     let currentString = stringArray[0] + ':' + desiredVal + '*';
     for (let i = 1; i < stringArray.length; i++) {
       currentString = currentString + '%20OR%20' + stringArray[i] + ':' + desiredVal + '*';
@@ -390,13 +390,16 @@ export class MyVariantInfoSearchService implements IDatabase {
 
           // For every result.
           for (const hit of mappedJSON.hits) {
+            const ensureValidString = (someString: string): string => {
+              return someString.indexOf(' ') >= 0 ? someString.substring(0, someString.indexOf(' ')) : someString;
+            };
             // Gene construction.
-            const geneHUGO: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO);
+            const geneHUGO: string = ensureValidString(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.GeneHUGO));
             const geneEntrez: number = Number(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.EntrezID));
             const variantGene = new Gene(geneHUGO, '', 1, geneEntrez);
 
             // Variant construction
-            const variantName: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName);
+            const variantName: string = ensureValidString(searchPotentialFields(hit, MY_VARIANT_LOCATIONS.VariantName));
             const variantDescription: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Description);
             const somatic: boolean = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.Somatic).toLowerCase().indexOf('somatic') >= 0;
             const chromosome: string = searchPotentialFields(hit, MY_VARIANT_LOCATIONS.ChromosomePos); // Can be 'X' or 'Y'
