@@ -48,14 +48,13 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                   <thead>
                   </thead>
                   <tbody>
-                  <tr>
+                  <tr *ngIf="variant.description && variant.description !== ''">
                     <td>Description</td>
-                    <td *ngIf="variant.description && variant.description !== ''" >{{variant.description}}</td>
-                    <td *ngIf="!variant.description || variant.description === ''" ><i>Knowledge Base Gap</i></td>
+                    <td>{{variant.description}}</td>
                   </tr>
                   <tr>
                     <td>Score</td>
-                    <td ngbPopover="Variant Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
+                    <td ngbPopover="Variant Score often defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
                   </tr>
                   <tr>
                     <td>Variant Origin</td>
