@@ -15,10 +15,9 @@ import {SMARTModule, SMARTReferenceService} from './smart-reference.service';
   `
 })
 export class SMARTLaunchComponent implements OnInit {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   state = 'Launching...';
-
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     // subscribe to router event
@@ -32,7 +31,7 @@ export class SMARTLaunchComponent implements OnInit {
         });
       } else {
         this.state = 'Required URL params were not provided! :(';
-        setTimeout(() => { this.router.navigate(['/data-entry']); }, 1500); // Wait a second before redirecting.
+        setTimeout(() => { this.router.navigate(['/data-entry']); }, 100); // Wait a second before redirecting.
       }
     });
   }

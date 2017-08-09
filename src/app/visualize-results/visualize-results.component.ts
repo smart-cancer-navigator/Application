@@ -5,6 +5,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Variant } from '../global/genomic-data';
 import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
+import { SMARTClient } from '../smart-initialization/smart-reference.service';
 
 @Component({
   selector: 'visualize-results',
@@ -74,7 +75,7 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
                   </tr>
                   <tr>
                     <td>Variant Location</td>
-                    <td>Chromosome {{variant.chromosome}}, {{variant.start !== variant.end ? 'Nucleotides ' +  variant.start + ' to ' + variant.end : 'Nucleotide ' + variant.start}}</td>
+                    <td>Chromosome {{variant.getLocation()}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -90,6 +91,8 @@ import { USER_SELECTED_VARIANTS } from '../data-entry/data-entry.component';
         </ng-template>
       </ngb-panel>
     </ngb-accordion>
+    
+    <button type="button" class="btn btn-success" style="float: right" (click)="saveVariantsToFHIRPatient()">Submit Data to EHR</button>
   `,
   styles: [`    
     small {
@@ -102,5 +105,76 @@ export class VisualizeResultsComponent implements OnInit {
 
   ngOnInit() {
     this.variants = USER_SELECTED_VARIANTS;
+  }
+
+  saveVariantsToFHIRPatient() {
+    if (!(this.variants && this.variants.length > 0)) {
+      console.log('Can\'t save an empty array of variants :P');
+      return;
+    }
+
+    SMARTClient.subscribe(smartClient => {
+      smartClient.patient.read().then((p) => {
+        for (const variant of this.variants) {
+          const dataToTransmit = {
+            'resource': {
+              'resourceType': 'Observation',
+              'id': 'SMART-Observation-' + p.identifier[0].value + '-variation-' + variant.hgvs_id.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ''),
+              'meta': {
+                'versionId': '1' // ,
+                // 'lastUpdated': Date.now().toString()
+              },
+              'text': {
+                'status': 'generated',
+                'div': '<div xmlns=\'http://www.w3.org/1999/xhtml\'>Variation at ' + variant.getLocation() + '</div>'
+              },
+              'status': 'final',
+              'category': [
+                {
+                  'coding': [
+                    {
+                      'system': 'http://hl7.org/fhir/observation-category',
+                      'code': 'genomic-variant',
+                      'display': 'Genomic Variant'
+                    }
+                  ],
+                  'text': 'Genomic Variant'
+                }
+              ],
+              'code': {
+                'coding': [
+                  {
+                    'system': 'http://www.hgvs.org',
+                    'code': variant.hgvs_id,
+                    'display': variant.hgvs_id
+                  }
+                ],
+                'text': variant.hgvs_id
+              },
+              'subject': {
+                'reference': 'Patient/' + p.id
+              },
+              // 'effectiveDateTime': Date.now().toString(),
+              // 'valueQuantity': {
+              //   'value': 41.1,
+              //   'unit': 'weeks',
+              //   'system': 'http://unitsofmeasure.org',
+              //   'code': 'wk'
+              // },
+              // 'context': {}
+            }
+          };
+
+          console.log('Updating data with ', dataToTransmit);
+          smartClient.api.update(dataToTransmit)
+            .then(result => {
+              console.log('Success:', result);
+            })
+            .fail(err => {
+              console.log('Error:', err);
+            });
+        }
+      });
+    });
   }
 }

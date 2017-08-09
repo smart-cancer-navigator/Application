@@ -9,7 +9,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // Components
 import { AppComponent } from './app.component';
 import { InfoHeaderComponent } from './global/info-header.component';
-import { CancerTypeSelectionComponent } from './cancertype-selection/cancertype-selection.component';
 import { DataEntryFormComponent } from './data-entry/data-entry.component';
 import { SMARTLaunchComponent } from './smart-initialization/smart-launch.component';
 import { SMARTTokenReceptionComponent } from './smart-initialization/smart-token-reception.component';
@@ -18,7 +17,6 @@ import { VisualizeResultsComponent } from './visualize-results/visualize-results
 import { ClinicalTrialsComponent } from './visualize-results/clinical-trials/clinical-trials.component';
 
 // Services
-import { CancerTypeSearchService } from './cancertype-selection/cancertype-search.service';
 import { SMARTReferenceService } from './smart-initialization/smart-reference.service';
 import { MyVariantInfoSearchService } from './data-entry/providers/myvariantinfo-search.service';
 import { ClinicalTrialsService } from './visualize-results/clinical-trials/clinical-trials.service';
@@ -38,7 +36,6 @@ import { DataEntryService } from './data-entry/data-entry.service';
     AppComponent,
     InfoHeaderComponent,
     DataEntryFormComponent,
-    CancerTypeSelectionComponent,
     SMARTLaunchComponent,
     SMARTTokenReceptionComponent,
     FilterableSearchComponent,
@@ -46,7 +43,6 @@ import { DataEntryService } from './data-entry/data-entry.service';
     ClinicalTrialsComponent,
   ],
   providers: [
-    CancerTypeSearchService,
     SMARTReferenceService,
     MyVariantInfoSearchService,
     ClinicalTrialsService,

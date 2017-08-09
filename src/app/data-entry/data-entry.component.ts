@@ -6,10 +6,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Variant } from '../global/genomic-data';
-import { SELECTED_CANCER_TYPE } from '../cancertype-selection/cancertype-selection.component';
 import { Router } from '@angular/router';
 import { NgbTabsetConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataEntryService } from './data-entry.service';
+import { SMARTClient } from '../smart-initialization/smart-reference.service';
 
 export let USER_SELECTED_VARIANTS: Variant[] = [];
 
@@ -33,7 +33,7 @@ class VariantWrapper {
         <button type="button" class="btn btn-danger" (click)="removeRow(variant.index)">X</button>
       </div>
       <div class="panel-body">
-        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variant.variant = $event"></filterable-search>
+        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" [(ngModel)]="variant.variant"></filterable-search>
       </div>
     </div>
 
@@ -104,7 +104,45 @@ export class DataEntryFormComponent implements OnInit {
    * specifying this function, we prevent that from happening.
    */
   ngOnInit() {
-    console.log('Selected Cancer Type', SELECTED_CANCER_TYPE);
+    // Query for existent genomic variants in the patient.
+    SMARTClient.subscribe(smartClient => {
+      if (smartClient === null) {
+        return;
+      }
+
+      console.log('Should now update');
+
+      smartClient.patient.api.search({type: 'Observation', query: {'category': 'genomic-variant'}, count: 10})
+        .then(results => {
+          console.log('Successfully got variants!', results);
+
+          if (!results.data.entry) {
+            return;
+          }
+
+          if (results.data.entry.length > 0) {
+            this.removeRow(0); // Start at the first index if we find other variants.
+          }
+
+          for (const result of results.data.entry) {
+            console.log('Would now add ' + result.resource.code.text);
+            this.dataEntryService.search(result.resource.code.text).subscribe(variants => {
+              if (variants.length === 0) {
+                console.log('NOT GOOD: Couldn\'t find any search results for ' + result.resource.code.text);
+                return;
+              }
+
+              // Add the search result to the list.
+              console.log('Adding', variants[0]);
+              this.variants.push(new VariantWrapper(this.variants.length, variants[0]));
+            });
+          }
+        })
+        .fail(err => {
+          console.log('Couldn\'t query genomic variants error!' + err);
+        });
+    });
+
     this.addRow();
   }
 

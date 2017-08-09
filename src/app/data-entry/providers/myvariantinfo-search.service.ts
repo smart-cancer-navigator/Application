@@ -207,9 +207,10 @@ export class MyVariantInfoSearchService implements IDatabase {
    */
   public constructORConcatenation(stringArray: string[], desiredVal: string): string {
     desiredVal = desiredVal.replace(/[:]/g, '\\$&');
-    let currentString = stringArray[0] + ':' + desiredVal + '*';
+    // desiredVal = encodeURIComponent(desiredVal);
+    let currentString = stringArray[0] + ':' + desiredVal + '*' + '%20OR%20' + stringArray[0] + ':' + desiredVal;
     for (let i = 1; i < stringArray.length; i++) {
-      currentString = currentString + '%20OR%20' + stringArray[i] + ':' + desiredVal + '*';
+      currentString = currentString + '%20OR%20' + stringArray[i] + ':' + desiredVal + '*' + '%20OR%20' + stringArray[i] + ':' + desiredVal;
     }
     return currentString;
   }

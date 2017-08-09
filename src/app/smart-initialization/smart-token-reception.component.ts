@@ -27,6 +27,6 @@ export class SMARTTokenReceptionComponent implements OnInit {
     this.smartReferenceService.ready();
 
     // Redirect to the disease selection.
-    setTimeout(() => this.router.navigate(['/cancertype-selection']), 1000);
+    setTimeout(() => this.router.navigate(['/data-entry']), 100);
   }
 }

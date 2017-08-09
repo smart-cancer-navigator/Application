@@ -134,4 +134,8 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   optionName = () => {
     return this.origin.hugo_symbol + ' ' + this.variant_name + ' ' + this.origin.entrez_id + ' ' + this.hgvs_id;
   }
+
+  getLocation = () => {
+    return this.chromosome + ', ' + (this.start !== this.end ? 'Nucleotides ' +  this.start + ' to ' + this.end : 'Nucleotide ' + this.start);
+  }
 }
