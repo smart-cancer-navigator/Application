@@ -7,6 +7,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { SMARTClient } from '../smart-initialization/smart-reference.service';
+import {Http} from "@angular/http";
 
 @Component({
   selector: 'info-header',
@@ -38,6 +39,8 @@ import { SMARTClient } from '../smart-initialization/smart-reference.service';
 })
 
 export class InfoHeaderComponent implements OnInit {
+  constructor (private http: Http) {}
+
   patientData: string = '';
   practitionerData: string = '';
 
@@ -54,7 +57,7 @@ export class InfoHeaderComponent implements OnInit {
       return;
     }
 
-    console.log('Got ', smartClient);
+    console.log('SMART Client', smartClient);
 
     smartClient.patient.read().then((p) => {
       console.log('SMART Patient', p);

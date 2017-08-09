@@ -15,10 +15,9 @@ import {SMARTModule, SMARTReferenceService} from './smart-reference.service';
   `
 })
 export class SMARTLaunchComponent implements OnInit {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   state = 'Launching...';
-
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     // subscribe to router event
