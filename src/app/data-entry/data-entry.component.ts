@@ -33,7 +33,7 @@ class VariantWrapper {
         <button type="button" class="btn btn-danger" (click)="removeRow(variant.index)">X</button>
       </div>
       <div class="panel-body">
-        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" (onSelected)="variant.variant = $event"></filterable-search>
+        <filterable-search #VariantFilter [searchService]="dataEntryService" [placeholderString]="'Search Variants'" [(ngModel)]="variant.variant"></filterable-search>
       </div>
     </div>
 
@@ -118,6 +118,10 @@ export class DataEntryFormComponent implements OnInit {
 
           if (!results.data.entry) {
             return;
+          }
+
+          if (results.data.entry.length > 0) {
+            this.removeRow(0); // Start at the first index if we find other variants.
           }
 
           for (const result of results.data.entry) {

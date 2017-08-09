@@ -5,7 +5,7 @@
  * the options access can be delayed in asynchronous fashion.
  */
 
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, forwardRef, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -17,6 +17,15 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
+
+
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+
+export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => FilterableSearchComponent),
+  multi: true
+};
 
 /**
  * Ensure that all options have an accessible name.
@@ -112,26 +121,64 @@ export interface IFilterableSearchService {
       width: 100%;
     }
   `],
+  providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR]
 })
-export class FilterableSearchComponent implements OnInit, AfterViewInit {
+export class FilterableSearchComponent implements OnInit, AfterViewInit, ControlValueAccessor {
   constructor(myElement: ElementRef) {
     this.elementRef = myElement;
+  }
+  elementRef: ElementRef;
+
+  // The internal data model (for ngModel)
+  _currentlySelected: IFilterableSearchOption = null;
+  get currentlySelected(): any {
+    return this._currentlySelected;
+  }
+  set currentlySelected(v: any) {
+    console.log('Change value requested to filterable search');
+    if (v !== this.currentlySelected) {
+      this._currentlySelected = v;
+      this.onChangeCallback(v);
+    }
   }
 
   @Input() placeholderString: string;
   @Input() searchService: IFilterableSearchService; // Provide the component with the appropriate search service on instantiation.
 
-  @Output() onSelected: EventEmitter<IFilterableSearchOption> = new EventEmitter();
-
   @ViewChild('SearchBox') searchBox: any;
   @ViewChild('PopupToggle') popupToggle: any;
 
-  desiredPopupWidth: number; // Set via Angular
-  elementRef: ElementRef;
+  desiredPopupWidth: number; // Set in code and updated to DOM via Angular
   menuCurrentlyOpen = false; // Used to toggle between display and filter mode.
   searchTerms = new Subject<string>();
   options: Observable<IFilterableSearchOption[]>;
-  currentlySelected: IFilterableSearchOption = null;
+
+  // Set touched on blur
+  onBlur() {
+    this.onTouchedCallback();
+  }
+
+  // From ControlValueAccessor interface
+  writeValue(value: any) {
+    console.log('Writing value');
+    if (value !== this.currentlySelected) {
+      this.currentlySelected = value;
+    }
+  }
+
+  // Placeholders for the callbacks which are later providesd by the Control Value Accessor
+  private onTouchedCallback: () => void = () => {};
+  private onChangeCallback: (_: any) => void = () => {};
+
+  // From ControlValueAccessor interface
+  registerOnChange(fn: any) {
+    this.onChangeCallback = fn;
+  }
+
+  // From ControlValueAccessor interface
+  registerOnTouched(fn: any) {
+    this.onTouchedCallback = fn;
+  }
 
 
   // For when the user clicks outside of the dropdown.
@@ -176,7 +223,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.searchBox.nativeElement.focus(), 50);
   }
 
-
   ngAfterViewInit() {
     // Otherwise 'Expression changed after checked error'
     setTimeout(() => this.recalculatePopupWidth(), 50);
@@ -218,7 +264,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit {
   onSelection(option: IFilterableSearchOption): void {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
-    this.onSelected.emit(option);
     console.log('Got chosen', option);
   }
 
