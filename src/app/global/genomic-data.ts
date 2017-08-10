@@ -1,48 +1,5 @@
-import { IFilterableSearchOption } from '../data-entry/filterable-search/filterable-search.component';
-
-/**
- * Easier to figure out merging.
- */
-export interface IMergeable {
-  mergeable: (other: IMergeable) => boolean;
-  merge: (other: IMergeable) => void;
-}
-
-export const MergeProperties = (property1: any, property2: any): any => {
-  if (typeof property1 !== typeof property2) {
-    console.log(property1 + ' and ' + property2 + ' have a type mismatch, since ' + typeof property1 + ' is not ' + typeof property2);
-    return property1;
-  }
-
-  // Merge arrays.
-  if (property1 instanceof Array) {
-    const addToArray = (toAdd: any) => {
-      for (const value of mergedArray) {
-        if (value === toAdd) {
-          return;
-        }
-      }
-      mergedArray.push(toAdd);
-    };
-    const mergedArray = Array.from(property1);
-    for (const value of property2) {
-      addToArray(value);
-    }
-  }
-
-  if (property1) {
-    if (property2) {
-      if (property1 !== property1)  {
-        console.log('Conflicting values between ' + property1 + ' and ' + property2);
-      }
-      return property1;
-    } else {
-      return property1;
-    }
-  } else {
-    return property2;
-  }
-};
+import { IFilterableSearchOption } from "../data-entry/filterable-search/filterable-search.component";
+import {IMergeable, MergeProperties} from "./data-merging";
 
 /**
  * The gene class provides a quick and easy way to obtain gene names, various IDs, and so on from a
@@ -50,11 +7,8 @@ export const MergeProperties = (property1: any, property2: any): any => {
  * conversion.
  */
 export class Gene implements IMergeable {
-  constructor (_hugo_symbol: string, _name: string, _score: number, _entrez_id: number) {
+  constructor (_hugo_symbol: string) {
     this.hugo_symbol = _hugo_symbol;
-    this.name = _name;
-    this.score = _score;
-    this.entrez_id = _entrez_id;
   }
 
   // Class properties
@@ -64,7 +18,7 @@ export class Gene implements IMergeable {
   entrez_id: number;
 
   mergeable = (other: Gene) => {
-    if (this.hugo_symbol === '' || this.name === '') {
+    if (this.hugo_symbol === "" || this.name === "") {
       return false;
     }
     return this.hugo_symbol === other.hugo_symbol || this.name === other.name;
@@ -83,25 +37,16 @@ export class Gene implements IMergeable {
  * alongside the genes which they vary from.
  */
 export class Variant implements IFilterableSearchOption, IMergeable {
-  constructor(_origin: Gene, _variant_name: string, _hgvs_id: string, _score: number, _description: string, _somatic: boolean, _types: string[], _drugs: string[], _diseases: string[], _chromosome: string, _start: number, _end: number) {
+  constructor(_origin: Gene, _variant_name: string, _hgvs_id: string) {
     this.origin = _origin;
     this.variant_name = _variant_name;
     this.hgvs_id = _hgvs_id;
-    this.score = _score;
-    this.description = _description;
-    this.somatic = _somatic;
-    this.types = _types;
-    this.drugs = _drugs;
-    this.diseases = _diseases;
-    this.chromosome = _chromosome;
-    this.start = _start;
-    this.end = _end;
   }
 
   origin: Gene;
   variant_name: string;
   hgvs_id: string;
-  score: number;
+  score: number = 0;
   description: string;
   somatic: boolean;
   types: string[];
@@ -117,9 +62,8 @@ export class Variant implements IFilterableSearchOption, IMergeable {
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   merge = (other: Variant) => {
-    this.origin = MergeProperties(this.origin, other.origin);
+    this.origin.merge(other.origin);
     this.variant_name = MergeProperties(this.variant_name, other.variant_name);
-    this.hgvs_id = MergeProperties(this.hgvs_id, other.hgvs_id);
     this.score = MergeProperties(this.score, other.score);
     this.description = MergeProperties(this.description, other.description);
     this.somatic = MergeProperties(this.somatic, other.somatic);
@@ -132,10 +76,10 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   }
 
   optionName = () => {
-    return this.origin.hugo_symbol + ' ' + this.variant_name + ' ' + this.origin.entrez_id + ' ' + this.hgvs_id;
+    return this.origin.hugo_symbol + " " + this.variant_name + " " + this.origin.entrez_id + " " + this.hgvs_id;
   }
 
   getLocation = () => {
-    return this.chromosome + ', ' + (this.start !== this.end ? 'Nucleotides ' +  this.start + ' to ' + this.end : 'Nucleotide ' + this.start);
+    return this.chromosome + ", " + (this.start !== this.end ? "Nucleotides " +  this.start + " to " + this.end : "Nucleotide " + this.start);
   }
 }

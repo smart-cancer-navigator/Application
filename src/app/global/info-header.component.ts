@@ -5,12 +5,12 @@
  * data, and the user name.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { SMARTClient } from '../smart-initialization/smart-reference.service';
+import { Component, OnInit } from "@angular/core";
+import { SMARTClient } from "../smart-initialization/smart-reference.service";
 import {Http} from "@angular/http";
 
 @Component({
-  selector: 'info-header',
+  selector: "info-header",
   template: `
     <div class="root">
       <div style="float: left">
@@ -41,12 +41,12 @@ import {Http} from "@angular/http";
 export class InfoHeaderComponent implements OnInit {
   constructor (private http: Http) {}
 
-  patientData: string = '';
-  practitionerData: string = '';
+  patientData: string = "";
+  practitionerData: string = "";
 
   ngOnInit(): void {
-    this.patientData = 'Undefined';
-    this.practitionerData = 'Undefined';
+    this.patientData = "Undefined";
+    this.practitionerData = "Undefined";
 
     // Once set, the function will be called.
     SMARTClient.subscribe(smart => this.setHeaderData(smart));
@@ -57,18 +57,18 @@ export class InfoHeaderComponent implements OnInit {
       return;
     }
 
-    console.log('SMART Client', smartClient);
+    console.log("SMART Client", smartClient);
 
     smartClient.patient.read().then((p) => {
-      console.log('SMART Patient', p);
+      console.log("SMART Patient", p);
 
-      this.patientData = p.name[0].given[0] + ' ' + p.name[0].family;
+      this.patientData = p.name[0].given[0] + " " + p.name[0].family;
     });
 
     smartClient.user.read().then((u) => {
-      console.log('SMART User', u);
+      console.log("SMART User", u);
 
-      this.practitionerData = u.name[0].given[0] + ' ' + u.name[0].family;
+      this.practitionerData = u.name[0].given[0] + " " + u.name[0].family;
     });
   }
 }

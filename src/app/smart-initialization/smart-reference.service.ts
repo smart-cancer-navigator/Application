@@ -8,7 +8,7 @@
  * https://stackoverflow.com/questions/34714462/updating-variable-changes-in-components-from-a-service-with-angular2
  */
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 declare const FHIR: any;
 export const SMARTModule = FHIR;

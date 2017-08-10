@@ -4,29 +4,27 @@
  */
 
 // Modules required to access URL parameters.
-import { Router } from '@angular/router';
-import { OnInit, Component } from '@angular/core';
-import { SMARTReferenceService } from './smart-reference.service';
+import { Router } from "@angular/router";
+import { OnInit, Component } from "@angular/core";
+import { SMARTReferenceService } from "./smart-reference.service";
 
 @Component({
-  selector: 'smart-launch',
+  selector: "smart-launch",
   template: `
     <p>{{state}}</p>
   `
 })
 
 export class SMARTTokenReceptionComponent implements OnInit {
-  state = 'Receiving token...';
+  constructor(private smartReferenceService: SMARTReferenceService, private router: Router) {}
 
-  constructor(
-    private smartReferenceService: SMARTReferenceService,
-    private router: Router) {}
+  state = "Receiving token...";
 
   ngOnInit() {
     // Set up the client reference.
     this.smartReferenceService.ready();
 
     // Redirect to the disease selection.
-    setTimeout(() => this.router.navigate(['/data-entry']), 100);
+    setTimeout(() => this.router.navigate(["/data-entry"]), 100);
   }
 }

@@ -3,13 +3,13 @@
  * often is the best way to glean such information.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
-import { ClinicalTrialsService } from './clinical-trials.service';
-import { ClinicalTrialReference } from './clinical-trials';
-import { Variant } from '../../global/genomic-data';
+import { Component, Input, OnInit } from "@angular/core";
+import { ClinicalTrialsService } from "./clinical-trials.service";
+import { ClinicalTrialReference } from "./clinical-trials";
+import { Variant } from "../../global/genomic-data";
 
 @Component({
-  selector: 'clinical-trials',
+  selector: "clinical-trials",
   template: `    
     <table class="table table-hover table-bordered">
       <thead>
@@ -48,7 +48,7 @@ export class ClinicalTrialsComponent implements OnInit {
   clinicalTrials: ClinicalTrialReference[] = [];
 
   ngOnInit(): void {
-    console.log('Called');
+    console.log("Called");
     if (!this.forVariant) {
       return;
     }

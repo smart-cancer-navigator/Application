@@ -1,25 +1,25 @@
 /**
  * Since the amount of data that one would have to parse through in a dropdown list while dealing
  * with genomic data is far too vast to be encompassed in a single select field, the filterable search
- * box is a vastly preferable alternative.  What's nice about Angular is that - using Observables -
+ * box is a vastly preferable alternative.  What"s nice about Angular is that - using Observables -
  * the options access can be delayed in asynchronous fashion.
  */
 
-import { AfterViewInit, forwardRef, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, forwardRef, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from "@angular/core";
 
 // Observable class extensions
-import 'rxjs/add/observable/of';
+import "rxjs/add/observable/of";
 
 // Observable operators
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/switchMap';
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import "rxjs/add/operator/catch";
+import "rxjs/add/operator/debounceTime";
+import "rxjs/add/operator/distinctUntilChanged";
+import "rxjs/add/operator/switchMap";
 
 
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -43,7 +43,7 @@ export interface IFilterableSearchService {
 }
 
 @Component({
-  selector: 'filterable-search',
+  selector: "filterable-search",
   template: `
     <div #PopupToggle class="filterToggle" (click)="toggleMenu(true)" [style.border-bottom]="menuCurrentlyOpen ? '0' : '1px solid #dadada'">
       <img src="/assets/dropdown.svg"/>
@@ -129,38 +129,33 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
   }
   elementRef: ElementRef;
 
-  // The internal data model (for ngModel)
-  _currentlySelected: IFilterableSearchOption = null;
-  get currentlySelected(): any {
-    return this._currentlySelected;
-  }
-  set currentlySelected(v: any) {
-    console.log('Change value requested to filterable search');
-    if (v !== this.currentlySelected) {
-      this._currentlySelected = v;
-      this.onChangeCallback(v);
-    }
-  }
-
   @Input() placeholderString: string;
   @Input() searchService: IFilterableSearchService; // Provide the component with the appropriate search service on instantiation.
 
-  @ViewChild('SearchBox') searchBox: any;
-  @ViewChild('PopupToggle') popupToggle: any;
+  @ViewChild("SearchBox") searchBox: any;
+  @ViewChild("PopupToggle") popupToggle: any;
 
   desiredPopupWidth: number; // Set in code and updated to DOM via Angular
   menuCurrentlyOpen = false; // Used to toggle between display and filter mode.
   searchTerms = new Subject<string>();
   options: Observable<IFilterableSearchOption[]>;
 
-  // Set touched on blur
-  onBlur() {
-    this.onTouchedCallback();
+  // The internal data model (for ngModel)
+  _currentlySelected: IFilterableSearchOption = null;
+  get currentlySelected(): any {
+    return this._currentlySelected;
+  }
+  set currentlySelected(v: any) {
+    console.log("Change value requested to filterable search");
+    if (v !== this.currentlySelected) {
+      this._currentlySelected = v;
+      this.onChangeCallback(v);
+    }
   }
 
   // From ControlValueAccessor interface
   writeValue(value: any) {
-    console.log('Writing value');
+    console.log("Writing value");
     if (value !== this.currentlySelected) {
       this.currentlySelected = value;
     }
@@ -168,21 +163,17 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
 
   // Placeholders for the callbacks which are later providesd by the Control Value Accessor
   private onTouchedCallback: () => void = () => {};
+  registerOnTouched(fn: any) {
+    this.onTouchedCallback = fn;
+  }
   private onChangeCallback: (_: any) => void = () => {};
-
-  // From ControlValueAccessor interface
   registerOnChange(fn: any) {
     this.onChangeCallback = fn;
   }
 
-  // From ControlValueAccessor interface
-  registerOnTouched(fn: any) {
-    this.onTouchedCallback = fn;
-  }
-
 
   // For when the user clicks outside of the dropdown.
-  @HostListener('document:click', ['$event'])
+  @HostListener("document:click", ["$event"])
   handleClick(event) {
     let clickedComponent = event.target;
     let inside = false;
@@ -204,7 +195,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
    */
   toggleMenu (): void;
   toggleMenu (newState?: boolean): void {
-    if (newState && typeof newState === 'boolean') {
+    if (newState && typeof newState === "boolean") {
       if (this.menuCurrentlyOpen === newState) {
         return;
       }
@@ -219,16 +210,16 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
 
     this.recalculatePopupWidth();
 
-    // Doesn't work without timeout...
+    // Doesn"t work without timeout...
     setTimeout(() => this.searchBox.nativeElement.focus(), 50);
   }
 
   ngAfterViewInit() {
-    // Otherwise 'Expression changed after checked error'
+    // Otherwise "Expression changed after checked error"
     setTimeout(() => this.recalculatePopupWidth(), 50);
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize", ["$event"])
   onResize(event) {
     this.recalculatePopupWidth();
   }
@@ -255,7 +246,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
         : Observable.of<IFilterableSearchOption[]>([])) // or the observable of empty options if there was no search term
       .catch(error => {
         // TODO: add real error handling
-        console.log('Search Service Error', error);
+        console.log("Search Service Error", error);
         return Observable.of<IFilterableSearchOption[]>([]);
       });
   }
@@ -264,7 +255,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
   onSelection(option: IFilterableSearchOption): void {
     this.currentlySelected = option;
     this.menuCurrentlyOpen = false;
-    console.log('Got chosen', option);
+    console.log("Got chosen", option);
   }
 
   // Push a search term into the observable stream.

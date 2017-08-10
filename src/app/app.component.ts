@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   template: `
     <info-header></info-header>
     <div id="content">
@@ -23,7 +23,7 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class AppComponent implements OnInit {
-  title = 'SMART EHR Module (Angular)';
+  title = "SMART EHR Module (Angular)";
 
   ngOnInit(): void {
   }

@@ -1,15 +1,15 @@
 /**
  * Data entry is an essential part of the final application that will be built, and it must be built in
  * a way which permits dynamic addition and removal of form elements.  Since Angular makes modularity
- * insanely easy and you can build custom input selectors, this shouldn't require too much code.
+ * insanely easy and you can build custom input selectors, this shouldn"t require too much code.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { Variant } from '../global/genomic-data';
-import { Router } from '@angular/router';
-import { NgbTabsetConfig } from '@ng-bootstrap/ng-bootstrap';
-import { DataEntryService } from './data-entry.service';
-import { SMARTClient } from '../smart-initialization/smart-reference.service';
+import { Component, OnInit } from "@angular/core";
+import { Variant } from "../global/genomic-data";
+import { Router } from "@angular/router";
+import { NgbTabsetConfig } from "@ng-bootstrap/ng-bootstrap";
+import { DataEntryService } from "./data-entry.service";
+import { SMARTClient } from "../smart-initialization/smart-reference.service";
 
 export let USER_SELECTED_VARIANTS: Variant[] = [];
 
@@ -24,7 +24,7 @@ class VariantWrapper {
 }
 
 @Component({
-  selector: 'data-entry',
+  selector: "data-entry",
   template: `
     <!-- Gene Variation List -->
     <div *ngFor="let variant of variants" class="entryPanel">
@@ -39,7 +39,7 @@ class VariantWrapper {
 
     <!-- Finalize buttons -->
     <button (click)="addRow()" style="float: left;" type="button" class="btn btn-primary formButton">New Variant</button>
-    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I'm Done!
+    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I"m Done!
     </button>
   `,
   styles: [`    
@@ -110,11 +110,11 @@ export class DataEntryFormComponent implements OnInit {
         return;
       }
 
-      console.log('Should now update');
+      console.log("Should now update");
 
-      smartClient.patient.api.search({type: 'Observation', query: {'category': 'genomic-variant'}, count: 10})
+      smartClient.patient.api.search({type: "Observation", query: {"category": "genomic-variant"}, count: 10})
         .then(results => {
-          console.log('Successfully got variants!', results);
+          console.log("Successfully got variants!", results);
 
           if (!results.data.entry) {
             return;
@@ -125,21 +125,21 @@ export class DataEntryFormComponent implements OnInit {
           }
 
           for (const result of results.data.entry) {
-            console.log('Would now add ' + result.resource.code.text);
+            console.log("Would now add " + result.resource.code.text);
             this.dataEntryService.search(result.resource.code.text).subscribe(variants => {
               if (variants.length === 0) {
-                console.log('NOT GOOD: Couldn\'t find any search results for ' + result.resource.code.text);
+                console.log("NOT GOOD: Couldn\"t find any search results for " + result.resource.code.text);
                 return;
               }
 
               // Add the search result to the list.
-              console.log('Adding', variants[0]);
+              console.log("Adding", variants[0]);
               this.variants.push(new VariantWrapper(this.variants.length, variants[0]));
             });
           }
         })
         .fail(err => {
-          console.log('Couldn\'t query genomic variants error!' + err);
+          console.log("Couldn't query genomic variants error!" + err);
         });
     });
 
@@ -171,6 +171,6 @@ export class DataEntryFormComponent implements OnInit {
     }
     USER_SELECTED_VARIANTS = filteredVariants;
 
-    this.router.navigate(['/visualize-results']);
+    this.router.navigate(["/visualize-results"]);
   }
 }

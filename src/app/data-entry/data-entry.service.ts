@@ -1,20 +1,20 @@
 /**
  * Takes care of querying for variants.
  */
-import { IFilterableSearchService } from './filterable-search/filterable-search.component';
+import { IFilterableSearchService } from "./filterable-search/filterable-search.component";
 
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 // RxJS stuff.
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/forkJoin';
+import { Observable } from "rxjs/Observable";
+import "rxjs/add/operator/map";
+import "rxjs/add/observable/forkJoin";
 
 // Genomic data stuff.
-import { Variant } from '../global/genomic-data';
+import { Variant } from "../global/genomic-data";
 
 // Databases.
-import { MyVariantInfoSearchService } from './providers/myvariantinfo-search.service';
+import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.service";
 /**
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.
@@ -43,7 +43,7 @@ export class DataEntryService implements IFilterableSearchService {
             // Make sure that we are sorting alphabetically.
             if (mergedVariants[arrayIndex].mergeable(variant)) {
               mergedVariants[arrayIndex].merge(variant);
-              console.log('Merged ' + variant.optionName());
+              console.log("Merged " + variant.optionName());
               return;
             } else if (mergedVariants[arrayIndex].optionName() > variant.optionName()) {
               mergedVariants.splice(arrayIndex, 0, variant);
@@ -51,7 +51,7 @@ export class DataEntryService implements IFilterableSearchService {
             }
           }
 
-          // It must've not been pushed if we reach here.
+          // It must"ve not been pushed if we reach here.
           mergedVariants.push(variant);
         };
 
