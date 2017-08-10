@@ -39,7 +39,7 @@ class VariantWrapper {
 
     <!-- Finalize buttons -->
     <button (click)="addRow()" style="float: left;" type="button" class="btn btn-primary formButton">New Variant</button>
-    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I"m Done!
+    <button (click)="complete()" style="float: right" type="button" class="btn btn-success formButton">I'm Done!
     </button>
   `,
   styles: [`    
