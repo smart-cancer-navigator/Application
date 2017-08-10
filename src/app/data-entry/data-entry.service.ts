@@ -19,7 +19,7 @@ import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.ser
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.
  */
-export interface IDatabase {
+export interface IVariantDatabase {
   search: (searchTerm: string) => Observable<Variant[]>;
 }
 
@@ -28,7 +28,7 @@ export class DataEntryService implements IFilterableSearchService {
   constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
 
   // The databases initialized in the constructor.
-  variantDatabases: IDatabase[] = [this.myvariantinfoSearchService];
+  variantDatabases: IVariantDatabase[] = [this.myvariantinfoSearchService];
 
   // Merge all variant streams into a single one.
   public search = (term: string): Observable<Variant[]> => {

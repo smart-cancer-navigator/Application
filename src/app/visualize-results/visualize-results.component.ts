@@ -6,24 +6,25 @@ import { Component, OnInit } from "@angular/core";
 import { Variant } from "../global/genomic-data";
 import { USER_SELECTED_VARIANTS } from "../data-entry/data-entry.component";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
+import {Drug, DrugReference} from "./drugs/drug";
 
 @Component({
   selector: "visualize-results",
   template: `
     <h2 class="display-2">Results</h2>
     <ngb-accordion #acc="ngbAccordion">
-      <ngb-panel *ngFor="let variant of variants; let i = index;" title="{{variant.optionName()}}">
+      <ngb-panel *ngFor="let variant of variants" title="{{variant.optionName()}}">
         <ng-template ngbPanelContent>
-          <ngb-tabset [destroyOnHide]="false" >
+          <ngb-tabset [destroyOnHide]="false">
             <ngb-tab title="Gene">
               <ng-template ngbTabContent>
-                
+
                 <br>
                 <h3 class="display-3">
                   {{variant.origin.hugo_symbol}}
                   <small class="text-muted">{{variant.origin.name}}</small>
                 </h3>
-                
+
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
                   <thead>
@@ -31,19 +32,22 @@ import { SMARTClient } from "../smart-initialization/smart-reference.service";
                   <tbody>
                   <tr>
                     <td>Score</td>
-                    <td ngbPopover="Gene Score defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.origin.score}}</td>
+                    <td ngbPopover="Gene Score defines Pathogenicity." triggers="mouseenter:mouseleave">
+                      {{variant.origin.score}}
+                    </td>
                   </tr>
                   </tbody>
                 </table>
+
               </ng-template>
             </ngb-tab>
-            
+
             <ngb-tab title="Variant">
               <ng-template ngbTabContent>
-                
+
                 <br>
                 <h3 class="display-3">{{variant.variant_name}}</h3>
-                
+
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
                   <thead>
@@ -55,7 +59,9 @@ import { SMARTClient } from "../smart-initialization/smart-reference.service";
                   </tr>
                   <tr>
                     <td>Score</td>
-                    <td ngbPopover="Variant Score often defines Pathogenicity." triggers="mouseenter:mouseleave">{{variant.score}}</td>
+                    <td ngbPopover="Variant Score often defines Pathogenicity." triggers="mouseenter:mouseleave">
+                      {{variant.score}}
+                    </td>
                   </tr>
                   <tr>
                     <td>Variant Origin</td>
@@ -63,13 +69,15 @@ import { SMARTClient } from "../smart-initialization/smart-reference.service";
                   </tr>
                   <tr *ngIf="variant.types.length > 0">
                     <td>Variant Type</td>
-                    <td >{{variant.types.join(", ")}}</td>
+                    <td>{{variant.types.join(", ")}}</td>
                   </tr>
                   <tr *ngIf="variant.drugs.length > 0">
                     <td>Effective Drugs</td>
-                    <td>{{variant.drugs.join(", ")}}</td>
+                    <td>
+                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary" (click)="openNewDrugTab(drugReference)">{{drugReference.name}}</button>
+                    </td>
                   </tr>
-                  <tr  *ngIf="variant.diseases.length > 0" >
+                  <tr *ngIf="variant.diseases.length > 0">
                     <td>Known Diseases</td>
                     <td>{{variant.diseases.join(", ")}}</td>
                   </tr>
@@ -87,11 +95,18 @@ import { SMARTClient } from "../smart-initialization/smart-reference.service";
                 <clinical-trials [forVariant]="variant"></clinical-trials>
               </ng-template>
             </ngb-tab>
+
+            <ngb-tab *ngFor="let drugReference of detailedDrugInfoTabs" title="{{drugReference.brief_name()}}">
+              <ng-template ngbTabContent>
+                <drugs-info [forReference]="drugReference"></drugs-info>
+                <button type="button" class="btn btn-danger" (click)="closeDrugTab(drugReference)">Close Tab</button>
+              </ng-template>
+            </ngb-tab>
           </ngb-tabset>
         </ng-template>
       </ngb-panel>
     </ngb-accordion>
-    
+
     <button type="button" class="btn btn-success" style="float: right" (click)="saveVariantsToFHIRPatient()">{{submitStatus}}</button>
   `,
   styles: [`    
@@ -103,9 +118,17 @@ import { SMARTClient } from "../smart-initialization/smart-reference.service";
 export class VisualizeResultsComponent implements OnInit {
   variants: Variant[];
   submitStatus: string = "Submit Data to EHR";
+  detailedDrugInfoTabs: DrugReference[] = [];
 
   ngOnInit() {
     this.variants = USER_SELECTED_VARIANTS;
+  }
+
+  openNewDrugTab(drug: DrugReference) {
+    this.detailedDrugInfoTabs.push(drug);
+  }
+  closeDrugTab(drug: DrugReference) {
+    this.detailedDrugInfoTabs.splice(this.detailedDrugInfoTabs.indexOf(drug), 1);
   }
 
   saveVariantsToFHIRPatient() {

@@ -22,6 +22,7 @@ import { SMARTReferenceService } from "./smart-initialization/smart-reference.se
 import { MyVariantInfoSearchService } from "./data-entry/providers/myvariantinfo-search.service";
 import { ClinicalTrialsService } from "./visualize-results/clinical-trials/clinical-trials.service";
 import { DataEntryService } from "./data-entry/data-entry.service";
+import { DrugsSearchService } from "./visualize-results/drugs/drugs-search.service";
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { DataEntryService } from "./data-entry/data-entry.service";
     SMARTReferenceService,
     MyVariantInfoSearchService,
     ClinicalTrialsService,
-    DataEntryService
+    DataEntryService,
+    DrugsSearchService
   ],
   bootstrap: [
     AppComponent

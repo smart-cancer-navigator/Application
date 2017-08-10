@@ -2,9 +2,11 @@
  * MyVariant.info compiles variant database information from across the web and provides in an easy-to-query
  * online API.
  */
-import { IDatabase } from "../data-entry.service";
+import { IVariantDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
 import { Gene, Variant } from "../../global/genomic-data";
+import { DrugReference } from "../../visualize-results/drugs/drug";
+
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
 
@@ -92,7 +94,7 @@ class VariantSearchKeyword {
 }
 
 @Injectable()
-export class MyVariantInfoSearchService implements IDatabase {
+export class MyVariantInfoSearchService implements IVariantDatabase {
   constructor(private http: Http) {
     // Scrub the locations of all bracket indicators.
     for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
@@ -454,13 +456,16 @@ export class MyVariantInfoSearchService implements IDatabase {
 
             // Variant construction
             const newVariant = new Variant(variantGene, ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id);
-            newVariant.variant_name = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.VariantName, false)[0]);
             newVariant.description = mergePathsData(MY_VARIANT_LOCATIONS.Description, false)[0];
+            newVariant.score = hit._score;
             newVariant.somatic = mergePathsData(MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf("somatic") >= 0;
             newVariant.chromosome = mergePathsData(MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
             newVariant.start = Number(mergePathsData(MY_VARIANT_LOCATIONS.StartPos, false)[0]);
             newVariant.end = Number(mergePathsData(MY_VARIANT_LOCATIONS.EndPos, false)[0]);
-            newVariant.drugs = mergePathsData(MY_VARIANT_LOCATIONS.Drug, true);
+            newVariant.drugs = [];
+            for (const drugName of mergePathsData(MY_VARIANT_LOCATIONS.Drug, true)) {
+              newVariant.drugs.push(new DrugReference(drugName));
+            }
             newVariant.types = mergePathsData(MY_VARIANT_LOCATIONS.VariantTypes, true);
             newVariant.diseases = mergePathsData(MY_VARIANT_LOCATIONS.Disease, true);
             // Add variant to array.

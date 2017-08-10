@@ -1,5 +1,6 @@
 import { IFilterableSearchOption } from "../data-entry/filterable-search/filterable-search.component";
-import {IMergeable, MergeProperties} from "./data-merging";
+import { IMergeable, MergeProperties } from "./data-merging";
+import { DrugReference } from "../visualize-results/drugs/drug";
 
 /**
  * The gene class provides a quick and easy way to obtain gene names, various IDs, and so on from a
@@ -50,7 +51,7 @@ export class Variant implements IFilterableSearchOption, IMergeable {
   description: string;
   somatic: boolean;
   types: string[];
-  drugs: string[];
+  drugs: DrugReference[];
   diseases: string[];
   chromosome: string;
   start: number;
