@@ -13,7 +13,7 @@ import {DrugsSearchService} from "./drugs-search.service";
     <br>
     <h3 class="display-3">
       {{forReference.name}}
-      <small class="text-muted" *ngIf="drugModel !== undefined" >{{drugModel.source}}</small>
+      <small class="text-muted" *ngIf="drugModel !== undefined"></small>
     </h3>
 
     <!-- A bit of info about the drug -->
@@ -25,10 +25,29 @@ import {DrugsSearchService} from "./drugs-search.service";
         <td>Description</td>
         <td>{{drugModel.description}}</td>
       </tr>
-      <tr *ngIf="drugModel.geneTargets !== undefined && drugModel.geneTargets.length > 0">
-        <td>Gene Targets</td>
-        <td>{{drugModel.geneTargetsString()}}</td>
-      </tr>
+      <ng-container *ngIf="drugModel.interactions !== undefined && drugModel.interactions.length > 0">
+        <tr>
+          <td style="font-weight: bold;">Gene</td>
+          <td style="font-weight: bold;">Interaction Types</td>
+        </tr>
+        <tr *ngFor="let interaction of drugModel.interactions">
+          <td>{{interaction.geneTarget.hugo_symbol}}</td>
+          <td>
+            <table class="table table-bordered" *ngIf="interaction.interactionTypes !== undefined && interaction.interactionTypes.length > 0">
+              <thead>
+              <td>Interaction Type</td>
+              <td>Sources</td>
+              </thead>
+              <tbody>
+              <tr *ngFor="let interactionType of interaction.interactionTypes">
+                <td style="width: 20%">{{interactionType.name}}</td>
+                <td style="width: 80%" *ngIf="interactionType.sources !== undefined">{{interactionType.sources.join(', ')}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </ng-container>
       </tbody>
     </table>
   `,

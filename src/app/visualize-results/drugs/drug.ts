@@ -4,7 +4,7 @@
  */
 
 import { Gene } from "../../global/genomic-data";
-import {IMergeable, MergeProperties} from "../../global/data-merging";
+import { IMergeable, MergeProperties } from "../../global/data-merging";
 
 export class DrugReference {
   constructor (_name: string) {
@@ -18,16 +18,31 @@ export class DrugReference {
   }
 }
 
+export class InteractionType {
+  constructor (_name: string, _sources: string[]) {
+    this.name = _name;
+    this.sources = _sources;
+  }
+  name: string;
+  sources: string[];
+}
+
+export class GeneInteraction {
+  constructor (_geneTarget: Gene, _sourceClassifications: InteractionType[]) {
+    this.geneTarget = _geneTarget;
+    this.interactionTypes = _sourceClassifications;
+  }
+  geneTarget: Gene;
+  interactionTypes: InteractionType[];
+}
+
 export class Drug extends DrugReference implements IMergeable {
   constructor (_name: string) {
     super(_name);
   }
 
-  code: string;
-  geneTargets: Gene[];
   description: string;
-  source: string;
-  aliases: string[];
+  interactions: GeneInteraction[];
 
   mergeable = (other: Drug) => {
     return this.name === other.name;
@@ -35,19 +50,7 @@ export class Drug extends DrugReference implements IMergeable {
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   merge = (other: Drug) => {
-    this.code = MergeProperties(this.code, other.code);
-    this.geneTargets = MergeProperties(this.geneTargets, other.geneTargets);
-    this.description = MergeProperties(this.description, other.description);
-    this.source = MergeProperties(this.source, other.source);
-    this.aliases = MergeProperties(this.aliases, other.aliases);
-  }
-
-  geneTargetsString = (): string => {
-    let currentString = this.geneTargets[0].hugo_symbol;
-    for (let i = 1; i < this.geneTargets.length; i++) {
-      currentString = currentString + ", " + this.geneTargets[i].hugo_symbol;
-    }
-    return currentString;
+    this.interactions = MergeProperties(this.interactions, other.interactions);
   }
 }
 

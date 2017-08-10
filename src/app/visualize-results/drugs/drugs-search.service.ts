@@ -2,7 +2,7 @@
  * This service, like the data entry service, queries for and merges duplicate drugs for given genes.
  */
 
-import {Drug, DrugReference} from "./drug";
+import {Drug, DrugReference, InteractionType, GeneInteraction} from "./drug";
 import {Observable} from "rxjs/Observable";
 import {Http} from "@angular/http";
 import {Injectable} from "@angular/core";
@@ -23,20 +23,35 @@ export class DrugsSearchService {
           return;
         }
 
-        newDrug.geneTargets = [];
-        const geneAlreadyPresentInTargets = (gene: Gene): boolean => {
-          for (const geneTarget of newDrug.geneTargets) {
-            if (geneTarget.hugo_symbol === gene.hugo_symbol) {
-              return true;
+        newDrug.interactions = [];
+        const addInteractionType = (interaction: GeneInteraction, interactionTypeName: string, sourceName: string) => {
+          for (const interactionType of interaction.interactionTypes) {
+            if (interactionType.name === interactionTypeName) {
+              interactionType.sources.push(sourceName);
+              return;
             }
           }
-          return false;
+
+          // Add new interaction type if source not found.
+          interaction.interactionTypes.push(new InteractionType(interactionTypeName, [sourceName]));
         };
-        for (const interaction of resultJSON.matchedTerms[0].interactions) {
-          const newGene = new Gene(interaction.geneName);
-          if (!geneAlreadyPresentInTargets(newGene)) {
-            newDrug.geneTargets.push(newGene);
+        const addInteraction = (interactionData: any) => {
+          const currentGeneTarget: string = interactionData.geneName;
+          const currentInteractionType: string = interactionData.interactionType;
+          const currentSource: string = interactionData.source;
+          for (const interaction of newDrug.interactions) {
+            if (interaction.geneTarget.hugo_symbol === currentGeneTarget) {
+              console.log("Found mergeable");
+              addInteractionType(interaction, currentInteractionType, currentSource);
+              return;
+            }
           }
+
+          newDrug.interactions.push(new GeneInteraction(new Gene(currentGeneTarget), [new InteractionType(currentInteractionType, [currentSource])]));
+        };
+        console.log("Interaction JSON is ", resultJSON.matchedTerms[0].interactions);
+        for (const jsonInteraction of resultJSON.matchedTerms[0].interactions) {
+          addInteraction(jsonInteraction);
         }
 
         return newDrug;
