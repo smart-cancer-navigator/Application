@@ -155,7 +155,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
 
   // From ControlValueAccessor interface
   writeValue(value: any) {
-    console.log("Writing value");
     if (value !== this.currentlySelected) {
       this.currentlySelected = value;
     }

@@ -3,7 +3,7 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { Variant } from "../global/genomic-data";
+import {Gene, Variant} from "../global/genomic-data";
 import { USER_SELECTED_VARIANTS } from "../data-entry/data-entry.component";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
 import { DrugReference } from "./drugs/drug";
@@ -25,13 +25,31 @@ import { DrugReference } from "./drugs/drug";
                   <small class="text-muted">{{variant.origin.name}}</small>
                 </h3>
 
-                <!-- A bit of info about the variant/gene -->
-                <table class="table table-bordered table-striped">
-                  <thead>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
+                <div class="card" style="width: 70%; float: left;">
+                  <!--<img class="card-img-top" src="..." alt="Card image cap">-->
+                  <div class="card-block">
+                    <h4 class="card-title">Gene Description</h4>
+                    <p class="card-text">{{variant.origin.description}}</p>
+                  </div>
+                </div>
+
+                <div class="card" style="width: 30%; float: left;">
+                  <!--<img class="card-img-top" src="..." alt="Card image cap">-->
+                  <div class="card-block">
+                    <h4 class="card-title">Gene Details</h4>
+                    <!-- A bit of info about the variant/gene -->
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>Not filled</td>
+                        <td>in >:(</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
               </ng-template>
             </ngb-tab>
@@ -61,17 +79,17 @@ import { DrugReference } from "./drugs/drug";
                     <td>Variant Origin</td>
                     <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
                   </tr>
-                  <tr *ngIf="variant.types.length > 0">
+                  <tr *ngIf="variant.types && variant.types.length > 0">
                     <td>Variant Type</td>
                     <td>{{variant.types.join(", ")}}</td>
                   </tr>
-                  <tr *ngIf="variant.drugs.length > 0">
+                  <tr *ngIf="variant.drugs && variant.drugs.length > 0">
                     <td>Effective Drugs</td>
                     <td>
                       <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary" (click)="openNewDrugTab(drugReference)">{{drugReference.name}}</button>
                     </td>
                   </tr>
-                  <tr *ngIf="variant.diseases.length > 0">
+                  <tr *ngIf="variant.diseases && variant.diseases.length > 0">
                     <td>Known Diseases</td>
                     <td>{{variant.diseases.join(", ")}}</td>
                   </tr>
