@@ -30,12 +30,6 @@ import { DrugReference } from "./drugs/drug";
                   <thead>
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>Score</td>
-                    <td ngbPopover="Gene Score defines Pathogenicity." triggers="mouseenter:mouseleave">
-                      {{variant.origin.score}}
-                    </td>
-                  </tr>
                   </tbody>
                 </table>
 
