@@ -1,10 +1,10 @@
 /**
  * A reference to a given clinical trial, which carries an ID property used to obtain more information about it.
  */
-import { Drug } from "../drugs/drug";
+import { DrugReference } from "../drugs/drug";
 
 export class ClinicalTrialReference {
-  constructor(_nci_id: string, _phase: string, _brief_title: string, _drugs: Drug[], _principal_investigator: string) {
+  constructor(_nci_id: string, _phase: string, _brief_title: string, _drugs: DrugReference[], _principal_investigator: string) {
     this.nci_id = _nci_id;
     this.phase = _phase;
     this.brief_title = _brief_title;
@@ -15,7 +15,7 @@ export class ClinicalTrialReference {
   nci_id: string;
   phase: string;
   brief_title: string;
-  drugs: Drug[];
+  drugs: DrugReference[];
   principal_investigator: string;
 
   drugsToString = (): string => {

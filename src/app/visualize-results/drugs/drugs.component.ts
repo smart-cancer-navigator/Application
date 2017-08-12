@@ -3,9 +3,9 @@
  * or variants.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {Drug, DrugReference} from "./drug";
-import {DrugsSearchService} from "./drugs-search.service";
+import { Component, Input, OnInit } from "@angular/core";
+import { Drug, DrugReference } from "./drug";
+import { DrugsSearchService } from "./drugs-search.service";
 
 @Component({
   selector: "drugs-info",
@@ -31,9 +31,10 @@ import {DrugsSearchService} from "./drugs-search.service";
           <td style="font-weight: bold;">Interaction Types</td>
         </tr>
         <tr *ngFor="let interaction of drugModel.interactions">
-          <td>{{interaction.geneTarget.hugo_symbol}}</td>
+          <td>{{interaction.geneTarget.hugoSymbol}}</td>
           <td>
-            <table class="table table-bordered" *ngIf="interaction.interactionTypes !== undefined && interaction.interactionTypes.length > 0">
+            <table class="table table-bordered"
+                   *ngIf="interaction.interactionTypes !== undefined && interaction.interactionTypes.length > 0">
               <thead>
               <td>Interaction Type</td>
               <td>Sources</td>
@@ -41,7 +42,9 @@ import {DrugsSearchService} from "./drugs-search.service";
               <tbody>
               <tr *ngFor="let interactionType of interaction.interactionTypes">
                 <td style="width: 20%">{{interactionType.name}}</td>
-                <td style="width: 80%" *ngIf="interactionType.sources !== undefined">{{interactionType.sources.join(', ')}}</td>
+                <td style="width: 80%" *ngIf="interactionType.sources !== undefined">
+                  {{interactionType.sources.join(', ')}}
+                </td>
               </tr>
               </tbody>
             </table>

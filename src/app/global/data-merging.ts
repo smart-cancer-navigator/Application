@@ -1,5 +1,5 @@
 /**
- * Easier to figure out merging.
+ * These interfaces make it easier to ensure merging standards.
  */
 export interface IMergeable {
   mergeable: (other: IMergeable) => boolean;

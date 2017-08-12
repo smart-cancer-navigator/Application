@@ -3,24 +3,24 @@
  * a way which permits dynamic addition and removal of form elements.  Since Angular makes modularity
  * insanely easy and you can build custom input selectors, this shouldn"t require too much code.
  */
-
 import { Component, OnInit } from "@angular/core";
-import { Variant } from "../global/genomic-data";
+import {Variant, VariantReference} from "../global/genomic-data";
 import { Router } from "@angular/router";
 import { NgbTabsetConfig } from "@ng-bootstrap/ng-bootstrap";
 import { DataEntryService } from "./data-entry.service";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
+import { Observable } from "rxjs/Observable";
 
-export let USER_SELECTED_VARIANTS: Variant[] = [];
+export let USER_SELECTED_VARIANTS: Observable<Variant[]>;
 
 class VariantWrapper {
-  constructor(_index: number, _variant: Variant) {
+  constructor(_index: number, _variant: VariantReference) {
     this.index = _index;
     this.variant = _variant;
   }
 
   index: number;
-  variant: Variant;
+  variant: VariantReference;
 }
 
 @Component({
@@ -104,7 +104,9 @@ export class DataEntryFormComponent implements OnInit {
    * specifying this function, we prevent that from happening.
    */
   ngOnInit() {
-    // Query for existent genomic variants in the patient.
+    this.addRow();
+
+    // Query for existent genomic variants in the patient context.
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
         return;
@@ -128,7 +130,7 @@ export class DataEntryFormComponent implements OnInit {
             console.log("Would now add " + result.resource.code.text);
             this.dataEntryService.search(result.resource.code.text).subscribe(variants => {
               if (variants.length === 0) {
-                console.log("NOT GOOD: Couldn\"t find any search results for " + result.resource.code.text);
+                console.log("NOT GOOD: Couldn't find any search results for " + result.resource.code.text);
                 return;
               }
 
@@ -142,8 +144,6 @@ export class DataEntryFormComponent implements OnInit {
           console.log("Couldn't query genomic variants error!" + err);
         });
     });
-
-    this.addRow();
   }
 
   addRow() {
@@ -160,16 +160,18 @@ export class DataEntryFormComponent implements OnInit {
     }
   }
 
+  /**
+   * Compiles a list of variant objects created from the bookmarks made by the suggestions earlier.
+   */
   complete(): void {
-    const filteredVariants: Variant[] = [];
-
-    // Filter variants
+    console.log("Got completed, constructing variants from variant references");
+    const variantObservables: Observable<Variant>[] = [];
     for (const variantWrapper of this.variants) {
       if (variantWrapper.variant !== null) {
-        filteredVariants.push(variantWrapper.variant);
+        variantObservables.push(this.dataEntryService.getByReference(variantWrapper.variant));
       }
     }
-    USER_SELECTED_VARIANTS = filteredVariants;
+    USER_SELECTED_VARIANTS = Observable.forkJoin(variantObservables).map((variants: Variant[]) => variants);
 
     this.router.navigate(["/visualize-results"]);
   }

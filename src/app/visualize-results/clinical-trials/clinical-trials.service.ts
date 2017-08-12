@@ -7,7 +7,7 @@ import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
 import { ClinicalTrialReference, ClinicalTrial } from "./clinical-trials";
-import { Drug } from "../drugs/drug";
+import { Drug, DrugReference } from "../drugs/drug";
 
 /**
  * Based on the Angular and RxJS documentation, this is the best way to deal with sequential HTTP requests (those
@@ -37,13 +37,10 @@ export class ClinicalTrialsService {
     const clinicalTrialJSONtoReferences = (jsonObject: any): ClinicalTrialReference[] => {
       const references: ClinicalTrialReference[] = [];
       for (const trial of jsonObject.trials) {
-        const drugsArray: Drug[] = [];
+        const drugsArray: DrugReference[] = [];
         for (const intervention of trial.arms[0].interventions) {
           if (intervention.intervention_type === "Drug") {
-            const newDrug = new Drug(intervention.intervention_name);
-            newDrug.code = intervention.intervention_code;
-            newDrug.description = intervention.intervention_description;
-            newDrug.aliases = intervention.synonyms;
+            const newDrug = new DrugReference(intervention.intervention_name);
             drugsArray.push(newDrug);
           }
         }
@@ -65,7 +62,7 @@ export class ClinicalTrialsService {
 
     // 1. Query for variant name in the clinical trials database.
     return this.http
-      .get(this.queryEndpoint + "size=" + desiredTrials + "&_fulltext=" + encodeURIComponent(variant.variant_name) + includeString)
+      .get(this.queryEndpoint + "size=" + desiredTrials + "&_fulltext=" + encodeURIComponent(variant.variantName) + includeString)
       .mergeMap(result1 => {
         console.log("1. Got name query results:", result1);
 
@@ -76,7 +73,7 @@ export class ClinicalTrialsService {
 
           // 2. Query for the variant HGVS ID in the clinical trials database.
           return this.http
-            .get(this.queryEndpoint + "size=" + (desiredTrials - result1References.length) + "&_fulltext=" + variant.hgvs_id + includeString)
+            .get(this.queryEndpoint + "size=" + (desiredTrials - result1References.length) + "&_fulltext=" + variant.hgvsID + includeString)
             .map(result2 => {
               console.log("2. Got HGVS query results:", result2);
 
@@ -111,7 +108,7 @@ export class ClinicalTrialsService {
 
           // 2. Query for the variant HGVS ID in the clinical trials database.
           return this.http
-            .get(this.queryEndpoint + "size=" + (desiredTrials - result2References.length) + "&_fulltext=" + variant.origin.hugo_symbol + includeString)
+            .get(this.queryEndpoint + "size=" + (desiredTrials - result2References.length) + "&_fulltext=" + variant.origin.hugoSymbol + includeString)
             .map(result3 => {
               console.log("3. Got HUGO query results:", result3);
 

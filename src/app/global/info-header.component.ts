@@ -4,10 +4,9 @@
  * The three components of this header, from left to right, should be the SMART logo, the patient
  * data, and the user name.
  */
-
 import { Component, OnInit } from "@angular/core";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
-import {Http} from "@angular/http";
+import { Http } from "@angular/http";
 
 @Component({
   selector: "info-header",

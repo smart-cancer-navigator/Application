@@ -6,7 +6,7 @@ import { Component, OnInit } from "@angular/core";
 import { Variant } from "../global/genomic-data";
 import { USER_SELECTED_VARIANTS } from "../data-entry/data-entry.component";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
-import {Drug, DrugReference} from "./drugs/drug";
+import { DrugReference } from "./drugs/drug";
 
 @Component({
   selector: "visualize-results",
@@ -21,7 +21,7 @@ import {Drug, DrugReference} from "./drugs/drug";
 
                 <br>
                 <h3 class="display-3">
-                  {{variant.origin.hugo_symbol}}
+                  {{variant.origin.hugoSymbol}}
                   <small class="text-muted">{{variant.origin.name}}</small>
                 </h3>
 
@@ -46,7 +46,7 @@ import {Drug, DrugReference} from "./drugs/drug";
               <ng-template ngbTabContent>
 
                 <br>
-                <h3 class="display-3">{{variant.variant_name}}</h3>
+                <h3 class="display-3">{{variant.variantName}}</h3>
 
                 <!-- A bit of info about the variant/gene -->
                 <table class="table table-bordered table-striped">
@@ -116,12 +116,15 @@ import {Drug, DrugReference} from "./drugs/drug";
   `]
 })
 export class VisualizeResultsComponent implements OnInit {
-  variants: Variant[];
+  variants: Variant[] = [];
   submitStatus: string = "Submit Data to EHR";
   detailedDrugInfoTabs: DrugReference[] = [];
 
   ngOnInit() {
-    this.variants = USER_SELECTED_VARIANTS;
+    if (!USER_SELECTED_VARIANTS) {
+      return;
+    }
+    USER_SELECTED_VARIANTS.subscribe(variants => this.variants = variants);
   }
 
   openNewDrugTab(drug: DrugReference) {
@@ -133,7 +136,7 @@ export class VisualizeResultsComponent implements OnInit {
 
   saveVariantsToFHIRPatient() {
     if (!(this.variants && this.variants.length > 0)) {
-      console.log("Can\"t save an empty array of variants :P");
+      console.log("Can't save an empty array of variants :P");
       return;
     }
 
@@ -143,7 +146,7 @@ export class VisualizeResultsComponent implements OnInit {
           const dataToTransmit = {
             "resource": {
               "resourceType": "Observation",
-              "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.hgvs_id.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
+              "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
               "meta": {
                 "versionId": "1" // ,
                 // "lastUpdated": Date.now().toString()
@@ -169,11 +172,11 @@ export class VisualizeResultsComponent implements OnInit {
                 "coding": [
                   {
                     "system": "http://www.hgvs.org",
-                    "code": variant.hgvs_id,
-                    "display": variant.hgvs_id
+                    "code": variant.hgvsID,
+                    "display": variant.hgvsID
                   }
                 ],
-                "text": variant.hgvs_id
+                "text": variant.hgvsID
               },
               "subject": {
                 "reference": "Patient/" + p.id

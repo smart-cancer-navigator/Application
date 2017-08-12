@@ -4,7 +4,7 @@
  */
 import { IVariantDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
-import { Gene, Variant } from "../../global/genomic-data";
+import {Gene, GeneReference, Variant, VariantReference} from "../../global/genomic-data";
 import { DrugReference } from "../../visualize-results/drugs/drug";
 
 import { Http } from "@angular/http";
@@ -38,7 +38,7 @@ const MY_VARIANT_LOCATIONS = {
     */
   ],
   "EntrezID": [
-    "civic.entrez_id",
+    "civic.entrezID",
     "clinvar.gene.id"
   ],
   "Drug": [
@@ -71,6 +71,9 @@ const MY_VARIANT_LOCATIONS = {
   "VariantTypes": [
     "civic.variant_types.display_name",
     "civic.variant_types[].display_name"
+  ],
+  "HGVSID": [
+    "_id"
   ]
 };
 
@@ -116,22 +119,32 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     }
 
     // Add all values of the MY_VARIANT_LOCATIONS array to the include string.
-    let currentString: string = "";
     for (const key of Object.keys(this.scrubbedLocations)) {
       for (const location of this.scrubbedLocations[key]) {
-        currentString = currentString + location + ",";
+        this.allFieldsIncludeString = this.allFieldsIncludeString + location + ",";
       }
     }
     // Remove the final comma.
-    this.includeString = currentString.substring(0, currentString.length - 1);
+    this.allFieldsIncludeString = this.allFieldsIncludeString.substring(0, this.allFieldsIncludeString.length - 1);
+
+    // Add fields required for references to reference include string.
+    for (const key of ["GeneHUGO", "VariantName", "EntrezID"]) {
+      for (const location of this.scrubbedLocations[key]) {
+        this.referenceFieldsIncludeString = this.referenceFieldsIncludeString + location + ",";
+      }
+    }
+    // Remove the final comma.
+    this.referenceFieldsIncludeString = this.referenceFieldsIncludeString.substring(0, this.allFieldsIncludeString.length - 1);
   }
 
   // Create these in the constructor so that we don"t constantly re-create them.
-  includeString: string = "";
+  allFieldsIncludeString: string = "";
+  referenceFieldsIncludeString: string = "";
+
   scrubbedLocations: any = {};
   queryEndpoint: string = "http://myvariant.info/v1/query?q=";
   currentKeywords: VariantSearchKeyword[] = [];
-  lastSuggestionSet: Observable<Variant[]> = Observable.of<Variant[]>([]);
+  lastSuggestionSet: Observable<VariantReference[]> = Observable.of<VariantReference[]>([]);
 
   /**
    * Allows users to pass the string "civic.evidence_items[0].display_name" and this method to interpret it.
@@ -139,8 +152,8 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
    * If the user passes civic.evidence_items[].display_name, they want a string array of all display_names.
    * If the user passes civic.evidence_items[0].display_name, they want a single string.
    */
-  private navigateToPath(inJSON: any, path: string): any {
-    let current = inJSON;
+  private navigateToPath(jsonTarget: any, path: string): any {
+    let current = jsonTarget;
     for (const key of path.split(".")) {
       if (current instanceof Array) {
         return null;
@@ -152,13 +165,13 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     }
     return current;
   }
-  private parseLocationPath(jsonToSearch: any, path: string): string | string[] {
+  private parseLocationPath(jsonTarget: any, path: string): string | string[] {
     // Figure out whether the user added any [] in.
     if (path.indexOf("[") >= 0 && path.indexOf("]") >= 0) {
       // Figure out the array stuff.
       const prePath = path.substring(0, path.indexOf("["));
       // Navigate to prePath.
-      const current = this.navigateToPath(jsonToSearch, prePath);
+      const current = this.navigateToPath(jsonTarget, prePath);
 
       if (!(current instanceof Array)) {
         return null;
@@ -197,8 +210,50 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
         return this.parseLocationPath(current[index], postPath);
       }
     } else {
-      return this.navigateToPath(jsonToSearch, path);
+      return this.navigateToPath(jsonTarget, path);
     }
+  }
+  // Looks at all paths and merges the data provided in each one to form a single variant.
+  private mergePathsData(jsonTarget: any, potentialHeaders: string[], searchAll: boolean): string[] {
+    let compilation: string[] = [];
+    for (const potentialHeader of potentialHeaders) {
+      const potentialValue = this.parseLocationPath(jsonTarget, potentialHeader);
+      if (potentialValue !== null) {
+        if (potentialValue instanceof Array) {
+          for (const subValue of potentialValue) {
+            compilation.push(subValue);
+          }
+        } else {
+          compilation.push(potentialValue);
+        }
+        if (!searchAll) {
+          break;
+        }
+      }
+    }
+
+    // Don"t search for duplicates if there"s only one value!
+    if (searchAll) {
+      // Remove duplicates from array (thanks StackOverflow!)
+      compilation = compilation.reduce(function(p, c, i, a){
+        if (p.indexOf(c) === -1) {
+          p.push(c);
+        } else {
+          p.push("");
+        }
+        return p;
+      }, []);
+      // Remove all empty strings from array.
+      compilation = compilation.filter(function (filterItem) {
+        return filterItem !== "";
+      });
+    }
+
+    if (compilation.length === 0 && !searchAll) {
+      compilation.push(""); // Empty string so that errors aren"t thrown.
+    }
+
+    return compilation;
   }
 
   /**
@@ -226,7 +281,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
    * @param {string} searchTerm
    * @returns {Observable<Variant[]>}
    */
-  public search = (searchTerm: string): Observable<Variant[]> => {
+  public searchByString = (searchTerm: string): Observable<VariantReference[]> => {
     // Get new keywords.
     const newKeywords: string[] = searchTerm.split(" ");
 
@@ -330,7 +385,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       }
     }
 
-    const getVariantArrayObservable = (): Observable<Variant[]> => {
+    const getVariantArrayObservable = (): Observable<VariantReference[]> => {
       console.log("Creating final observable with keywords", this.currentKeywords);
       // Apply keywords to query.
       let finalQuery = this.queryEndpoint;
@@ -347,7 +402,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
             arrayToUse = this.scrubbedLocations.VariantName;
             break;
           case KeywordPurpose.HGVS_ID:
-            arrayToUse = ["_id"];
+            arrayToUse = this.scrubbedLocations.HGVSID;
             break;
           case KeywordPurpose.ENTREZ_ID:
             arrayToUse = this.scrubbedLocations.EntrezID;
@@ -365,7 +420,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       }
 
       // Add suffix.
-      finalQuery = finalQuery + "&fields=" + this.includeString + "&size=15";
+      finalQuery = finalQuery + "&fields=" + this.referenceFieldsIncludeString + "&size=15";
 
       return this.http.get(finalQuery)
         .map(result => {
@@ -377,99 +432,21 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
           }
 
           // Used to check whether a given property exists in the mapped JSON.
-          const variantResults: Variant[] = [];
+          const variantResults: VariantReference[] = [];
+
           // For every result.
           for (const hit of mappedJSON.hits) {
-            // Looks at all paths and merges the data provided in each one to form a single variant.
-            const mergePathsData = (potentialHeaders: string[], searchAll: boolean): string[] => {
-              let compilation: string[] = [];
-              for (const potentialHeader of potentialHeaders) {
-                const potentialValue = this.parseLocationPath(hit, potentialHeader);
-                if (potentialValue !== null) {
-                  if (potentialValue instanceof Array) {
-                    for (const subValue of potentialValue) {
-                      compilation.push(subValue);
-                    }
-                  } else {
-                    compilation.push(potentialValue);
-                  }
-                  if (!searchAll) {
-                    break;
-                  }
-                }
-              }
-
-              // Don"t search for duplicates if there"s only one value!
-              if (searchAll) {
-                // Remove duplicates from array (thanks StackOverflow!)
-                compilation = compilation.reduce(function(p, c, i, a){
-                  if (p.indexOf(c) === -1) {
-                    p.push(c);
-                  } else {
-                    p.push("");
-                  }
-                  return p;
-                }, []);
-                // Remove all empty strings from array.
-                compilation = compilation.filter(function (filterItem) {
-                  return filterItem !== "";
-                });
-              }
-
-              if (compilation.length === 0 && !searchAll) {
-                compilation.push(""); // Empty string so that errors aren"t thrown.
-              }
-
-              return compilation;
-            };
-
             // Since names, HUGO symbols, and such shouldn"t include spaces.
             const ensureValidString = (someString: string): string => {
               return someString.indexOf(" ") >= 0 ? someString.substring(0, someString.indexOf(" ")) : someString;
             };
 
             // Gene construction.
-            const geneHUGO: string = ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]);
-            const geneEntrez: number = Number(mergePathsData(MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
-            const variantGene = new Gene(geneHUGO);
-            variantGene.entrez_id = geneEntrez;
-
-            // Query for gene name.
-            this.http.get("http://mygene.info/v3/query?q=symbol:" + variantGene.hugo_symbol + "%20AND%20_id:" + variantGene.entrez_id + "&fields=name,_score&size=1")
-              .map(response => {
-                const responseJSON = response.json();
-
-                if (!responseJSON.hits || responseJSON.hits.length === 0) {
-                  return {};
-                }
-
-                return {
-                  "name": responseJSON.hits[0].name,
-                  "score": responseJSON.hits[0]._score
-                };
-              })
-              .subscribe(queryResults => {
-                // Change by property instead of whole object because otherwise changes don"t propagate.
-                variantGene.score = queryResults["score"] ? queryResults["score"] : 1;
-                variantGene.name = queryResults["name"] ? queryResults["name"] : 1;
-              });
+            const variantGene = new GeneReference(ensureValidString(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]));
+            variantGene.entrezID = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
 
             // Variant construction
-            const newVariant = new Variant(variantGene, ensureValidString(mergePathsData(MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id);
-            newVariant.description = mergePathsData(MY_VARIANT_LOCATIONS.Description, false)[0];
-            newVariant.score = hit._score;
-            newVariant.somatic = mergePathsData(MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf("somatic") >= 0;
-            newVariant.chromosome = mergePathsData(MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
-            newVariant.start = Number(mergePathsData(MY_VARIANT_LOCATIONS.StartPos, false)[0]);
-            newVariant.end = Number(mergePathsData(MY_VARIANT_LOCATIONS.EndPos, false)[0]);
-            newVariant.drugs = [];
-            for (const drugName of mergePathsData(MY_VARIANT_LOCATIONS.Drug, true)) {
-              newVariant.drugs.push(new DrugReference(drugName));
-            }
-            newVariant.types = mergePathsData(MY_VARIANT_LOCATIONS.VariantTypes, true);
-            newVariant.diseases = mergePathsData(MY_VARIANT_LOCATIONS.Disease, true);
-            // Add variant to array.
-            variantResults.push(newVariant);
+            variantResults.push(new VariantReference(variantGene, ensureValidString(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id));
           }
 
           return variantResults;
@@ -488,5 +465,93 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       this.lastSuggestionSet = getVariantArrayObservable();
       return this.lastSuggestionSet;
     }
+  }
+
+  getByReference = (reference: VariantReference): Observable<Variant> => {
+    console.log("Creating final observable with keywords", this.currentKeywords);
+
+    // Apply key fields to query.
+    let queryConstruct = this.queryEndpoint;
+    let alreadyAdded = 0;
+    const addORConstructToQuery = (orConstruct: string) => {
+      if (alreadyAdded > 0) {
+        queryConstruct = queryConstruct + "%20OR%20(";
+      } else {
+        queryConstruct = queryConstruct + "(";
+      }
+      queryConstruct = queryConstruct + orConstruct + ")";
+      alreadyAdded++;
+    };
+    if (reference.origin) {
+      if (reference.origin.hugoSymbol && reference.origin.hugoSymbol !== "") {
+        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, reference.origin.hugoSymbol));
+      }
+      if (reference.origin.entrezID && reference.origin.entrezID !== -1) {
+        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.EntrezID, reference.origin.entrezID.toString()));
+      }
+    }
+
+    if (reference.hgvsID && reference.hgvsID !== "") {
+      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.HGVSID, reference.hgvsID));
+    }
+    if (reference.variantName && reference.variantName !== "") {
+      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.VariantName, reference.variantName));
+    }
+    // Add suffix.
+    queryConstruct = queryConstruct + "&fields=" + this.allFieldsIncludeString + "&size=15";
+
+    return this.http.get(queryConstruct)
+      .map(result => {
+        const mappedJSON = result.json();
+
+        console.log("Final Query result from " + queryConstruct, mappedJSON);
+        if (!mappedJSON.hits) {
+          return null;
+        }
+
+        // For every result.
+        if (!(mappedJSON.hits && mappedJSON.hits.length > 0)) {
+          return null;
+        }
+
+        const hit = mappedJSON.hits[0];
+
+        // Since names, HUGO symbols, and such shouldn"t include spaces.
+        const ensureValidString = (someString: string): string => {
+          return someString.indexOf(" ") >= 0 ? someString.substring(0, someString.indexOf(" ")) : someString;
+        };
+
+        // Gene construction.
+        const newVariant: Variant = Variant.fromReference(reference);
+
+        newVariant.description = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Description, false)[0];
+        newVariant.score = hit._score;
+        newVariant.somatic = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf("somatic") >= 0;
+        newVariant.chromosome = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
+        newVariant.start = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.StartPos, false)[0]);
+        newVariant.end = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.EndPos, false)[0]);
+        newVariant.drugs = [];
+        for (const drugName of this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Drug, true)) {
+          newVariant.drugs.push(new DrugReference(drugName));
+        }
+        newVariant.types = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantTypes, true);
+        newVariant.diseases = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Disease, true);
+
+        // Query for gene name.
+        this.http.get("http://mygene.info/v3/query?q=symbol:" + newVariant.origin.hugoSymbol + "%20AND%20_id:" + newVariant.origin.entrezID + "&fields=name,_score&size=1")
+          .map(response => {
+            const responseJSON = response.json();
+            if (!responseJSON.hits || responseJSON.hits.length === 0) {
+              return "";
+            }
+            return responseJSON.hits[0].name;
+          })
+          .subscribe((geneName: string) => {
+            // Change by property instead of whole object because otherwise changes don"t propagate.
+            newVariant.origin.name = geneName;
+          });
+
+        return newVariant;
+      });
   }
 }

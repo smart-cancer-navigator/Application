@@ -2,11 +2,11 @@
  * This service, like the data entry service, queries for and merges duplicate drugs for given genes.
  */
 
-import {Drug, DrugReference, InteractionType, GeneInteraction} from "./drug";
-import {Observable} from "rxjs/Observable";
-import {Http} from "@angular/http";
-import {Injectable} from "@angular/core";
-import {Gene} from "../../global/genomic-data";
+import { Drug, DrugReference, InteractionType, GeneInteraction } from "./drug";
+import { Observable } from "rxjs/Observable";
+import { Http } from "@angular/http";
+import { Injectable } from "@angular/core";
+import { Gene } from "../../global/genomic-data";
 
 @Injectable()
 export class DrugsSearchService {
@@ -40,7 +40,7 @@ export class DrugsSearchService {
           const currentInteractionType: string = interactionData.interactionType;
           const currentSource: string = interactionData.source;
           for (const interaction of newDrug.interactions) {
-            if (interaction.geneTarget.hugo_symbol === currentGeneTarget) {
+            if (interaction.geneTarget.hugoSymbol === currentGeneTarget) {
               console.log("Found mergeable");
               addInteractionType(interaction, currentInteractionType, currentSource);
               return;

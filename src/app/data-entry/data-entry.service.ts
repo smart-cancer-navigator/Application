@@ -2,7 +2,6 @@
  * Takes care of querying for variants.
  */
 import { IFilterableSearchService } from "./filterable-search/filterable-search.component";
-
 import { Injectable } from "@angular/core";
 
 // RxJS stuff.
@@ -11,7 +10,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/observable/forkJoin";
 
 // Genomic data stuff.
-import { Variant } from "../global/genomic-data";
+import {Variant, VariantReference} from "../global/genomic-data";
 
 // Databases.
 import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.service";
@@ -20,7 +19,8 @@ import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.ser
  * results.
  */
 export interface IVariantDatabase {
-  search: (searchTerm: string) => Observable<Variant[]>;
+  searchByString: (searchTerm: string) => Observable<VariantReference[]>;
+  getByReference: (reference: VariantReference) => Observable <Variant>;
 }
 
 @Injectable()
@@ -31,14 +31,14 @@ export class DataEntryService implements IFilterableSearchService {
   variantDatabases: IVariantDatabase[] = [this.myvariantinfoSearchService];
 
   // Merge all variant streams into a single one.
-  public search = (term: string): Observable<Variant[]> => {
+  public search = (term: string): Observable<VariantReference[]> => {
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDatabases
-      .map(searchService => searchService.search(term))
-    ).map((variantArrays: Variant[][]) => {
-        const mergedVariants: Variant[] = [];
+      .map(searchService => searchService.searchByString(term))
+    ).map((variantArrays: VariantReference[][]) => {
+        const mergedVariants: VariantReference[] = [];
 
-        const addVariant = (variant: Variant) => {
+        const addVariant = (variant: VariantReference) => {
           for (let arrayIndex = 0; arrayIndex < mergedVariants.length; arrayIndex++) {
             // Make sure that we are sorting alphabetically.
             if (mergedVariants[arrayIndex].mergeable(variant)) {
@@ -61,7 +61,27 @@ export class DataEntryService implements IFilterableSearchService {
             addVariant(variant);
           }
         }
+        console.log("Got in response to " + term, mergedVariants);
         return mergedVariants;
+      }
+    );
+  }
+
+  // Merge all variant streams into a single one.
+  public getByReference = (reference: VariantReference): Observable<Variant> => {
+    // map them into a array of observables and forkJoin
+    return Observable.forkJoin(this.variantDatabases
+      .map(searchService => searchService.getByReference(reference))
+    ).map((variantArray: Variant[]) => {
+        const mergedVariant: Variant = variantArray[0];
+        for (let i = 1; i < variantArray.length; i++) {
+          if (mergedVariant.mergeable(variantArray[i])) {
+            mergedVariant.merge(variantArray[i]);
+          }
+        }
+        console.log("Got in response to ", reference);
+        console.log("...", mergedVariant);
+        return mergedVariant;
       }
     );
   }
