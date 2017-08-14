@@ -33,6 +33,7 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
 
         variant.origin.name = responseJSON.name;
         variant.origin.description = responseJSON.summary;
+        variant.origin.proteinCoding = responseJSON.type_of_gene;
 
         return variant;
       });

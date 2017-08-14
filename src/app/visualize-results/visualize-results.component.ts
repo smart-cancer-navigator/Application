@@ -46,6 +46,10 @@ import { DrugReference } from "./drugs/drug";
                         <td>Entrez ID</td>
                         <td>{{variant.origin.entrezID}}</td>
                       </tr>
+                      <tr *ngIf="variant.origin.proteinCoding !== undefined">
+                        <td>Type</td>
+                        <td>{{variant.origin.proteinCoding}}</td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
