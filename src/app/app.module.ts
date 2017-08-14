@@ -23,6 +23,7 @@ import { MyVariantInfoSearchService } from "./data-entry/providers/myvariantinfo
 import { ClinicalTrialsService } from "./visualize-results/clinical-trials/clinical-trials.service";
 import { DataEntryService } from "./data-entry/data-entry.service";
 import { DrugsSearchService } from "./visualize-results/drugs/drugs-search.service";
+import { MyGeneInfoSearchService } from "./data-entry/providers/mygeneinfo-search.service";
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { DrugsSearchService } from "./visualize-results/drugs/drugs-search.servi
   providers: [
     SMARTReferenceService,
     MyVariantInfoSearchService,
+    MyGeneInfoSearchService,
     ClinicalTrialsService,
     DataEntryService,
     DrugsSearchService

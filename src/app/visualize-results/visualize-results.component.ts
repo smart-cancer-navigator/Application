@@ -38,13 +38,13 @@ import { DrugReference } from "./drugs/drug";
                   <div class="card-block">
                     <h4 class="card-title">Gene Details</h4>
                     <!-- A bit of info about the variant/gene -->
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered">
                       <thead>
                       </thead>
                       <tbody>
-                      <tr>
-                        <td>Not filled</td>
-                        <td>in >:(</td>
+                      <tr *ngIf="variant.origin.entrezID !== undefined">
+                        <td>Entrez ID</td>
+                        <td>{{variant.origin.entrezID}}</td>
                       </tr>
                       </tbody>
                     </table>

@@ -14,6 +14,7 @@ import {Variant, VariantReference} from "../global/genomic-data";
 
 // Databases.
 import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.service";
+import {MyGeneInfoSearchService} from "./providers/mygeneinfo-search.service";
 /**
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.
@@ -23,12 +24,17 @@ export interface IVariantDatabase {
   getByReference: (reference: VariantReference) => Observable <Variant>;
 }
 
+export interface IGeneDatabase {
+  updateVariantOrigin: (variant: Variant) => Observable <Variant>;
+}
+
 @Injectable()
 export class DataEntryService implements IFilterableSearchService {
-  constructor(private myvariantinfoSearchService: MyVariantInfoSearchService) {}
+  constructor(private myvariantinfoSearchService: MyVariantInfoSearchService, private mygeneinfoSearchService: MyGeneInfoSearchService) {}
 
   // The databases initialized in the constructor.
   variantDatabases: IVariantDatabase[] = [this.myvariantinfoSearchService];
+  geneDatabases: IGeneDatabase[] = [this.mygeneinfoSearchService];
 
   // Merge all variant streams into a single one.
   public search = (term: string): Observable<VariantReference[]> => {
@@ -70,6 +76,7 @@ export class DataEntryService implements IFilterableSearchService {
   // Merge all variant streams into a single one.
   public getByReference = (reference: VariantReference): Observable<Variant> => {
     // map them into a array of observables and forkJoin
+    console.log("Asked to get variant from ", reference);
     return Observable.forkJoin(this.variantDatabases
       .map(searchService => searchService.getByReference(reference))
     ).map((variantArray: Variant[]) => {
@@ -79,10 +86,22 @@ export class DataEntryService implements IFilterableSearchService {
             mergedVariant.merge(variantArray[i]);
           }
         }
-        console.log("Got in response to ", reference);
-        console.log("...", mergedVariant);
+        console.log("Got ", mergedVariant);
         return mergedVariant;
       }
-    );
+    ).mergeMap(variant => {
+      return Observable.forkJoin(this.geneDatabases
+        .map(geneService => geneService.updateVariantOrigin(variant))
+      ).map((updatedVariants: Variant[]) => {
+        const mergedVariant: Variant = updatedVariants[0];
+        for (let i = 1; i < updatedVariants.length; i++) {
+          if (mergedVariant.mergeable(updatedVariants[i])) {
+            mergedVariant.merge(updatedVariants[i]);
+          }
+        }
+        console.log("Updated origin to ", mergedVariant);
+        return mergedVariant;
+      });
+    });
   }
 }

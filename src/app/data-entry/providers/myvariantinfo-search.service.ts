@@ -537,20 +537,6 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
         newVariant.types = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantTypes, true);
         newVariant.diseases = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Disease, true);
 
-        // Query for gene name.
-        this.http.get("http://mygene.info/v3/query?q=symbol:" + newVariant.origin.hugoSymbol + "%20AND%20_id:" + newVariant.origin.entrezID + "&fields=name,_score&size=1")
-          .map(response => {
-            const responseJSON = response.json();
-            if (!responseJSON.hits || responseJSON.hits.length === 0) {
-              return "";
-            }
-            return responseJSON.hits[0].name;
-          })
-          .subscribe((geneName: string) => {
-            // Change by property instead of whole object because otherwise changes don"t propagate.
-            newVariant.origin.name = geneName;
-          });
-
         return newVariant;
       });
   }
