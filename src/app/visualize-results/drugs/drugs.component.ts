@@ -33,8 +33,7 @@ import { DrugsSearchService } from "./drugs-search.service";
         <tr *ngFor="let interaction of drugModel.interactions">
           <td>{{interaction.geneTarget.hugoSymbol}}</td>
           <td>
-            <table class="table table-bordered"
-                   *ngIf="interaction.interactionTypes !== undefined && interaction.interactionTypes.length > 0">
+            <table class="table table-bordered" *ngIf="interaction.interactionTypes !== undefined && interaction.interactionTypes.length > 0">
               <thead>
               <td>Interaction Type</td>
               <td>Sources</td>
