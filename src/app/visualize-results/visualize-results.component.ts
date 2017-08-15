@@ -101,6 +101,7 @@ import { DrugReference } from "./drugs/drug";
                   <tr>
                     <td>Functional Prediction</td>
                     <td>
+                      <!-- TODO: Figure out how to determine pathogenicity, and make badges actionable. -->
                       {{variant.score}} <span class="badge badge-danger">Pathogenic</span>
                     </td>
                   </tr>
@@ -115,8 +116,7 @@ import { DrugReference } from "./drugs/drug";
                   <tr *ngIf="variant.drugs && variant.drugs.length > 0">
                     <td>Effective Drugs</td>
                     <td>
-                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary"
-                              (click)="openNewDrugTab(drugReference)">{{drugReference.name}}
+                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary" (click)="openNewDrugTab(drugReference)">{{drugReference.name}}
                       </button>
                     </td>
                   </tr>
@@ -139,6 +139,7 @@ import { DrugReference } from "./drugs/drug";
               </ng-template>
             </ngb-tab>
 
+            <!-- TODO: Remove in favor of pop-ups (which can be used for a wider variety of things without tab clutter) -->
             <ngb-tab *ngFor="let drugReference of detailedDrugInfoTabs" title="{{drugReference.brief_name()}}">
               <ng-template ngbTabContent>
                 <drugs-info [forReference]="drugReference"></drugs-info>
