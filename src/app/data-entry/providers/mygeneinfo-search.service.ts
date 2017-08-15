@@ -54,6 +54,13 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
           variant.origin.type = responseJSON.type_of_gene;
         }
 
+        if (responseJSON.genomic_pos) {
+          variant.origin.chromosome = responseJSON.genomic_pos.chr;
+          variant.origin.start = responseJSON.genomic_pos.start;
+          variant.origin.end = responseJSON.genomic_pos.end;
+          variant.origin.strand = responseJSON.genomic_pos.strand;
+        }
+
         if (responseJSON.pathway && responseJSON.pathway.wikipathways) {
           for (const wikipathway of responseJSON.pathway.wikipathways) {
             variant.origin.pathways.push(new Pathway(wikipathway.id, wikipathway.name));

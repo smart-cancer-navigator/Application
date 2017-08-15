@@ -57,6 +57,10 @@ export class Gene {
   type: string;
   aliases: string[];
   pathways: Pathway[] = [];
+  chromosome: string;
+  start: number;
+  end: number;
+  strand: number;
 
   pathwaysString = (): string => {
     if (!this.pathways || this.pathways.length === 0) {
@@ -144,9 +148,7 @@ export class Variant {
   types: string[];
   drugs: DrugReference[];
   diseases: string[];
-  chromosome: string;
-  start: number;
-  end: number;
+  variantLocation: number;
 
   optionName = () => {
     return this.origin.hugoSymbol + " " + this.variantName + " " + this.origin.entrezID + " " + this.hgvsID;
@@ -170,12 +172,9 @@ export class Variant {
     this.types = MergeProperties(this.types, other.types);
     this.drugs = MergeProperties(this.drugs, other.drugs);
     this.diseases = MergeProperties(this.drugs, other.drugs);
-    this.chromosome = MergeProperties(this.chromosome, other.chromosome);
-    this.start = MergeProperties(this.start, other.start);
-    this.end = MergeProperties(this.end, other.end);
   }
 
   getLocation = () => {
-    return this.chromosome + ", " + (this.start !== this.end ? "Nucleotides " +  this.start + " to " + this.end : "Nucleotide " + this.start);
+    return "Nucleotide " + this.variantLocation;
   }
 }

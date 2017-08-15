@@ -63,6 +63,18 @@ import { DrugReference } from "./drugs/drug";
                         <td>Aliases</td>
                         <td>{{variant.origin.aliases.join(", ")}}</td>
                       </tr>
+                      <tr *ngIf="variant.origin.chromosome !== undefined">
+                        <td>Chromosome</td>
+                        <td>{{variant.origin.chromosome}}</td>
+                      </tr>
+                      <tr *ngIf="variant.origin.strand !== undefined">
+                        <td>Strand</td>
+                        <td>{{variant.origin.strand}}</td>
+                      </tr>
+                      <tr *ngIf="variant.origin.start !== undefined && variant.origin.end !== undefined">
+                        <td>Nucleotides</td>
+                        <td>{{variant.origin.start}} to {{variant.origin.end}}</td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
