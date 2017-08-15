@@ -14,11 +14,6 @@ import { Component } from "@angular/core";
       margin: 0 20px;
       width: calc(100% - 40px);
     }
-    
-    div * {
-      display: block;
-      background-color: blue;
-    }
   `]
 })
 

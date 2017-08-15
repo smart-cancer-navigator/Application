@@ -24,6 +24,7 @@ import { ClinicalTrialsService } from "./visualize-results/clinical-trials/clini
 import { DataEntryService } from "./data-entry/data-entry.service";
 import { DrugsSearchService } from "./visualize-results/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./data-entry/providers/mygeneinfo-search.service";
+import { JSONNavigatorService } from "./data-entry/providers/utilities/json-navigator.service";
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { MyGeneInfoSearchService } from "./data-entry/providers/mygeneinfo-searc
     MyGeneInfoSearchService,
     ClinicalTrialsService,
     DataEntryService,
-    DrugsSearchService
+    DrugsSearchService,
+    JSONNavigatorService
   ],
   bootstrap: [
     AppComponent

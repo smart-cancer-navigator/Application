@@ -12,6 +12,7 @@ import { Injectable } from "@angular/core";
 
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
+import {JSONNavigatorService} from "./utilities/json-navigator.service";
 
 /**
  * Since the myvariant.info response JSON is MASSIVE and depends to a large extent on the query, these locations
@@ -98,7 +99,7 @@ class VariantSearchKeyword {
 
 @Injectable()
 export class MyVariantInfoSearchService implements IVariantDatabase {
-  constructor(private http: Http) {
+  constructor(private http: Http, private jsonNavigator: JSONNavigatorService) {
     // Scrub the locations of all bracket indicators.
     for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
       const compilation: string[] = [];
@@ -145,116 +146,6 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
   queryEndpoint: string = "http://myvariant.info/v1/query?q=";
   currentKeywords: VariantSearchKeyword[] = [];
   lastSuggestionSet: Observable<VariantReference[]> = Observable.of<VariantReference[]>([]);
-
-  /**
-   * Allows users to pass the string "civic.evidence_items[0].display_name" and this method to interpret it.
-   *
-   * If the user passes civic.evidence_items[].display_name, they want a string array of all display_names.
-   * If the user passes civic.evidence_items[0].display_name, they want a single string.
-   */
-  private navigateToPath(jsonTarget: any, path: string): any {
-    let current = jsonTarget;
-    for (const key of path.split(".")) {
-      if (current instanceof Array) {
-        return null;
-      }
-      if (!current.hasOwnProperty(key)) {
-        return null;
-      }
-      current = current[key];
-    }
-    return current;
-  }
-  private parseLocationPath(jsonTarget: any, path: string): string | string[] {
-    // Figure out whether the user added any [] in.
-    if (path.indexOf("[") >= 0 && path.indexOf("]") >= 0) {
-      // Figure out the array stuff.
-      const prePath = path.substring(0, path.indexOf("["));
-      // Navigate to prePath.
-      const current = this.navigateToPath(jsonTarget, prePath);
-
-      if (!(current instanceof Array)) {
-        return null;
-      }
-
-      // Post path.
-      let index = Number(path[path.indexOf("[") + 1]);
-      if (isNaN(index)) {
-        index = -1;
-      }
-      const postPath = path.substring(path.indexOf("]") + 2);
-
-      // User wrote civic.evidence_items[] not [0]
-      if (index === -1) { // Will return array
-        let compilation: string[] = [];
-        for (const subJSON of current) {
-          // Recursive call (in case more [] are included)
-          const subJSONValue = this.parseLocationPath(subJSON, postPath);
-          if (subJSONValue === null) {
-            return null;
-          }
-
-          if (subJSONValue instanceof Array) {
-            for (const subJSONArrayValue of subJSONValue) {
-              compilation.push(subJSONArrayValue);
-            }
-          } else {
-            compilation.push(subJSONValue);
-          }
-        }
-        compilation = compilation.filter(function (filterItem) {
-          return filterItem !== null && filterItem !== "";
-        });
-        return compilation;
-      } else {
-        return this.parseLocationPath(current[index], postPath);
-      }
-    } else {
-      return this.navigateToPath(jsonTarget, path);
-    }
-  }
-  // Looks at all paths and merges the data provided in each one to form a single variant.
-  private mergePathsData(jsonTarget: any, potentialHeaders: string[], searchAll: boolean): string[] {
-    let compilation: string[] = [];
-    for (const potentialHeader of potentialHeaders) {
-      const potentialValue = this.parseLocationPath(jsonTarget, potentialHeader);
-      if (potentialValue !== null) {
-        if (potentialValue instanceof Array) {
-          for (const subValue of potentialValue) {
-            compilation.push(subValue);
-          }
-        } else {
-          compilation.push(potentialValue);
-        }
-        if (!searchAll) {
-          break;
-        }
-      }
-    }
-
-    // Don"t search for duplicates if there"s only one value!
-    if (searchAll) {
-      // Remove duplicates from array (thanks StackOverflow!)
-      compilation = compilation.reduce(function(p, c, i, a){
-        if (p.indexOf(c) === -1) {
-          p.push(c);
-        } else {
-          p.push("");
-        }
-        return p;
-      }, []);
-      // Remove all empty strings from array.
-      compilation = compilation.filter(function (filterItem) {
-        return filterItem !== "";
-      });
-    }
-
-    if (compilation.length === 0 && !searchAll) {
-      compilation.push(""); // Empty string so that errors aren"t thrown.
-    }
-
-    return compilation;
-  }
 
   /**
    * Utility method to query in accordance with myvariant.info API.
@@ -442,11 +333,11 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
             };
 
             // Gene construction.
-            const variantGene = new GeneReference(ensureValidString(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]));
-            variantGene.entrezID = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
+            const variantGene = new GeneReference(ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]));
+            variantGene.entrezID = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
 
             // Variant construction
-            variantResults.push(new VariantReference(variantGene, ensureValidString(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id));
+            variantResults.push(new VariantReference(variantGene, ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id));
           }
 
           return variantResults;
@@ -524,18 +415,18 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
         // Gene construction.
         const newVariant: Variant = Variant.fromReference(reference);
 
-        newVariant.description = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Description, false)[0];
+        newVariant.description = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Description, false)[0];
         newVariant.score = hit._score;
-        newVariant.somatic = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf("somatic") >= 0;
-        newVariant.chromosome = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
-        newVariant.start = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.StartPos, false)[0]);
-        newVariant.end = Number(this.mergePathsData(hit, MY_VARIANT_LOCATIONS.EndPos, false)[0]);
+        newVariant.somatic = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Somatic, false)[0].toLowerCase().indexOf("somatic") >= 0;
+        newVariant.chromosome = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
+        newVariant.start = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.StartPos, false)[0]);
+        newVariant.end = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EndPos, false)[0]);
         newVariant.drugs = [];
-        for (const drugName of this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Drug, true)) {
+        for (const drugName of this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Drug, true)) {
           newVariant.drugs.push(new DrugReference(drugName));
         }
-        newVariant.types = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantTypes, true);
-        newVariant.diseases = this.mergePathsData(hit, MY_VARIANT_LOCATIONS.Disease, true);
+        newVariant.types = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantTypes, true);
+        newVariant.diseases = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Disease, true);
 
         return newVariant;
       });
