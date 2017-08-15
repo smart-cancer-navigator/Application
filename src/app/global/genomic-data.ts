@@ -47,6 +47,7 @@ export class Gene {
   name: string;
   description: string;
   proteinCoding: string;
+  aliases: string[];
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeable = (other: Gene) => {
@@ -60,6 +61,7 @@ export class Gene {
     this.name = MergeProperties(this.name, other.name);
     this.description = MergeProperties(this.description, other.description);
     this.proteinCoding = MergeProperties(this.proteinCoding, other.proteinCoding);
+    this.aliases = MergeProperties(this.aliases, other.aliases);
   }
 }
 

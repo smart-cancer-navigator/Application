@@ -8,6 +8,7 @@ import { Variant } from "../../global/genomic-data";
 
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
+import {JSONNavigatorService} from "./utilities/json-navigator.service";
 
 
 /**
@@ -15,10 +16,17 @@ import { Injectable } from "@angular/core";
  * map the keys of the JSON where values may be stored.
  */
 
+
+const GENE_DATA_LOCATIONS = {
+  "Aliases": [
+    "alias[]"
+  ]
+};
+
 @Injectable()
 export class MyGeneInfoSearchService implements IGeneDatabase {
 
-  constructor (private http: Http) {}
+  constructor (private http: Http, private jsonNavigator: JSONNavigatorService) {}
 
   public updateVariantOrigin = (variant: Variant): Observable<Variant> => {
     if (!variant.origin || !variant.origin.entrezID) {
@@ -31,7 +39,10 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
       .map(response => {
         const responseJSON = response.json();
 
+        console.log("Aliases are " + variant.origin.aliases);
+
         variant.origin.name = responseJSON.name;
+        variant.origin.aliases = responseJSON.alias;
         variant.origin.description = responseJSON.summary;
         variant.origin.proteinCoding = responseJSON.type_of_gene;
 

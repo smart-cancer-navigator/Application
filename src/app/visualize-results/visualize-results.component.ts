@@ -50,6 +50,10 @@ import { DrugReference } from "./drugs/drug";
                         <td>Type</td>
                         <td>{{variant.origin.proteinCoding}}</td>
                       </tr>
+                      <tr *ngIf="variant.origin.aliases !== undefined && variant.origin.aliases.length > 0">
+                        <td>Aliases</td>
+                        <td>{{variant.origin.aliases.join(", ")}}</td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
