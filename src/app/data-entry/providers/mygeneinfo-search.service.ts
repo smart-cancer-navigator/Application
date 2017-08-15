@@ -4,7 +4,7 @@
  */
 import { IGeneDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
-import { Variant } from "../../global/genomic-data";
+import {Pathway, Variant} from "../../global/genomic-data";
 
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
@@ -39,12 +39,26 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
       .map(response => {
         const responseJSON = response.json();
 
-        console.log("Aliases are " + variant.origin.aliases);
+        console.log("Got for gene annotation ", responseJSON);
 
-        variant.origin.name = responseJSON.name;
-        variant.origin.aliases = responseJSON.alias;
-        variant.origin.description = responseJSON.summary;
-        variant.origin.proteinCoding = responseJSON.type_of_gene;
+        if (responseJSON.name) {
+          variant.origin.name = responseJSON.name;
+        }
+        if (responseJSON.alias) {
+          variant.origin.aliases = responseJSON.alias;
+        }
+        if (responseJSON.summary) {
+          variant.origin.description = responseJSON.summary;
+        }
+        if (responseJSON.type_of_gene) {
+          variant.origin.type = responseJSON.type_of_gene;
+        }
+
+        if (responseJSON.pathway && responseJSON.pathway.wikipathways) {
+          for (const wikipathway of responseJSON.pathway.wikipathways) {
+            variant.origin.pathways.push(new Pathway(wikipathway.id, wikipathway.name));
+          }
+        }
 
         return variant;
       });

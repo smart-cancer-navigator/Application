@@ -25,14 +25,23 @@ import { DrugReference } from "./drugs/drug";
                   <small class="text-muted">{{variant.origin.name}}</small>
                 </h3>
 
-                <div class="card" style="width: 70%; float: left;">
-                  <!--<img class="card-img-top" src="..." alt="Card image cap">-->
-                  <div class="card-block">
-                    <h4 class="card-title">Gene Description</h4>
-                    <p class="card-text">{{variant.origin.description}}</p>
+                <div style="width: 70%; float: left;">
+                  <div class="card">
+                    <!--<img class="card-img-top" src="..." alt="Card image cap">-->
+                    <div class="card-block">
+                      <h4 class="card-title">Gene Description</h4>
+                      <p class="card-text">{{variant.origin.description}}</p>
+                    </div>
+                  </div>
+                  
+                  <div class="card">
+                    <div class="card-block" *ngIf="variant.origin.pathways !== undefined && variant.origin.pathways.length > 0">
+                      <h4 class="card-title">Gene Pathways</h4>
+                      <p class="card-text">{{variant.origin.pathwaysString()}}</p>
+                    </div>
                   </div>
                 </div>
-
+  
                 <div class="card" style="width: 30%; float: left;">
                   <!--<img class="card-img-top" src="..." alt="Card image cap">-->
                   <div class="card-block">
@@ -46,9 +55,9 @@ import { DrugReference } from "./drugs/drug";
                         <td>Entrez ID</td>
                         <td>{{variant.origin.entrezID}}</td>
                       </tr>
-                      <tr *ngIf="variant.origin.proteinCoding !== undefined">
+                      <tr *ngIf="variant.origin.type !== undefined">
                         <td>Type</td>
-                        <td>{{variant.origin.proteinCoding}}</td>
+                        <td>{{variant.origin.type}}</td>
                       </tr>
                       <tr *ngIf="variant.origin.aliases !== undefined && variant.origin.aliases.length > 0">
                         <td>Aliases</td>
@@ -94,7 +103,9 @@ import { DrugReference } from "./drugs/drug";
                   <tr *ngIf="variant.drugs && variant.drugs.length > 0">
                     <td>Effective Drugs</td>
                     <td>
-                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary" (click)="openNewDrugTab(drugReference)">{{drugReference.name}}</button>
+                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary"
+                              (click)="openNewDrugTab(drugReference)">{{drugReference.name}}
+                      </button>
                     </td>
                   </tr>
                   <tr *ngIf="variant.diseases && variant.diseases.length > 0">

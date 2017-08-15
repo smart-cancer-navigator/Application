@@ -30,6 +30,14 @@ export class GeneReference implements IMergeable {
  * variety of databases.  Eventually this class will be made FHIR compliant to speed up FHIR bundle
  * conversion.
  */
+export class Pathway {
+  constructor (_id: string, _name: string) {
+    this.id = _id;
+    this.name = _name;
+  }
+  id: string;
+  name: string;
+}
 export class Gene {
   static fromReference(reference: GeneReference) {
     const newGene = new Gene(reference.hugoSymbol);
@@ -46,8 +54,25 @@ export class Gene {
   entrezID: number;
   name: string;
   description: string;
-  proteinCoding: string;
+  type: string;
   aliases: string[];
+  pathways: Pathway[] = [];
+
+  pathwaysString = (): string => {
+    if (!this.pathways || this.pathways.length === 0) {
+      return "";
+    }
+
+    let current = "The " + this.pathways[0].name;
+    for (let i = 1; i < this.pathways.length; i++) {
+      if (i < this.pathways.length - 1) {
+        current = current + ", the " + this.pathways[i].name;
+      } else {
+        current = current + ", and the " + this.pathways[i].name;
+      }
+    }
+    return current;
+  }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   mergeable = (other: Gene) => {
@@ -60,7 +85,7 @@ export class Gene {
     this.entrezID = MergeProperties(this.entrezID, other.entrezID);
     this.name = MergeProperties(this.name, other.name);
     this.description = MergeProperties(this.description, other.description);
-    this.proteinCoding = MergeProperties(this.proteinCoding, other.proteinCoding);
+    this.type = MergeProperties(this.type, other.type);
     this.aliases = MergeProperties(this.aliases, other.aliases);
   }
 }
