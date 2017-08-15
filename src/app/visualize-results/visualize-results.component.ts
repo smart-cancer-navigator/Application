@@ -99,9 +99,9 @@ import { DrugReference } from "./drugs/drug";
                     <td>{{variant.description}}</td>
                   </tr>
                   <tr>
-                    <td>Score</td>
-                    <td ngbPopover="Variant Score often defines Pathogenicity." triggers="mouseenter:mouseleave">
-                      {{variant.score}}
+                    <td>Functional Prediction</td>
+                    <td>
+                      {{variant.score}} <span class="badge badge-danger">Pathogenic</span>
                     </td>
                   </tr>
                   <tr>
@@ -155,6 +155,10 @@ import { DrugReference } from "./drugs/drug";
   styles: [`    
     small {
       font-size: 25px;
+    }
+    
+    .card {
+      padding: 5px;
     }
   `]
 })

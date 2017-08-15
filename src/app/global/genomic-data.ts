@@ -148,7 +148,9 @@ export class Variant {
   types: string[];
   drugs: DrugReference[];
   diseases: string[];
-  variantLocation: number;
+  chromosome: string; // For potential edge cases when the variant has no associated gene.
+  start: number;
+  end: number;
 
   optionName = () => {
     return this.origin.hugoSymbol + " " + this.variantName + " " + this.origin.entrezID + " " + this.hgvsID;
@@ -175,6 +177,6 @@ export class Variant {
   }
 
   getLocation = () => {
-    return "Nucleotide " + this.variantLocation;
+    return this.start === this.end ? "Nucleotide " + this.start : "Nucleotides " + this.start + " to " + this.end;
   }
 }
