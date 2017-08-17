@@ -16,6 +16,8 @@ import { FilterableSearchComponent } from "./data-entry/filterable-search/filter
 import { VisualizeResultsComponent } from "./visualize-results/visualize-results.component";
 import { ClinicalTrialsComponent } from "./visualize-results/clinical-trials/clinical-trials.component";
 import { DrugsComponent } from "./visualize-results/drugs/drugs.component";
+import { GeneVisualizationComponent } from "./visualize-results/genomic-data/gene-visualization.component";
+import { VariantVisualizationComponent } from "./visualize-results/genomic-data/variant-visualization.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -45,7 +47,9 @@ import { JSONNavigatorService } from "./data-entry/providers/utilities/json-navi
     FilterableSearchComponent,
     VisualizeResultsComponent,
     ClinicalTrialsComponent,
-    DrugsComponent
+    DrugsComponent,
+    GeneVisualizationComponent,
+    VariantVisualizationComponent
   ],
   providers: [
     SMARTReferenceService,

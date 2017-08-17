@@ -129,6 +129,14 @@ export class VariantReference implements IFilterableSearchOption, IMergeable {
  * Gene variants vary in their pathogenicity (danger to their host), and are important to consider
  * alongside the genes which they vary from.
  */
+export class Classification {
+  constructor (_name: string, _source: string) {
+    this.name = _name;
+    this.sources = [_source];
+  }
+  name: string;
+  sources: string[];
+}
 export class Variant {
   static fromReference(reference: VariantReference) {
     return new Variant(Gene.fromReference(reference.origin), reference.variantName, reference.hgvsID);
@@ -147,6 +155,7 @@ export class Variant {
   somatic: boolean;
   types: string[];
   drugs: DrugReference[];
+  classifications: Classification[];
   diseases: string[];
   chromosome: string; // For potential edge cases when the variant has no associated gene.
   start: number;

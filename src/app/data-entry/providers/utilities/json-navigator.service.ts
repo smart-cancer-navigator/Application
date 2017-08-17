@@ -33,7 +33,7 @@ export class JSONNavigatorService {
    * @param {string} path
    * @returns {string | string[]}
    */
-  getPathData(from: any, path: string): string | string[] {
+  getPathData(from: any, path: string): any | any[] {
     // Figure out whether the user added any [] in.
     if (path.indexOf("[") >= 0 && path.indexOf("]") >= 0) {
       // Figure out the array stuff.
@@ -85,7 +85,7 @@ export class JSONNavigatorService {
   /**
    * Calls getPathData on a bunch of paths and merges the resulting data.
    */
-  mergePathsData(from: any, paths: string[], searchAll: boolean): string[] {
+  mergePathsData(from: any, paths: string[], searchAll: boolean): any[] {
     let compilation: string[] = [];
     for (const potentialHeader of paths) {
       const potentialValue = this.getPathData(from, potentialHeader);

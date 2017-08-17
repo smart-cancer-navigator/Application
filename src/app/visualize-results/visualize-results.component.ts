@@ -18,118 +18,13 @@ import { DrugReference } from "./drugs/drug";
           <ngb-tabset [destroyOnHide]="false">
             <ngb-tab title="Gene">
               <ng-template ngbTabContent>
-
-                <br>
-                <h3 class="display-3">
-                  {{variant.origin.hugoSymbol}}
-                  <small class="text-muted">{{variant.origin.name}}</small>
-                </h3>
-
-                <div style="width: 70%; float: left;">
-                  <div class="card">
-                    <!--<img class="card-img-top" src="..." alt="Card image cap">-->
-                    <div class="card-block">
-                      <h4 class="card-title">Gene Description</h4>
-                      <p class="card-text">{{variant.origin.description}}</p>
-                    </div>
-                  </div>
-                  
-                  <div class="card">
-                    <div class="card-block" *ngIf="variant.origin.pathways !== undefined && variant.origin.pathways.length > 0">
-                      <h4 class="card-title">Gene Pathways</h4>
-                      <p class="card-text">{{variant.origin.pathwaysString()}}</p>
-                    </div>
-                  </div>
-                </div>
-  
-                <div class="card" style="width: 30%; float: left;">
-                  <!--<img class="card-img-top" src="..." alt="Card image cap">-->
-                  <div class="card-block">
-                    <h4 class="card-title">Gene Details</h4>
-                    <!-- A bit of info about the variant/gene -->
-                    <table class="table table-bordered">
-                      <thead>
-                      </thead>
-                      <tbody>
-                      <tr *ngIf="variant.origin.entrezID !== undefined">
-                        <td>Entrez ID</td>
-                        <td>{{variant.origin.entrezID}}</td>
-                      </tr>
-                      <tr *ngIf="variant.origin.type !== undefined">
-                        <td>Type</td>
-                        <td>{{variant.origin.type}}</td>
-                      </tr>
-                      <tr *ngIf="variant.origin.aliases !== undefined && variant.origin.aliases.length > 0">
-                        <td>Aliases</td>
-                        <td>{{variant.origin.aliases.join(", ")}}</td>
-                      </tr>
-                      <tr *ngIf="variant.origin.chromosome !== undefined">
-                        <td>Chromosome</td>
-                        <td>{{variant.origin.chromosome}}</td>
-                      </tr>
-                      <tr *ngIf="variant.origin.strand !== undefined">
-                        <td>Strand</td>
-                        <td>{{variant.origin.strand}}</td>
-                      </tr>
-                      <tr *ngIf="variant.origin.start !== undefined && variant.origin.end !== undefined">
-                        <td>Nucleotides</td>
-                        <td>{{variant.origin.start}} to {{variant.origin.end}}</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
+                <gene-visualization [gene]="variant.origin"></gene-visualization>
               </ng-template>
             </ngb-tab>
 
             <ngb-tab title="Variant">
               <ng-template ngbTabContent>
-
-                <br>
-                <h3 class="display-3">{{variant.variantName}}</h3>
-
-                <!-- A bit of info about the variant/gene -->
-                <table class="table table-bordered table-striped">
-                  <thead>
-                  </thead>
-                  <tbody>
-                  <tr *ngIf="variant.description && variant.description !== ''">
-                    <td>Description</td>
-                    <td>{{variant.description}}</td>
-                  </tr>
-                  <tr>
-                    <td>Functional Prediction</td>
-                    <td>
-                      <!-- TODO: Figure out how to determine pathogenicity, and make badges actionable. -->
-                      {{variant.score}} <span class="badge badge-danger">Pathogenic</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Variant Origin</td>
-                    <td>{{variant.somatic ? 'Somatic' : 'Germline'}}</td>
-                  </tr>
-                  <tr *ngIf="variant.types && variant.types.length > 0">
-                    <td>Variant Type</td>
-                    <td>{{variant.types.join(", ")}}</td>
-                  </tr>
-                  <tr *ngIf="variant.drugs && variant.drugs.length > 0">
-                    <td>Effective Drugs</td>
-                    <td>
-                      <button *ngFor="let drugReference of variant.drugs" class="btn btn-secondary" (click)="openNewDrugTab(drugReference)">{{drugReference.name}}
-                      </button>
-                    </td>
-                  </tr>
-                  <tr *ngIf="variant.diseases && variant.diseases.length > 0">
-                    <td>Known Diseases</td>
-                    <td>{{variant.diseases.join(", ")}}</td>
-                  </tr>
-                  <tr>
-                    <td>Variant Location</td>
-                    <td>Chromosome {{variant.getLocation()}}</td>
-                  </tr>
-                  </tbody>
-                </table>
+                <variant-visualization [variant]="variant" (viewDrugDetails)="openNewDrugTab($event)"></variant-visualization>
               </ng-template>
             </ngb-tab>
 
@@ -154,13 +49,6 @@ import { DrugReference } from "./drugs/drug";
     <button type="button" class="btn btn-success" style="float: right" (click)="saveVariantsToFHIRPatient()">{{submitStatus}}</button>
   `,
   styles: [`    
-    small {
-      font-size: 25px;
-    }
-    
-    .card {
-      padding: 5px;
-    }
   `]
 })
 export class VisualizeResultsComponent implements OnInit {

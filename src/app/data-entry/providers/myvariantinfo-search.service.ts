@@ -4,7 +4,7 @@
  */
 import { IVariantDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
-import {Gene, GeneReference, Variant, VariantReference} from "../../global/genomic-data";
+import {Classification, Gene, GeneReference, Variant, VariantReference} from "../../global/genomic-data";
 import { DrugReference } from "../../visualize-results/drugs/drug";
 
 import { Http } from "@angular/http";
@@ -50,13 +50,18 @@ const MY_VARIANT_LOCATIONS = {
   ],
   "Disease": [
     "civic.evidence_items.disease.display_name",
-    "civic.evidence_items[].disease.display_name"
+    "civic.evidence_items[].disease.display_name",
+    "clinvar.rcv.conditions.name",
+    "clinvar.rcv[].conditions.name",
+    "clinvar.rcv[].conditions[].name",
+    "clinvar.rcv.conditions[].name"
   ],
   "Description": [
     "civic.description"
   ],
   "Somatic": [
-    "civic.evidence_items[0].variant_origin"
+    "civic.evidence_items[0].variant_origin",
+    "clinvar.rcv.origin"
   ],
   "ChromosomePos": [
     "chrom"
@@ -75,6 +80,10 @@ const MY_VARIANT_LOCATIONS = {
   ],
   "HGVSID": [
     "_id"
+  ],
+  "ClinicalSignificance": [
+    "clinvar.rcv", // Cool my script even works for sub JSON objects :)
+    "clinvar.rcv[]"
   ]
 };
 
@@ -421,12 +430,28 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
         newVariant.chromosome = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.ChromosomePos, false)[0]; // Can be "X" or "Y"
         newVariant.start = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.StartPos, false)[0]);
         newVariant.end = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EndPos, false)[0]);
+
         newVariant.drugs = [];
         for (const drugName of this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Drug, true)) {
           newVariant.drugs.push(new DrugReference(drugName));
         }
+
         newVariant.types = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantTypes, true);
         newVariant.diseases = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Disease, true);
+
+        newVariant.classifications = [];
+        const addClassification = (classification: Classification) => {
+          for (const existentC of newVariant.classifications) {
+            if (existentC.name === classification.name) {
+              existentC.sources.push(classification.sources[0]);
+              return;
+            }
+          }
+          newVariant.classifications.push(classification);
+        };
+        for (const classification of this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.ClinicalSignificance, true)) {
+          addClassification(new Classification(classification.clinical_significance, "ClinVar RCV Accession " + classification.accession));
+        }
 
         return newVariant;
       });
