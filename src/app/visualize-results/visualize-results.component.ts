@@ -24,21 +24,13 @@ import { DrugReference } from "./drugs/drug";
 
             <ngb-tab title="Variant">
               <ng-template ngbTabContent>
-                <variant-visualization [variant]="variant" (viewDrugDetails)="openNewDrugTab($event)"></variant-visualization>
+                <variant-visualization [variant]="variant"></variant-visualization>
               </ng-template>
             </ngb-tab>
 
             <ngb-tab title="Clinical Trials">
               <ng-template ngbTabContent>
                 <clinical-trials [forVariant]="variant"></clinical-trials>
-              </ng-template>
-            </ngb-tab>
-
-            <!-- TODO: Remove in favor of pop-ups (which can be used for a wider variety of things without tab clutter) -->
-            <ngb-tab *ngFor="let drugReference of detailedDrugInfoTabs" title="{{drugReference.brief_name()}}">
-              <ng-template ngbTabContent>
-                <drugs-info [forReference]="drugReference"></drugs-info>
-                <button type="button" class="btn btn-danger" (click)="closeDrugTab(drugReference)">Close Tab</button>
               </ng-template>
             </ngb-tab>
           </ngb-tabset>
@@ -54,20 +46,12 @@ import { DrugReference } from "./drugs/drug";
 export class VisualizeResultsComponent implements OnInit {
   variants: Variant[] = [];
   submitStatus: string = "Submit Data to EHR";
-  detailedDrugInfoTabs: DrugReference[] = [];
 
   ngOnInit() {
     if (!USER_SELECTED_VARIANTS) {
       return;
     }
     USER_SELECTED_VARIANTS.subscribe(variants => this.variants = variants);
-  }
-
-  openNewDrugTab(drug: DrugReference) {
-    this.detailedDrugInfoTabs.push(drug);
-  }
-  closeDrugTab(drug: DrugReference) {
-    this.detailedDrugInfoTabs.splice(this.detailedDrugInfoTabs.indexOf(drug), 1);
   }
 
   saveVariantsToFHIRPatient() {

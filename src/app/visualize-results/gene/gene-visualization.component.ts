@@ -75,6 +75,10 @@ import { Gene } from "../../global/genomic-data";
     small {
       font-size: 25px;
     }
+    
+    .card {
+      padding: 10px;
+    }
   `]
 })
 export class GeneVisualizationComponent {

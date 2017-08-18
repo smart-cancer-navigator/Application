@@ -50,6 +50,7 @@ export class Drug extends DrugReference implements IMergeable {
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
   merge = (other: Drug) => {
+    this.description = MergeProperties(this.description, other.description);
     this.interactions = MergeProperties(this.interactions, other.interactions);
   }
 }

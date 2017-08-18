@@ -165,6 +165,18 @@ export class Variant {
     return this.origin.hugoSymbol + " " + this.variantName + " " + this.origin.entrezID + " " + this.hgvsID;
   }
 
+  getClassification = () => {
+    let maxAgreements = 0;
+    let verdict = "";
+    for (const classification of this.classifications) {
+      if (maxAgreements < classification.sources.length) {
+        maxAgreements = classification.sources.length;
+        verdict = classification.name;
+      }
+    }
+    return verdict;
+  }
+
   /**
    * Merging methods
    */

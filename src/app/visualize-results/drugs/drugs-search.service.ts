@@ -19,7 +19,7 @@ export class DrugsSearchService {
 
         const newDrug = new Drug(reference.name);
 
-        if (!(resultJSON.matchedTerms && resultJSON.matchedTerms.length >= 0)) {
+        if (!(resultJSON.matchedTerms && resultJSON.matchedTerms.length >= 0 && resultJSON.matchedTerms[0].interactions)) {
           return;
         }
 

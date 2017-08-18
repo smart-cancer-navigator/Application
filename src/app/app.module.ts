@@ -15,9 +15,9 @@ import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token
 import { FilterableSearchComponent } from "./data-entry/filterable-search/filterable-search.component";
 import { VisualizeResultsComponent } from "./visualize-results/visualize-results.component";
 import { ClinicalTrialsComponent } from "./visualize-results/clinical-trials/clinical-trials.component";
-import { DrugsComponent } from "./visualize-results/drugs/drugs.component";
-import { GeneVisualizationComponent } from "./visualize-results/genomic-data/gene-visualization.component";
-import { VariantVisualizationComponent } from "./visualize-results/genomic-data/variant-visualization.component";
+import { DrugDetailsModalComponent } from "./visualize-results/drugs/drug-details-modal.component";
+import { GeneVisualizationComponent } from "./visualize-results/gene/gene-visualization.component";
+import { VariantVisualizationComponent } from "./visualize-results/variant/variant-visualization.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -27,6 +27,7 @@ import { DataEntryService } from "./data-entry/data-entry.service";
 import { DrugsSearchService } from "./visualize-results/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./data-entry/providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./data-entry/providers/utilities/json-navigator.service";
+import {ClassificationsModalComponent} from "./visualize-results/variant/classifications-modal.component";
 
 
 @NgModule({
@@ -47,9 +48,14 @@ import { JSONNavigatorService } from "./data-entry/providers/utilities/json-navi
     FilterableSearchComponent,
     VisualizeResultsComponent,
     ClinicalTrialsComponent,
-    DrugsComponent,
     GeneVisualizationComponent,
-    VariantVisualizationComponent
+    VariantVisualizationComponent,
+    DrugDetailsModalComponent,
+    ClassificationsModalComponent
+  ],
+  entryComponents: [
+    DrugDetailsModalComponent, // Since it enters later on in the flow.
+    ClassificationsModalComponent
   ],
   providers: [
     SMARTReferenceService,
