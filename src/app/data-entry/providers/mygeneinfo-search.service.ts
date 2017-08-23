@@ -35,7 +35,7 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
     }
 
     // Query for gene stuff.
-    return this.http.get("http://mygene.info/v3/gene/" + variant.origin.entrezID)
+    return this.http.get("https://mygene.info/v3/gene/" + variant.origin.entrezID)
       .map(response => {
         const responseJSON = response.json();
 

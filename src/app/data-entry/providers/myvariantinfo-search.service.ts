@@ -152,7 +152,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
   referenceFieldsIncludeString: string = "";
 
   scrubbedLocations: any = {};
-  queryEndpoint: string = "http://myvariant.info/v1/query?q=";
+  queryEndpoint: string = "https://myvariant.info/v1/query?q=";
   currentKeywords: VariantSearchKeyword[] = [];
   lastSuggestionSet: Observable<VariantReference[]> = Observable.of<VariantReference[]>([]);
 
