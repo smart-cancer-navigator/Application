@@ -21,7 +21,7 @@ class VariantWrapper {
 }
 
 @Component({
-  selector: "primary-functionality",
+  selector: "variant-entry-and-visualization",
   template: `
     <div id="variantVisualizations">
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">

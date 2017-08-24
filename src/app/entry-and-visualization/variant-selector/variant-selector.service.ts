@@ -13,8 +13,8 @@ import "rxjs/add/observable/forkJoin";
 import {Variant, VariantReference} from "../genomic-data";
 
 // Databases.
-import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.service";
-import { MyGeneInfoSearchService } from "./providers/mygeneinfo-search.service";
+import { MyVariantInfoSearchService } from "../genomic-data-providers/myvariantinfo-search.service";
+import { MyGeneInfoSearchService } from "../genomic-data-providers/mygeneinfo-search.service";
 /**
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
-import {VariantEntryAndVisualizationComponent} from "./primary-functionality/variant-entry-and-visualization.component";
+import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/variant-entry-and-visualization", pathMatch: "full" },

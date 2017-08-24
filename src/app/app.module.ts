@@ -10,26 +10,26 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 // Components
 import { AppComponent } from "./app.component";
 import { HeaderComponent } from "./header.component";
-import { VariantSelectorComponent } from "./primary-functionality/variant-selector/variant-selector.component";
+import { VariantSelectorComponent } from "./entry-and-visualization/variant-selector/variant-selector.component";
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
-import { FilterableSearchComponent } from "./primary-functionality/filterable-search/filterable-search.component";
-import { ClinicalTrialsComponent } from "./primary-functionality/variant-visualization/clinical-trials/clinical-trials.component";
-import { DrugDetailsModalComponent } from "./primary-functionality/variant-visualization/drugs/drug-details-modal.component";
-import { GeneInformationComponent } from "./primary-functionality/variant-visualization/gene/gene-information.component";
-import { VariantInformationComponent } from "./primary-functionality/variant-visualization/variant/variant-information.component";
-import { VariantVisualizationComponent } from "./primary-functionality/variant-visualization/variant-visualization.component";
+import { FilterableSearchComponent } from "./entry-and-visualization/filterable-search/filterable-search.component";
+import { ClinicalTrialsComponent } from "./entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.component";
+import { DrugDetailsModalComponent } from "./entry-and-visualization/variant-visualization/drugs/drug-details-modal.component";
+import { GeneInformationComponent } from "./entry-and-visualization/variant-visualization/gene/gene-information.component";
+import { VariantInformationComponent } from "./entry-and-visualization/variant-visualization/variant/variant-information.component";
+import { VariantVisualizationComponent } from "./entry-and-visualization/variant-visualization/variant-visualization.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
-import { MyVariantInfoSearchService } from "./primary-functionality/variant-selector/providers/myvariantinfo-search.service";
-import { ClinicalTrialsService } from "./primary-functionality/variant-visualization/clinical-trials/clinical-trials.service";
-import { VariantSelectorService } from "./primary-functionality/variant-selector/variant-selector.service";
-import { DrugsSearchService } from "./primary-functionality/variant-visualization/drugs/drugs-search.service";
-import { MyGeneInfoSearchService } from "./primary-functionality/variant-selector/providers/mygeneinfo-search.service";
-import { JSONNavigatorService } from "./primary-functionality/variant-selector/providers/utilities/json-navigator.service";
-import { ClassificationsModalComponent } from "./primary-functionality/variant-visualization/variant/classifications-modal.component";
-import {VariantEntryAndVisualizationComponent} from "./primary-functionality/variant-entry-and-visualization.component";
+import { MyVariantInfoSearchService } from "./entry-and-visualization/genomic-data-providers/myvariantinfo-search.service";
+import { ClinicalTrialsService } from "./entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.service";
+import { VariantSelectorService } from "./entry-and-visualization/variant-selector/variant-selector.service";
+import { DrugsSearchService } from "./entry-and-visualization/variant-visualization/drugs/drugs-search.service";
+import { MyGeneInfoSearchService } from "./entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
+import { JSONNavigatorService } from "./entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
+import { ClassificationsModalComponent } from "./entry-and-visualization/variant-visualization/variant/classifications-modal.component";
+import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
 
 @NgModule({
   imports:      [

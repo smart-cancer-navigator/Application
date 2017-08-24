@@ -3,11 +3,11 @@
  * a way which permits dynamic addition and removal of form elements.  Since Angular makes modularity
  * insanely easy and you can build custom input selectors, this shouldn"t require too much code.
  */
-import {Component, forwardRef} from "@angular/core";
+import { Component, forwardRef } from "@angular/core";
 import { Variant, VariantReference } from "../genomic-data";
 import { VariantSelectorService } from "./variant-selector.service";
 import { SMARTClient } from "../../smart-initialization/smart-reference.service";
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
