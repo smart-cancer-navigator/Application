@@ -111,7 +111,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   constructor (private selectorService: VariantSelectorService) {}
 
   variants: VariantWrapper[] = [];
-  submitStatus: string;
 
   ngOnInit() {
     this.addRow();
@@ -178,11 +177,15 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   }
 
   removeRow(index: number) {
+    const variantToRemove = this.variants[index].variant;
+
     this.variants.splice(index, 1);
 
     for (let i = 0; i < this.variants.length; i++) {
       this.variants[i].index = i;
     }
+
+    this.removeEHRVariant(variantToRemove);
   }
 
   // Remove and save EHR variants.
@@ -256,24 +259,97 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           }
         };
 
-        console.log("Updating data with ", dataToTransmit);
-        this.submitStatus = "Submitting...";
+        console.log("Adding variant with", dataToTransmit);
         smartClient.api.update(dataToTransmit)
           .then(result => {
-            console.log("Success:", result);
-            this.submitStatus = "Complete!";
-            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
+            console.log("Added EHR variant successfully!", result);
           })
           .fail(err => {
-            console.log("Error:", err);
-            this.submitStatus = "Error";
-            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
+            console.log("Failed to add EHR variant", err);
           });
       });
     });
   }
 
   removeEHRVariant(variant: Variant) {
+    SMARTClient.subscribe(smartClient => {
+      if (smartClient === null) {
+        return;
+      }
 
+      smartClient.patient.read().then((p) => {
+        const dataToTransmit = {
+          "resource": {
+            "resourceType": "Observation",
+            "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
+            "meta": {
+              "versionId": "1" // ,
+              // "lastUpdated": Date.now().toString()
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.getLocation() + "</div>"
+            },
+            "status": "final",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://www.genenames.org",
+                      "code": "12014",
+                      "display": "TPMT"
+                    }
+                  ]
+                }
+              }
+            ],
+            "category": [
+              {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/observation-category",
+                    "code": "genomic-variant",
+                    "display": "Genomic Variant"
+                  }
+                ],
+                "text": "Genomic Variant"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://www.hgvs.org",
+                  "code": variant.hgvsID,
+                  "display": variant.hgvsID
+                }
+              ],
+              "text": variant.hgvsID
+            },
+            "subject": {
+              "reference": "Patient/" + p.id
+            },
+            // "effectiveDateTime": Date.now().toString(),
+            // "valueQuantity": {
+            //   "value": 41.1,
+            //   "unit": "weeks",
+            //   "system": "http://unitsofmeasure.org",
+            //   "code": "wk"
+            // },
+            // "context": {}
+          }
+        };
+
+        console.log("Removing variant with", dataToTransmit);
+        smartClient.api.delete(dataToTransmit)
+          .then(result => {
+            console.log("Removed EHR variant successfully!", result);
+          })
+          .fail(err => {
+            console.log("Failed to remove EHR variant", err);
+          });
+      });
+    });
   }
 }
