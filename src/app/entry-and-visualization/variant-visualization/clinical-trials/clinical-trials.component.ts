@@ -6,7 +6,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ClinicalTrialsService } from "./clinical-trials.service";
 import { ClinicalTrialReference } from "./clinical-trials";
-import { Variant } from "../../global/genomic-data";
+import { Variant } from "../../genomic-data";
 
 @Component({
   selector: "clinical-trials",

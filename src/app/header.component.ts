@@ -5,48 +5,44 @@
  * data, and the user name.
  */
 import { Component, OnInit } from "@angular/core";
-import { SMARTClient } from "../smart-initialization/smart-reference.service";
-import { Http } from "@angular/http";
+import { SMARTClient } from "./smart-initialization/smart-reference.service";
 
 @Component({
-  selector: "info-header",
+  selector: "header",
   template: `
-    <div class="root">
-      <div style="float: left">
-        <label for="patientHeader">Patient Context:</label>
-        <p id="patientHeader">{{patientData}}</p>
-      </div>
-      <div style="float: right">
-        <label for="userHeader">User Context:</label>
-        <p id="userHeader">{{practitionerData}}</p>
-      </div>
+    <div id="ehrInfo">
+      <p *ngIf="patientData !== ''">Patient: {{patientData}} ----- User: {{practitionerData}}</p>
+      <p *ngIf="patientData === ''">No EHR Link Active :(</p>
     </div>
   `,
   styles: [`
-    .root {
+    #ehrInfo {
       background-color: black;
       height: 40px;
+      overflow: hidden;
+    }
+    
+    #ehrInfo * {
+      float: left;
+      overflow: hidden;
+      text-align: center;
     }
 
-    .root label, p {
+    p {
       color: white;
+      width: 100%;
       margin: 5px 7.5px;
+      height: calc(100% - 15px);
       font-size: 20px;
-      float: left;
     }
   `]
 })
 
-export class InfoHeaderComponent implements OnInit {
-  constructor (private http: Http) {}
-
+export class HeaderComponent implements OnInit {
   patientData: string = "";
   practitionerData: string = "";
 
   ngOnInit(): void {
-    this.patientData = "Undefined";
-    this.practitionerData = "Undefined";
-
     // Once set, the function will be called.
     SMARTClient.subscribe(smart => this.setHeaderData(smart));
   }

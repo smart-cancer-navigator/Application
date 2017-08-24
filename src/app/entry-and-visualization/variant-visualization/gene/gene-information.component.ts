@@ -3,10 +3,10 @@
  */
 
 import { Component, Input } from "@angular/core";
-import { Gene } from "../../global/genomic-data";
+import { Gene } from "../../genomic-data";
 
 @Component({
-  selector: "gene-visualization",
+  selector: "gene-information",
   template: `
     <ng-container *ngIf="gene !== undefined">
       <br>
@@ -81,6 +81,6 @@ import { Gene } from "../../global/genomic-data";
     }
   `]
 })
-export class GeneVisualizationComponent {
+export class GeneInformationComponent {
   @Input() gene: Gene;
 }

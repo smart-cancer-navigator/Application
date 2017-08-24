@@ -9,7 +9,7 @@ import {DrugDetailsModalComponent} from "../drugs/drug-details-modal.component";
 import {ClassificationsModalComponent} from "./classifications-modal.component";
 
 @Component({
-  selector: "variant-visualization",
+  selector: "variant-information",
   template: `
     <ng-container *ngIf="variant">
       <br>
@@ -70,7 +70,7 @@ import {ClassificationsModalComponent} from "./classifications-modal.component";
     }
   `]
 })
-export class VariantVisualizationComponent {
+export class VariantInformationComponent {
   constructor (private modalService: NgbModal) {}
 
   @Input() variant;

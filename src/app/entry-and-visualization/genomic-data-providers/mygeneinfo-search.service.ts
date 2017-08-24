@@ -2,13 +2,13 @@
  * MyVariant.info compiles variant database information from across the web and provides in an easy-to-query
  * online API.
  */
-import { IGeneDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
-import {Pathway, Variant} from "../../global/genomic-data";
+import {Pathway, Variant} from "../genomic-data";
 
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
 import {JSONNavigatorService} from "./utilities/json-navigator.service";
+import {IGeneDatabase} from "../variant-selector/variant-selector.service";
 
 
 /**

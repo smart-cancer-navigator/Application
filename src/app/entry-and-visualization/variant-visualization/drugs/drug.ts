@@ -3,8 +3,8 @@
  * against different genes and variants.
  */
 
-import { Gene } from "../../global/genomic-data";
-import { IMergeable, MergeProperties } from "../../global/data-merging";
+import { Gene } from "../../genomic-data";
+import { IMergeable, MergeProperties } from "../../data-merging";
 
 export class DrugReference {
   constructor (_name: string) {

@@ -1,20 +1,21 @@
 /**
  * Takes care of querying for variants.
  */
-import { IFilterableSearchService } from "./filterable-search/filterable-search.component";
+import { IFilterableSearchService } from "../filterable-search/filterable-search.component";
 import { Injectable } from "@angular/core";
+
+// Genomic data stuff.
+import { Variant, VariantReference } from "../genomic-data";
+
+// Databases.
+import { MyVariantInfoSearchService } from "../genomic-data-providers/myvariantinfo-search.service";
+import { MyGeneInfoSearchService } from "../genomic-data-providers/mygeneinfo-search.service";
 
 // RxJS stuff.
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/forkJoin";
 
-// Genomic data stuff.
-import {Variant, VariantReference} from "../global/genomic-data";
-
-// Databases.
-import { MyVariantInfoSearchService } from "./providers/myvariantinfo-search.service";
-import {MyGeneInfoSearchService} from "./providers/mygeneinfo-search.service";
 /**
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.
@@ -29,7 +30,7 @@ export interface IGeneDatabase {
 }
 
 @Injectable()
-export class DataEntryService implements IFilterableSearchService {
+export class VariantSelectorService implements IFilterableSearchService {
   constructor(private myvariantinfoSearchService: MyVariantInfoSearchService, private mygeneinfoSearchService: MyGeneInfoSearchService) {}
 
   // The databases initialized in the constructor.
@@ -38,6 +39,12 @@ export class DataEntryService implements IFilterableSearchService {
 
   // Merge all variant streams into a single one.
   public search = (term: string): Observable<VariantReference[]> => {
+    console.log("Search " + term);
+
+    if (term === "") {
+      return null;
+    }
+
     // map them into a array of observables and forkJoin
     return Observable.forkJoin(this.variantDatabases
       .map(searchService => searchService.searchByString(term))

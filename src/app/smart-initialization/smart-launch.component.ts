@@ -31,7 +31,7 @@ export class SMARTLaunchComponent implements OnInit {
         });
       } else {
         this.state = "Required URL params were not provided! :(";
-        setTimeout(() => { this.router.navigate(["/data-entry"]); }, 100); // Wait a second before redirecting.
+        setTimeout(() => { this.router.navigate(["/selector"]); }, 100); // Wait a second before redirecting.
       }
     });
   }

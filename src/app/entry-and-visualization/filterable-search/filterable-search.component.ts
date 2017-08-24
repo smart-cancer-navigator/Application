@@ -49,8 +49,8 @@ export interface IFilterableSearchService {
       <img src="/assets/dropdown.svg"/>
       
       <!-- Display selected option before click -->
-      <p *ngIf="currentlySelected !== null" [hidden]="menuCurrentlyOpen" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
-      <p *ngIf="currentlySelected === null" [hidden]="menuCurrentlyOpen" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
+      <p *ngIf="currentlySelected !== undefined && currentlySelected !== null" [hidden]="menuCurrentlyOpen" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
+      <p *ngIf="currentlySelected === undefined || currentlySelected === null" [hidden]="menuCurrentlyOpen" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
       
       <!-- Switch from p to input on click -->
       <input autocomplete="off" #SearchBox [hidden]="!menuCurrentlyOpen" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
@@ -76,6 +76,7 @@ export interface IFilterableSearchService {
       cursor: pointer;
 
       border: 1px solid #dadada;
+      overflow: hidden;
     }
 
     .filterToggle:hover {
@@ -92,7 +93,8 @@ export interface IFilterableSearchService {
       float: right;
       width: 20px;
       height: 20px;
-      margin: 4px;
+      margin-top: 9px;
+      margin-right: 5px;
     }
 
     .filterToggle input {
@@ -142,11 +144,10 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
 
   // The internal data model (for ngModel)
   _currentlySelected: IFilterableSearchOption = null;
-  get currentlySelected(): any {
+  get currentlySelected(): IFilterableSearchOption {
     return this._currentlySelected;
   }
-  set currentlySelected(v: any) {
-    console.log("Change value requested to filterable search");
+  set currentlySelected(v: IFilterableSearchOption) {
     if (v !== this.currentlySelected) {
       this._currentlySelected = v;
       this.onChangeCallback(v);
@@ -154,7 +155,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
   }
 
   // From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value: IFilterableSearchOption) {
     if (value !== this.currentlySelected) {
       this.currentlySelected = value;
     }

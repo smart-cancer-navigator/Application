@@ -2,7 +2,7 @@
  * The clinical trials API provides a method through which one can glean data obtained via clinicaltrials.gov.
  * Note that the API is available at clinicaltrialsapi.cancer.gov instead.
  */
-import { Variant } from "../../global/genomic-data";
+import { Variant } from "../../genomic-data";
 import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";

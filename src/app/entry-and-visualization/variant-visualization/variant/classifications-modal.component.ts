@@ -5,7 +5,7 @@
 
 import { Component, Input } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { Variant } from "../../global/genomic-data";
+import { Variant } from "../../genomic-data";
 
 @Component({
   selector: "classifications-modal",

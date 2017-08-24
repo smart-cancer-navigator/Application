@@ -6,7 +6,7 @@ import { Drug, DrugReference, InteractionType, GeneInteraction } from "./drug";
 import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
-import { Gene } from "../../global/genomic-data";
+import { Gene } from "../../genomic-data";
 
 @Injectable()
 export class DrugsSearchService {

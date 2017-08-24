@@ -2,10 +2,9 @@
  * MyVariant.info compiles variant database information from across the web and provides in an easy-to-query
  * online API.
  */
-import { IVariantDatabase } from "../data-entry.service";
 import { Observable } from "rxjs/Observable";
-import {Classification, Gene, GeneReference, Variant, VariantReference} from "../../global/genomic-data";
-import { DrugReference } from "../../visualize-results/drugs/drug";
+import {Classification, Gene, GeneReference, Variant, VariantReference} from "../genomic-data";
+import { DrugReference } from "../variant-visualization/drugs/drug";
 
 import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
@@ -13,6 +12,7 @@ import { Injectable } from "@angular/core";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
 import {JSONNavigatorService} from "./utilities/json-navigator.service";
+import {IVariantDatabase} from "../variant-selector/variant-selector.service";
 
 /**
  * Since the myvariant.info response JSON is MASSIVE and depends to a large extent on the query, these locations
@@ -342,8 +342,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
             };
 
             // Gene construction.
-            const variantGene = new GeneReference(ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]));
-            variantGene.entrezID = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
+            const variantGene = new GeneReference(ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]), Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]));
 
             // Variant construction
             variantResults.push(new VariantReference(variantGene, ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id));
