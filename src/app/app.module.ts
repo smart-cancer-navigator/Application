@@ -5,6 +5,7 @@ import { HttpModule } from "@angular/http";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppRoutingModule } from "./app-routing.module";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 // Components
 import { AppComponent } from "./app.component";
@@ -17,7 +18,7 @@ import { ClinicalTrialsComponent } from "./primary-functionality/variant-visuali
 import { DrugDetailsModalComponent } from "./primary-functionality/variant-visualization/drugs/drug-details-modal.component";
 import { GeneInformationComponent } from "./primary-functionality/variant-visualization/gene/gene-information.component";
 import { VariantInformationComponent } from "./primary-functionality/variant-visualization/variant/variant-information.component";
-import { VariantVisualizationComponent } from "./primary-functionality/variant-visualization/visualization.component";
+import { VariantVisualizationComponent } from "./primary-functionality/variant-visualization/variant-visualization.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -28,7 +29,7 @@ import { DrugsSearchService } from "./primary-functionality/variant-visualizatio
 import { MyGeneInfoSearchService } from "./primary-functionality/variant-selector/providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./primary-functionality/variant-selector/providers/utilities/json-navigator.service";
 import { ClassificationsModalComponent } from "./primary-functionality/variant-visualization/variant/classifications-modal.component";
-import {PrimaryFunctionalityComponent} from "./primary-functionality/primary-functionality.component";
+import {VariantEntryAndVisualizationComponent} from "./primary-functionality/variant-entry-and-visualization.component";
 
 @NgModule({
   imports:      [
@@ -37,12 +38,13 @@ import {PrimaryFunctionalityComponent} from "./primary-functionality/primary-fun
     HttpModule,
     FormsModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     NgbModule.forRoot()
   ],
   declarations: [
     AppComponent,
     HeaderComponent,
-    PrimaryFunctionalityComponent,
+    VariantEntryAndVisualizationComponent,
     VariantVisualizationComponent,
     VariantSelectorComponent,
     SMARTLaunchComponent,

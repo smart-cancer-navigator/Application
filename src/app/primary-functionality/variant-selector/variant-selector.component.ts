@@ -20,7 +20,7 @@ export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
   template: `
     <!-- Gene Variation List -->
     <div>
-      <filterable-search [searchService]="selectorService" [placeholderString]="'Search Variants'" [ngModel]="currentlySelected" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
+      <filterable-search [searchService]="selectorService" [placeholderString]="'Search Variants'" [ngModel]="currentReference" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
     </div>
   `,
   styles: [`
@@ -34,6 +34,8 @@ export class VariantSelectorComponent implements ControlValueAccessor {
   constructor(public selectorService: VariantSelectorService) {}
 
   submitStatus: string = "";
+
+  currentReference: VariantReference;
 
   // The internal data model (for ngModel)
   _currentlySelected: Variant;
@@ -66,15 +68,19 @@ export class VariantSelectorComponent implements ControlValueAccessor {
 
   // Update the EHR item (if possible) and change the variant.
   onNewReferenceSelection(reference: VariantReference) {
+    if (!reference) {
+      return;
+    }
+
     console.log("Would get by reference ", reference);
+    this.currentReference = reference;
     this.selectorService.getByReference(reference)
       .subscribe(resultingVariant => {
         this.currentlySelected = resultingVariant;
-        this.saveFHIRResource();
+        // this.saveFHIRResource();
       });
   }
 
-  
   saveFHIRResource() {
     if (!this.currentlySelected) {
       return;

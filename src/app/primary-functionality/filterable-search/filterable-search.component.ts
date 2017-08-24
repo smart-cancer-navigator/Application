@@ -49,8 +49,8 @@ export interface IFilterableSearchService {
       <img src="/assets/dropdown.svg"/>
       
       <!-- Display selected option before click -->
-      <p *ngIf="currentlySelected !== null" [hidden]="menuCurrentlyOpen" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
-      <p *ngIf="currentlySelected === null" [hidden]="menuCurrentlyOpen" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
+      <p *ngIf="currentlySelected !== undefined && currentlySelected !== null" [hidden]="menuCurrentlyOpen" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
+      <p *ngIf="currentlySelected === undefined || currentlySelected === null" [hidden]="menuCurrentlyOpen" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
       
       <!-- Switch from p to input on click -->
       <input autocomplete="off" #SearchBox [hidden]="!menuCurrentlyOpen" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
@@ -93,7 +93,8 @@ export interface IFilterableSearchService {
       float: right;
       width: 20px;
       height: 20px;
-      margin: 4px;
+      margin-top: 9px;
+      margin-right: 5px;
     }
 
     .filterToggle input {

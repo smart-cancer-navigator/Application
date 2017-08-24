@@ -13,10 +13,10 @@ export const VISUALIZATION_CONTROL_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-  selector: "visualization",
+  selector: "variant-visualization",
   template: `
     <!-- Tabs to view the variant's info.  -->
-    <ngb-tabset [destroyOnHide]="false" *ngIf="currentlySelected !== undefined">
+    <ngb-tabset [destroyOnHide]="false" *ngIf="currentlySelected !== undefined && currentlySelected !== null">
       <ngb-tab title="Gene">
         <ng-template ngbTabContent>
           <gene-information [gene]="currentlySelected.origin"></gene-information>
