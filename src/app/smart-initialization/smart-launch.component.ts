@@ -7,32 +7,66 @@
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { OnInit, Component } from "@angular/core";
 import { SMARTModule } from "./smart-reference.service";
+import {isNullOrUndefined} from "util";
 
 @Component({
   selector: "smart-launch",
-  template: `    
-    <p>{{state}}</p>
-  `
+  template: `
+    <div *ngIf="requiredParametersSupplied === true">
+      <h3 class="display-3" style="width: 100%">Enter Authorization Info</h3>
+      <label class="thinFont1">Client ID: </label><input class="form-control" type="text" [(ngModel)]="clientID" placeholder="Ex: 1e7af332-b27a-4de2-8c51-728ae3ed25c2">
+      <label class="thinFont1">Scopes: </label><input class="form-control" type="text" [(ngModel)]="scopes">
+      <br>
+      <button (click)="authorizeApp()" class="btn btn-success">Authorize</button>
+    </div>
+    
+    <p *ngIf="requiredParametersSupplied === false">ISS and Launch parameters were not supplied!  Redirecting in 3 seconds...</p>
+  `,
+  styles: [`
+    div {
+      padding: 10px;
+      overflow: hidden;
+    }
+    
+    div * {
+      float: left;
+    }
+
+    label {
+      width: 20%;
+      font-size: 25px;
+      margin: 0;
+    }
+    
+    input {
+      width: calc(80% - 2px);
+    }
+  `]
 })
 export class SMARTLaunchComponent implements OnInit {
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
-  state = "Launching...";
+  requiredParametersSupplied = false;
+  clientID = "";
+  scopes = "launch patient/*.* openid profile";
 
   ngOnInit() {
     // subscribe to router event
-    this.activatedRoute.params.subscribe((params: Params) => {
-      if (params["iss"] !== null && params["launch"] !== null) {
-        SMARTModule.oauth2.authorize({
-          // client_id: "1e7af332-b27a-4de2-8c51-728ae3ed25c2",
-          client_id: "90453bbe-ba81-492b-b1bb-bcac626d5eef",
-          scope: "launch patient/*.* openid profile",
-          redirect_uri: "http://127.0.0.1:4200/token-reception"
-        });
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+      if (params["iss"] && params["launch"]) {
+        this.requiredParametersSupplied = true;
       } else {
-        this.state = "Required URL params were not provided! :(";
-        setTimeout(() => { this.router.navigate(["/selector"]); }, 100); // Wait a second before redirecting.
+        this.requiredParametersSupplied = false;
+        setTimeout(() => { this.router.navigate(["/variant-entry-and-visualization"]); }, 3000); // Wait a second before redirecting.
       }
+    });
+  }
+
+  authorizeApp = () => {
+    SMARTModule.oauth2.authorize({
+      client_id: this.clientID,
+      scope: this.scopes,
+      redirect_uri: window.location.href.substring(0, window.location.href.lastIndexOf("/")) + "/token-reception"
     });
   }
 }

@@ -6,13 +6,14 @@
  */
 import { Component, OnInit } from "@angular/core";
 import { SMARTClient } from "./smart-initialization/smart-reference.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: "header",
   template: `
     <div id="ehrInfo">
       <p *ngIf="patientData !== ''">Patient: {{patientData}} ----- User: {{practitionerData}}</p>
-      <p *ngIf="patientData === ''">No EHR Link Active :(</p>
+      <a id="ehrLink" *ngIf="patientData === ''" href="javascript:void(0)" (click)="viewEHRInstructions()">EHR Link Instructions</a>
       
       <a href="https://www.github.com/smart-co/Application">
         <img src="/assets/github-icon.png"  ngbPopover="Fork us on GitHub!" triggers="mouseenter:mouseleave" placement="left">
@@ -30,7 +31,7 @@ import { SMARTClient } from "./smart-initialization/smart-reference.service";
       float: left;
     }
 
-    p {
+    p, #ehrLink {
       text-align: center;
       color: white;
       width: calc(100% - 55px);
@@ -43,11 +44,14 @@ import { SMARTClient } from "./smart-initialization/smart-reference.service";
       height: 30px; 
       width: 30px; 
       margin: 5px;
+      float: right;
     }
   `]
 })
 
 export class HeaderComponent implements OnInit {
+  constructor (private router: Router) {}
+
   patientData: string = "";
   practitionerData: string = "";
 
@@ -74,5 +78,9 @@ export class HeaderComponent implements OnInit {
 
       this.practitionerData = u.name[0].given[0] + " " + u.name[0].family;
     });
+  }
+
+  viewEHRInstructions() {
+    this.router.navigate(["ehr-instructions"]);
   }
 }
