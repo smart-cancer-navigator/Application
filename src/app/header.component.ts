@@ -13,6 +13,10 @@ import { SMARTClient } from "./smart-initialization/smart-reference.service";
     <div id="ehrInfo">
       <p *ngIf="patientData !== ''">Patient: {{patientData}} ----- User: {{practitionerData}}</p>
       <p *ngIf="patientData === ''">No EHR Link Active :(</p>
+      
+      <a href="https://www.github.com/smart-co/Application">
+        <img src="/assets/github-icon.png"  ngbPopover="Fork us on GitHub!" triggers="mouseenter:mouseleave" placement="left">
+      </a>
     </div>
   `,
   styles: [`
@@ -24,16 +28,21 @@ import { SMARTClient } from "./smart-initialization/smart-reference.service";
     
     #ehrInfo * {
       float: left;
-      overflow: hidden;
-      text-align: center;
     }
 
     p {
+      text-align: center;
       color: white;
-      width: 100%;
+      width: calc(100% - 55px);
       margin: 5px 7.5px;
       height: calc(100% - 15px);
       font-size: 20px;
+    }
+    
+    img {
+      height: 30px; 
+      width: 30px; 
+      margin: 5px;
     }
   `]
 })
