@@ -114,7 +114,7 @@ export class DataEntryFormComponent implements OnInit {
 
       console.log("Should now update");
 
-      smartClient.patient.api.search({type: "Observation", query: {"category": "genomic-variant"}, count: 10})
+      smartClient.patient.api.search({type: "Observation", query: {"extension:url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene"}, count: 10})
         .then(results => {
           console.log("Successfully got variants!", results);
 
@@ -141,7 +141,7 @@ export class DataEntryFormComponent implements OnInit {
           }
         })
         .fail(err => {
-          console.log("Couldn't query genomic variants error!" + err);
+          console.log("Couldn't query genomic variants error!", err);
         });
     });
   }

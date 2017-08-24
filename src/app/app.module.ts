@@ -18,6 +18,7 @@ import { ClinicalTrialsComponent } from "./visualize-results/clinical-trials/cli
 import { DrugDetailsModalComponent } from "./visualize-results/drugs/drug-details-modal.component";
 import { GeneVisualizationComponent } from "./visualize-results/gene/gene-visualization.component";
 import { VariantVisualizationComponent } from "./visualize-results/variant/variant-visualization.component";
+import { EHREntryComponent } from "./ehr-entry/ehr-entry.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -51,7 +52,8 @@ import {ClassificationsModalComponent} from "./visualize-results/variant/classif
     GeneVisualizationComponent,
     VariantVisualizationComponent,
     DrugDetailsModalComponent,
-    ClassificationsModalComponent
+    ClassificationsModalComponent,
+    EHREntryComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.

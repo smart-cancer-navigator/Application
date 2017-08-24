@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
+import { EHREntryComponent } from "./ehr-entry/ehr-entry.component";
 import { DataEntryFormComponent } from "./data-entry/data-entry.component";
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
@@ -8,10 +9,11 @@ import { VisualizeResultsComponent } from "./visualize-results/visualize-results
 
 const routes: Routes = [
   { path: "", redirectTo: "/data-entry", pathMatch: "full" },
+  { path: "ehr-entry", component: EHREntryComponent },
   { path: "data-entry", component: DataEntryFormComponent },
   { path: "smart-launch", component: SMARTLaunchComponent },
   { path: "token-reception", component: SMARTTokenReceptionComponent },
-  { path: "visualize-results", component: VisualizeResultsComponent }
+  { path: "visualize-results", component: VisualizeResultsComponent },
 ];
 
 @NgModule({

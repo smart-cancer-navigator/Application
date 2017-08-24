@@ -2,8 +2,12 @@ body {
   margin: 0;
 }
 
-* {
-  /* Ideally both of these would be included for aesthetic purposes, but Safari doesn't support text boxes with these properties. */
-  /*user-select: none;*/
-  /*outline: none;*/
+.thinFont1 {
+  font-family: "Avenir Next";
+  font-weight: 100;
+}
+
+.thinFont2 {
+  font-family: "Helvetica Neue";
+  font-weight: 100;
 }

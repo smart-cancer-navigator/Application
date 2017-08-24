@@ -76,6 +76,20 @@ export class VisualizeResultsComponent implements OnInit {
                 "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.getLocation() + "</div>"
               },
               "status": "final",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
+                  "valueCodeableConcept": {
+                    "coding": [
+                      {
+                        "system": "http://www.genenames.org",
+                        "code": "12014",
+                        "display": "TPMT"
+                      }
+                    ]
+                  }
+                }
+              ],
               "category": [
                 {
                   "coding": [
