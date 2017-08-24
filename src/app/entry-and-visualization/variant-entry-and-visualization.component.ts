@@ -27,7 +27,7 @@ class VariantWrapper {
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
         <div class="variantSelector">
           <div class="variantSelectorSpan">
-            <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRow()"></variant-selector>
+            <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant.variant);"></variant-selector>
           </div>
           <button class="removeRowButton btn btn-danger" (click)="removeRow(i)">X</button>
         </div>
@@ -100,7 +100,7 @@ class VariantWrapper {
         height: "0"
       })),
       state("open", style({
-        height: "500px"
+        height: "700px"
       })),
       transition("closed => open", animate("400ms ease-in-out")),
       transition("open => closed", animate("400ms ease-in-out"))
@@ -111,6 +111,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   constructor (private selectorService: VariantSelectorService) {}
 
   variants: VariantWrapper[] = [];
+  submitStatus: string;
 
   ngOnInit() {
     this.addRow();
@@ -135,8 +136,9 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           }
 
           // For every variant.
+          let resultIndex = 0;
           for (const result of results.data.entry) {
-            console.log("Would now add " + result.resource.code.text);
+            console.log("Will now add " + result.resource.code.text);
             this.selectorService.search(result.resource.code.text).subscribe(variants => {
               if (variants.length === 0) {
                 console.log("NOT GOOD: Couldn't find any search results for " + result.resource.code.text);
@@ -147,7 +149,15 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               console.log("Adding", variants[0]);
 
               this.selectorService.getByReference(variants[0])
-                .subscribe(variant => this.variants.push(new VariantWrapper(this.variants.length, variant)));
+                .subscribe(variant => {
+                  const newWrapper = new VariantWrapper(resultIndex, variant);
+                  if (this.variants.length === resultIndex) {
+                    this.variants.push(newWrapper);
+                  } else {
+                    this.variants[resultIndex] = newWrapper;
+                  }
+                  resultIndex++;
+                });
             });
           }
         })
@@ -157,11 +167,113 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     });
   }
 
+  // Row management.
   addRow() {
     this.variants.push(new VariantWrapper(this.variants.length, null));
+  }
+  addRowMaybe(indexInQuestion: number) {
+    if (this.variants.length === indexInQuestion + 1) {
+      this.addRow();
+    }
   }
 
   removeRow(index: number) {
     this.variants.splice(index, 1);
+
+    for (let i = 0; i < this.variants.length; i++) {
+      this.variants[i].index = i;
+    }
+  }
+
+  // Remove and save EHR variants.
+  saveEHRVariant(variant: Variant) {
+    SMARTClient.subscribe(smartClient => {
+      if (smartClient === null) {
+        return;
+      }
+
+      smartClient.patient.read().then((p) => {
+        const dataToTransmit = {
+          "resource": {
+            "resourceType": "Observation",
+            "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
+            "meta": {
+              "versionId": "1" // ,
+              // "lastUpdated": Date.now().toString()
+            },
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.getLocation() + "</div>"
+            },
+            "status": "final",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://www.genenames.org",
+                      "code": "12014",
+                      "display": "TPMT"
+                    }
+                  ]
+                }
+              }
+            ],
+            "category": [
+              {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/observation-category",
+                    "code": "genomic-variant",
+                    "display": "Genomic Variant"
+                  }
+                ],
+                "text": "Genomic Variant"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://www.hgvs.org",
+                  "code": variant.hgvsID,
+                  "display": variant.hgvsID
+                }
+              ],
+              "text": variant.hgvsID
+            },
+            "subject": {
+              "reference": "Patient/" + p.id
+            },
+            // "effectiveDateTime": Date.now().toString(),
+            // "valueQuantity": {
+            //   "value": 41.1,
+            //   "unit": "weeks",
+            //   "system": "http://unitsofmeasure.org",
+            //   "code": "wk"
+            // },
+            // "context": {}
+          }
+        };
+
+        console.log("Updating data with ", dataToTransmit);
+        this.submitStatus = "Submitting...";
+        smartClient.api.update(dataToTransmit)
+          .then(result => {
+            console.log("Success:", result);
+            this.submitStatus = "Complete!";
+            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
+          })
+          .fail(err => {
+            console.log("Error:", err);
+            this.submitStatus = "Error";
+            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
+          });
+      });
+    });
+  }
+
+  removeEHRVariant(variant: Variant) {
+
   }
 }

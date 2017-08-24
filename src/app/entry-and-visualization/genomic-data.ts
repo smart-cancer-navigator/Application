@@ -1,5 +1,5 @@
 import { IFilterableSearchOption } from "./filterable-search/filterable-search.component";
-import { IMergeable, MergeProperties } from "../data-merging";
+import { IMergeable, MergeProperties } from "./data-merging";
 import { DrugReference } from "./variant-visualization/drugs/drug";
 import {Injectable} from "@angular/core";
 
@@ -8,8 +8,9 @@ import {Injectable} from "@angular/core";
  * and such.
  */
 export class GeneReference implements IMergeable {
-  constructor (_hugoSymbol: string) {
+  constructor (_hugoSymbol: string, _entrezID: number) {
     this.hugoSymbol = _hugoSymbol;
+    this.entrezID = _entrezID;
   }
   hugoSymbol: string;
   entrezID: number;

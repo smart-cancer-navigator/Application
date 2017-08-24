@@ -4,17 +4,18 @@
 import { IFilterableSearchService } from "../filterable-search/filterable-search.component";
 import { Injectable } from "@angular/core";
 
+// Genomic data stuff.
+import { Variant, VariantReference } from "../genomic-data";
+
+// Databases.
+import { MyVariantInfoSearchService } from "../genomic-data-providers/myvariantinfo-search.service";
+import { MyGeneInfoSearchService } from "../genomic-data-providers/mygeneinfo-search.service";
+
 // RxJS stuff.
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/forkJoin";
 
-// Genomic data stuff.
-import {Variant, VariantReference} from "../genomic-data";
-
-// Databases.
-import { MyVariantInfoSearchService } from "../genomic-data-providers/myvariantinfo-search.service";
-import { MyGeneInfoSearchService } from "../genomic-data-providers/mygeneinfo-search.service";
 /**
  * Very simple and straightforward requirements, the database receives the search term and then just hands back the
  * results.

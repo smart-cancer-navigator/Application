@@ -6,25 +6,13 @@
  */
 import { Component, OnInit } from "@angular/core";
 import { SMARTClient } from "./smart-initialization/smart-reference.service";
-import { Http } from "@angular/http";
-import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: "header",
   template: `
     <div id="ehrInfo">
-      <div id="patientInfoDiv">
-        <label for="patientHeader">Patient Context:</label>
-        <p id="patientHeader">{{patientData}}</p>
-      </div>
-      <div id="loadingDiv">
-        <!-- Loading stuff will go here -->
-        <p></p>
-      </div>
-      <div id="userInfoDiv">
-        <label for="userHeader">User Context:</label>
-        <p id="userHeader">{{practitionerData}}</p>
-      </div>
+      <p *ngIf="patientData !== ''">Patient: {{patientData}} ----- User: {{practitionerData}}</p>
+      <p *ngIf="patientData === ''">No EHR Link Active :(</p>
     </div>
   `,
   styles: [`
@@ -37,22 +25,12 @@ import {NavigationEnd, Router} from "@angular/router";
     #ehrInfo * {
       float: left;
       overflow: hidden;
-    }
-    
-    #patientInfoDiv {
-      width: 40%;
+      text-align: center;
     }
 
-    #userInfoDiv {
-      width: 40%;
-    }
-
-    #loadingDiv {
-      width: 20%;
-    }
-
-    label, p {
+    p {
       color: white;
+      width: 100%;
       margin: 5px 7.5px;
       height: calc(100% - 15px);
       font-size: 20px;
@@ -61,26 +39,10 @@ import {NavigationEnd, Router} from "@angular/router";
 })
 
 export class HeaderComponent implements OnInit {
-  constructor (private router: Router) {
-    router.events.subscribe((val) => {
-      if (val instanceof NavigationEnd) {
-        if (val.url.indexOf("?") >= 0) {
-          this.currentRoute = val.url.substring(0, val.url.indexOf("?"));
-        } else {
-          this.currentRoute = val.url;
-        }
-      }
-    });
-  }
-
   patientData: string = "";
   practitionerData: string = "";
-  currentRoute: string = "";
 
   ngOnInit(): void {
-    this.patientData = "Undefined";
-    this.practitionerData = "Undefined";
-
     // Once set, the function will be called.
     SMARTClient.subscribe(smart => this.setHeaderData(smart));
   }
@@ -103,9 +65,5 @@ export class HeaderComponent implements OnInit {
 
       this.practitionerData = u.name[0].given[0] + " " + u.name[0].family;
     });
-  }
-
-  navigateToRoute(route: string) {
-    this.router.navigate([route]);
   }
 }

@@ -342,8 +342,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
             };
 
             // Gene construction.
-            const variantGene = new GeneReference(ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]));
-            variantGene.entrezID = Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]);
+            const variantGene = new GeneReference(ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.GeneHUGO, false)[0]), Number(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.EntrezID, false)[0]));
 
             // Variant construction
             variantResults.push(new VariantReference(variantGene, ensureValidString(this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.VariantName, false)[0]), hit._id));

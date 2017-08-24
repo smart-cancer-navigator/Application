@@ -4,7 +4,7 @@
  */
 
 import { Gene } from "../../genomic-data";
-import { IMergeable, MergeProperties } from "../../../data-merging";
+import { IMergeable, MergeProperties } from "../../data-merging";
 
 export class DrugReference {
   constructor (_name: string) {

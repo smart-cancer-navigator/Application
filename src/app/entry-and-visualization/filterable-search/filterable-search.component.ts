@@ -144,10 +144,10 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
 
   // The internal data model (for ngModel)
   _currentlySelected: IFilterableSearchOption = null;
-  get currentlySelected(): any {
+  get currentlySelected(): IFilterableSearchOption {
     return this._currentlySelected;
   }
-  set currentlySelected(v: any) {
+  set currentlySelected(v: IFilterableSearchOption) {
     if (v !== this.currentlySelected) {
       this._currentlySelected = v;
       this.onChangeCallback(v);
@@ -155,7 +155,7 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
   }
 
   // From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value: IFilterableSearchOption) {
     if (value !== this.currentlySelected) {
       this.currentlySelected = value;
     }

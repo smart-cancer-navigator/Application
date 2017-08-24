@@ -4,9 +4,8 @@
  * insanely easy and you can build custom input selectors, this shouldn"t require too much code.
  */
 import { Component, forwardRef } from "@angular/core";
-import { Variant, VariantReference } from "../genomic-data";
+import {GeneReference, Variant, VariantReference} from "../genomic-data";
 import { VariantSelectorService } from "./variant-selector.service";
-import { SMARTClient } from "../../smart-initialization/smart-reference.service";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
@@ -33,8 +32,6 @@ export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
 export class VariantSelectorComponent implements ControlValueAccessor {
   constructor(public selectorService: VariantSelectorService) {}
 
-  submitStatus: string = "";
-
   currentReference: VariantReference;
 
   // The internal data model (for ngModel)
@@ -50,9 +47,13 @@ export class VariantSelectorComponent implements ControlValueAccessor {
   }
 
   // From ControlValueAccessor interface
-  writeValue(value: any) {
+  writeValue(value: Variant) {
     if (value !== this.currentlySelected) {
       this.currentlySelected = value;
+
+      if (value && value !== null) {
+        this.currentReference = new VariantReference(new GeneReference(this.currentlySelected.origin.hugoSymbol, this.currentlySelected.origin.entrezID), this.currentlySelected.variantName, this.currentlySelected.hgvsID);
+      }
     }
   }
 
@@ -75,96 +76,6 @@ export class VariantSelectorComponent implements ControlValueAccessor {
     console.log("Would get by reference ", reference);
     this.currentReference = reference;
     this.selectorService.getByReference(reference)
-      .subscribe(resultingVariant => {
-        this.currentlySelected = resultingVariant;
-        // this.saveFHIRResource();
-      });
-  }
-
-  saveFHIRResource() {
-    if (!this.currentlySelected) {
-      return;
-    }
-
-    SMARTClient.subscribe(smartClient => {
-      smartClient.patient.read().then((p) => {
-        const dataToTransmit = {
-          "resource": {
-            "resourceType": "Observation",
-            "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + this.currentlySelected.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
-            "meta": {
-              "versionId": "1" // ,
-              // "lastUpdated": Date.now().toString()
-            },
-            "text": {
-              "status": "generated",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + this.currentlySelected.getLocation() + "</div>"
-            },
-            "status": "final",
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
-                "valueCodeableConcept": {
-                  "coding": [
-                    {
-                      "system": "http://www.genenames.org",
-                      "code": "12014",
-                      "display": "TPMT"
-                    }
-                  ]
-                }
-              }
-            ],
-            "category": [
-              {
-                "coding": [
-                  {
-                    "system": "http://hl7.org/fhir/observation-category",
-                    "code": "genomic-variant",
-                    "display": "Genomic Variant"
-                  }
-                ],
-                "text": "Genomic Variant"
-              }
-            ],
-            "code": {
-              "coding": [
-                {
-                  "system": "http://www.hgvs.org",
-                  "code": this.currentlySelected.hgvsID,
-                  "display": this.currentlySelected.hgvsID
-                }
-              ],
-              "text": this.currentlySelected.hgvsID
-            },
-            "subject": {
-              "reference": "Patient/" + p.id
-            },
-            // "effectiveDateTime": Date.now().toString(),
-            // "valueQuantity": {
-            //   "value": 41.1,
-            //   "unit": "weeks",
-            //   "system": "http://unitsofmeasure.org",
-            //   "code": "wk"
-            // },
-            // "context": {}
-          }
-        };
-
-        console.log("Updating data with ", dataToTransmit);
-        this.submitStatus = "Submitting...";
-        smartClient.api.update(dataToTransmit)
-          .then(result => {
-            console.log("Success:", result);
-            this.submitStatus = "Complete!";
-            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
-          })
-          .fail(err => {
-            console.log("Error:", err);
-            this.submitStatus = "Error";
-            setTimeout(() => { this.submitStatus = "Submit Data to EHR"; }, 1000);
-            });
-      });
-    });
+      .subscribe(resultingVariant => this.currentlySelected = resultingVariant);
   }
 }
