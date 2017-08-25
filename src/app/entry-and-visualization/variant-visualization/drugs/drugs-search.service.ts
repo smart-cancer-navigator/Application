@@ -13,7 +13,7 @@ export class DrugsSearchService {
   constructor (private http: Http) {}
 
   public searchByReference(reference: DrugReference): Observable <Drug> {
-    return this.http.get("http://dgidb.genome.wustl.edu/api/v1/interactions.json?drugs=" + (reference.name.indexOf(" ") >= 0 ? reference.name.substring(0, reference.name.indexOf(" ")) : reference.name))
+    return this.http.get("https://dgidb.genome.wustl.edu/api/v1/interactions.json?drugs=" + (reference.name.indexOf(" ") >= 0 ? reference.name.substring(0, reference.name.indexOf(" ")) : reference.name))
       .map(result => {
         const resultJSON = result.json();
 

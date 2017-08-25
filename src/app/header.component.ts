@@ -13,10 +13,11 @@ import {Router} from "@angular/router";
   template: `
     <div id="ehrInfo">
       <p *ngIf="patientData !== ''">Patient: {{patientData}} ----- User: {{practitionerData}}</p>
-      <a id="ehrLink" *ngIf="patientData === ''" href="javascript:void(0)" (click)="viewEHRInstructions()">EHR Link Instructions</a>
-      
+      <a id="ehrLink" *ngIf="patientData === ''" href="javascript:void(0)" (click)="linkClicked()">{{linkText}}</a>
+
       <a href="https://www.github.com/smart-co/Application">
-        <img src="/assets/github-icon.png"  ngbPopover="Fork us on GitHub!" triggers="mouseenter:mouseleave" placement="left">
+        <img src="/assets/github-icon.png" ngbPopover="Fork us on GitHub!" triggers="mouseenter:mouseleave"
+             placement="left">
       </a>
     </div>
   `,
@@ -54,6 +55,7 @@ export class HeaderComponent implements OnInit {
 
   patientData: string = "";
   practitionerData: string = "";
+  linkText: string = "EHR Link Instructions";
 
   ngOnInit(): void {
     // Once set, the function will be called.
@@ -80,7 +82,13 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  viewEHRInstructions() {
-    this.router.navigate(["ehr-instructions"]);
+  linkClicked() {
+    if (this.linkText === "EHR Link Instructions") {
+      this.router.navigate(["ehr-instructions"]);
+      this.linkText = "Return to Variant Selection";
+    } else {
+      this.router.navigate(["variant-entry-and-visualization"]);
+      this.linkText = "EHR Link Instructions";
+    }
   }
 }
