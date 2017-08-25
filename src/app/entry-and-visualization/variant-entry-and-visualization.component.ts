@@ -29,7 +29,7 @@ class VariantWrapper {
           <div class="variantSelectorSpan">
             <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant.variant);"></variant-selector>
           </div>
-          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)">X</button>
+          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" [disabled]="variants.length === 1">X</button>
         </div>
         <div>
           <div class="visualizationContent" [@drawerAnimation]="variant.drawerState">
