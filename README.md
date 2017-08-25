@@ -1,4 +1,4 @@
-# PCM SMART EHR Module (Angular 4 based)
+# The SMART-CO Application
 
 ## About
 
