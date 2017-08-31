@@ -3,6 +3,7 @@ import { Variant } from "./genomic-data";
 import { SMARTClient } from "../smart-initialization/smart-reference.service";
 import { VariantSelectorService } from "./variant-selector/variant-selector.service";
 import { trigger, state, style, animate, transition } from "@angular/animations";
+import {Router} from "@angular/router";
 
 class VariantWrapper {
   constructor(_index: number, _variant: Variant) {
@@ -24,6 +25,8 @@ class VariantWrapper {
   selector: "variant-entry-and-visualization",
   template: `
     <div id="variantVisualizations">
+      <h2 class="display-2" style="padding: 30px;">Variant Entry and Visualization</h2>
+      
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
         <div class="variantSelector">
           <div class="variantSelectorSpan">
@@ -40,6 +43,13 @@ class VariantWrapper {
           </div>
         </div>
       </div>
+    </div>
+    
+    <!-- Where the user can determine how to link to their EHR. -->
+    <div id="howToLinkToEHR" *ngIf="offerToLinkToEHRInstructions">
+      <a href="javascript:void(0)" (click)="routeToInstructions()">
+        <ngb-alert [type]="'primary'" (close)="removeAlert()">Want to link to an EHR?</ngb-alert>
+      </a>
     </div>
   `,
   styles: [`
@@ -93,6 +103,13 @@ class VariantWrapper {
       width: 10px;
       margin: 10px;
     }
+    
+    #howToLinkToEHR {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
   `],
   animations: [
     trigger("drawerAnimation", [
@@ -108,9 +125,10 @@ class VariantWrapper {
   ]
 })
 export class VariantEntryAndVisualizationComponent implements OnInit {
-  constructor (private selectorService: VariantSelectorService) {}
+  constructor (private selectorService: VariantSelectorService, private router: Router) {}
 
   variants: VariantWrapper[] = [];
+  offerToLinkToEHRInstructions = true;
 
   ngOnInit() {
     this.addRow();
@@ -119,6 +137,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       if (smartClient === null) {
         return;
       }
+
+      this.offerToLinkToEHRInstructions = false;
 
       console.log("Should now update");
 
@@ -186,6 +206,14 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     }
 
     this.removeEHRVariant(variantToRemove);
+  }
+
+  removeAlert() {
+    this.offerToLinkToEHRInstructions = false;
+  }
+
+  routeToInstructions() {
+    this.router.navigate(["ehr-instructions"]);
   }
 
   // Remove and save EHR variants.

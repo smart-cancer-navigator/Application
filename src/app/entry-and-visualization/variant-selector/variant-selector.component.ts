@@ -19,7 +19,7 @@ export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
   template: `
     <!-- Gene Variation List -->
     <div>
-      <filterable-search [searchService]="selectorService" [placeholderString]="'Search Variants'" [ngModel]="currentReference" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
+      <filterable-search [searchService]="selectorService" [placeholderString]="'Add New Variant'" [ngModel]="currentReference" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
     </div>
   `,
   styles: [`

@@ -9,7 +9,6 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 // Components
 import { AppComponent } from "./app.component";
-import { HeaderComponent } from "./header.component";
 import { VariantSelectorComponent } from "./entry-and-visualization/variant-selector/variant-selector.component";
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
@@ -46,7 +45,6 @@ import {GithubForkUsComponent} from "./universal-components/github-fork-us.compo
   ],
   declarations: [
     AppComponent,
-    HeaderComponent,
     VariantEntryAndVisualizationComponent,
     VariantVisualizationComponent,
     VariantSelectorComponent,

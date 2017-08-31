@@ -4,7 +4,7 @@ import {Component} from "@angular/core";
   selector: "ehr-instructions",
   template: `
     <div id="wrapper">
-      <h3 class="display-3">EHR Example: Launching SMART-CO via the HSPC Sandbox</h3>
+      <h2 class="display-2" style="text-align: center;">EHR Link Example</h2>
       <br>
       <div class="instructionBlock">
         <h4 class="display-4 instructionHeading">Linking the app to the sandbox</h4>
