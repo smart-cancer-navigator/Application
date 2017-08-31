@@ -3,7 +3,7 @@ import { Component } from "@angular/core";
 @Component({
   selector: "app-root",
   template: `
-    <header></header>
+    <github-fork-us></github-fork-us>
     <router-outlet></router-outlet>
   `,
 })

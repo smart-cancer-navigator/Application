@@ -9,7 +9,6 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 // Components
 import { AppComponent } from "./app.component";
-import { HeaderComponent } from "./header.component";
 import { VariantSelectorComponent } from "./entry-and-visualization/variant-selector/variant-selector.component";
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
@@ -31,6 +30,8 @@ import { MyGeneInfoSearchService } from "./entry-and-visualization/genomic-data-
 import { JSONNavigatorService } from "./entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
 import { ClassificationsModalComponent } from "./entry-and-visualization/variant-visualization/variant/classifications-modal.component";
 import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
+import {LandingPageComponent} from "./landing-page/landing-page.component";
+import {GithubForkUsComponent} from "./universal-components/github-fork-us.component";
 
 @NgModule({
   imports:      [
@@ -44,7 +45,6 @@ import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/v
   ],
   declarations: [
     AppComponent,
-    HeaderComponent,
     VariantEntryAndVisualizationComponent,
     VariantVisualizationComponent,
     VariantSelectorComponent,
@@ -56,7 +56,9 @@ import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/v
     GeneInformationComponent,
     DrugDetailsModalComponent,
     ClassificationsModalComponent,
-    EHRInstructionsComponent
+    EHRInstructionsComponent,
+    LandingPageComponent,
+    GithubForkUsComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
