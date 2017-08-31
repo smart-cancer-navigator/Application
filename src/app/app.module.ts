@@ -31,6 +31,8 @@ import { MyGeneInfoSearchService } from "./entry-and-visualization/genomic-data-
 import { JSONNavigatorService } from "./entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
 import { ClassificationsModalComponent } from "./entry-and-visualization/variant-visualization/variant/classifications-modal.component";
 import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
+import {LandingPageComponent} from "./landing-page/landing-page.component";
+import {GithubForkUsComponent} from "./universal-components/github-fork-us.component";
 
 @NgModule({
   imports:      [
@@ -56,7 +58,9 @@ import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/v
     GeneInformationComponent,
     DrugDetailsModalComponent,
     ClassificationsModalComponent,
-    EHRInstructionsComponent
+    EHRInstructionsComponent,
+    LandingPageComponent,
+    GithubForkUsComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
