@@ -57,7 +57,7 @@ export interface IFilterableSearchService {
     </div>
 
     <!-- Suggestions for potential selections -->
-    <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth"> <!--  [style.height.px]="(options | async)?.length * 40 < 95 ? (options | async)?.length * 40 : 95" -->
+    <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth" [style.height.px]="(options | async)?.length < 6 ? (options | async)?.length * 48 : 288">
       <table class="table table-hover">
         <tr *ngFor="let option of options | async">
           <td (click)="onSelection(option)">{{option.optionName()}}</td>
@@ -108,7 +108,6 @@ export interface IFilterableSearchService {
       position: absolute;
       z-index: 1000;
 
-      padding: 5px;
       background-color: white;
 
       border: 1px solid #dadada;
