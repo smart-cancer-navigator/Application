@@ -21,18 +21,29 @@ class VariantWrapper {
   }
 }
 
+
+// Todo: Fix LAMA2 gene (error upon selection).
 @Component({
   selector: "variant-entry-and-visualization",
   template: `
     <div id="variantVisualizations">
-      <h2 class="display-2" style="padding: 30px;">Variant Entry and Visualization</h2>
+      <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
+        <img src="/assets/info-icon.png">
+        <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
+      </div>
+
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
+        <img [src]="patientObject.gender === 'male' ? '/assets/male-icon.png' : '/assets/female-icon.png'">
+        <p class="thinFont1">Name: {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} Lives in: {{patientObject.address[0].country}}</p>
+      </div>
       
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
         <div class="variantSelector">
-          <div class="variantSelectorSpan">
+          <div [style.width]="i === variants.length - 1 ? '100%' : 'calc(100% - 38px)'">
             <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant.variant);"></variant-selector>
           </div>
-          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" [disabled]="i === variants.length - 1">X</button>
+          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1">X</button>
         </div>
         <div>
           <div class="visualizationContent" [@drawerAnimation]="variant.drawerState">
@@ -44,15 +55,12 @@ class VariantWrapper {
         </div>
       </div>
     </div>
-    
-    <!-- Where the user can determine how to link to their EHR. -->
-    <div id="howToLinkToEHR" *ngIf="offerToLinkToEHRInstructions">
-      <a href="javascript:void(0)" (click)="routeToInstructions()">
-        <ngb-alert [type]="'primary'" (close)="removeAlert()">Want to link to an EHR?</ngb-alert>
-      </a>
-    </div>
   `,
   styles: [`
+    p {
+      margin: 0;
+    }
+
     #variantVisualizations {
       padding: 15px;
     }
@@ -68,10 +76,6 @@ class VariantWrapper {
     .variantSelector > * {
       float: left;
       height: 100%;
-    }
-
-    .variantSelectorSpan {
-      width: calc(100% - 38px);
     }
 
     .removeRowButton {
@@ -103,12 +107,71 @@ class VariantWrapper {
       width: 10px;
       margin: 10px;
     }
-    
-    #howToLinkToEHR {
-      display: block;
-      position: fixed;
-      bottom: 0;
-      left: 0;
+
+    #suggestEHRLink {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 150px;
+      width: 100%;
+
+      background-color: rgba(255, 163, 8, 0.52);
+
+      border-radius: 20px;
+      overflow: hidden;
+
+      margin-bottom: 20px;
+    }
+
+    #suggestEHRLink img {
+      width: 13%;
+      height: auto;
+      margin: 1%;
+    }
+
+    #suggestEHRLink p {
+      width: calc(83% - 100px);
+      margin: 1%;
+      font-size: 30px;
+      color: black;
+    }
+
+    #suggestEHRLink button {
+      width: 100px;
+      height: 100px;
+      color: white;
+      border-radius: 20px;
+      font-size: 50px;
+    }
+
+    #patientInfo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 150px;
+      width: 100%;
+
+      border-radius: 20px;
+      overflow: hidden;
+
+      margin-bottom: 20px;
+      
+      text-align: center;
+    }
+
+    #patientInfo img {
+      width: 100px;
+      height: 100px;
+      margin: 1%;
+    }
+
+    #patientInfo p {
+      width: calc(96% - 100px);
+      margin: 1%;
+      font-size: 30px;
+      color: black;
     }
   `],
   animations: [
@@ -129,6 +192,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   variants: VariantWrapper[] = [];
   offerToLinkToEHRInstructions = true;
+  patientExists = false;
+  patientObject: any = null;
 
   ngOnInit() {
     this.addRow();
@@ -140,7 +205,11 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
       this.offerToLinkToEHRInstructions = false;
 
-      console.log("Should now update");
+      smartClient.patient.read().then(p => {
+        console.log("Patient read is ", p);
+        this.patientObject = p;
+        this.patientExists = true;
+      });
 
       smartClient.patient.api.search({type: "Observation", query: {"category": "genomic-variant"}, count: 10})
         .then(results => {
@@ -213,7 +282,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   }
 
   routeToInstructions() {
-    this.router.navigate(["ehr-instructions"]);
+    this.router.navigate(["ehr-link"]);
   }
 
   // Remove and save EHR variants.

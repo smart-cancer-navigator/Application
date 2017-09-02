@@ -8,12 +8,12 @@ import { EHRInstructionsComponent } from "./ehr-instructions/ehr-instructions.co
 import {LandingPageComponent} from "./landing-page/landing-page.component";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/landing-page", pathMatch: "full" },
+  { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "smart-launch", component: SMARTLaunchComponent },
   { path: "token-reception", component: SMARTTokenReceptionComponent },
-  { path: "variant-entry-and-visualization", component: VariantEntryAndVisualizationComponent },
-  { path: "ehr-instructions", component: EHRInstructionsComponent },
-  { path: "landing-page", component: LandingPageComponent }
+  { path: "app", component: VariantEntryAndVisualizationComponent },
+  { path: "ehr-link", component: EHRInstructionsComponent },
+  { path: "home", component: LandingPageComponent }
 ];
 
 @NgModule({

@@ -298,6 +298,6 @@ export class LandingPageComponent {
   constructor (private router: Router) {}
 
   navigateToVisualization() {
-    this.router.navigate(["/variant-entry-and-visualization"]);
+    this.router.navigate(["/app"]);
   }
 }

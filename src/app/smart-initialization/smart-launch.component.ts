@@ -57,7 +57,7 @@ export class SMARTLaunchComponent implements OnInit {
         this.requiredParametersSupplied = true;
       } else {
         this.requiredParametersSupplied = false;
-        setTimeout(() => { this.router.navigate(["/variant-entry-and-visualization"]); }, 3000); // Wait a second before redirecting.
+        setTimeout(() => { this.router.navigate(["/app"]); }, 3000); // Wait a second before redirecting.
       }
     });
   }
