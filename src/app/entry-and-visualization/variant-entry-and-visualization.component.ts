@@ -35,7 +35,15 @@ class VariantWrapper {
 
       <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
         <img [src]="patientObject.gender === 'male' ? '/assets/male-icon.png' : '/assets/female-icon.png'">
-        <p class="thinFont1">Name: {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} Lives in: {{patientObject.address[0].country}}</p>
+        <table class="thinFont2" style="border: 0;">
+          <tr>
+            <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
+          </tr>
+          <tr>
+            <td><b>Lives in:</b> {{patientObject.address[0].country}}</td>
+            <td><b>Age:</b> {{patientAge}}</td>
+          </tr>
+        </table>
       </div>
       
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
@@ -167,7 +175,7 @@ class VariantWrapper {
       margin: 1%;
     }
 
-    #patientInfo p {
+    #patientInfo table {
       width: calc(96% - 100px);
       margin: 1%;
       font-size: 30px;
@@ -194,6 +202,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   offerToLinkToEHRInstructions = true;
   patientExists = false;
   patientObject: any = null;
+  patientAge: number = -1;
 
   ngOnInit() {
     this.addRow();
@@ -208,6 +217,12 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       smartClient.patient.read().then(p => {
         console.log("Patient read is ", p);
         this.patientObject = p;
+        if (p.birthDate) {
+          const birthDateValues = p.birthDate.split("-");
+          const timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDateValues[0]), parseInt(birthDateValues[1]), parseInt(birthDateValues[2])).getTime());
+          // Used Math.floor instead of Math.ceil so 26 years and 140 days would be considered as 26, not 27.
+          this.patientAge = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
+        }
         this.patientExists = true;
       });
 
