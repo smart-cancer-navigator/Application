@@ -40,8 +40,10 @@ class VariantWrapper {
             <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
           </tr>
           <tr>
-            <td><b>Lives in:</b> {{patientObject.address[0].country}}</td>
-            <td><b>Age:</b> {{patientAge}}</td>
+            <td><b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}}</td>
+          </tr>
+          <tr>
+            <td *ngIf="patientObject.active"><b>Age:</b> {{patientAge}}</td>
           </tr>
         </table>
       </div>
@@ -217,7 +219,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       smartClient.patient.read().then(p => {
         console.log("Patient read is ", p);
         this.patientObject = p;
-        if (p.birthDate) {
+        if (p.birthDate && p.active) {
           const birthDateValues = p.birthDate.split("-");
           const timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDateValues[0]), parseInt(birthDateValues[1]), parseInt(birthDateValues[2])).getTime());
           // Used Math.floor instead of Math.ceil so 26 years and 140 days would be considered as 26, not 27.
