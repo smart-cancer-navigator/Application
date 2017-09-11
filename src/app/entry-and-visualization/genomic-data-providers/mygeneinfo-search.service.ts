@@ -45,7 +45,11 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
           variant.origin.name = responseJSON.name;
         }
         if (responseJSON.alias) {
-          variant.origin.aliases = responseJSON.alias;
+          if (responseJSON.alias instanceof Array) {
+            variant.origin.aliases = responseJSON.alias;
+          } else {
+            variant.origin.aliases = [responseJSON.alias];
+          }
         }
         if (responseJSON.summary) {
           variant.origin.description = responseJSON.summary;
