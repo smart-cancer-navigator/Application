@@ -30,21 +30,21 @@ class VariantWrapper {
   template: `
     <div id="appHeader">
       <div id="smartCancerNavigator">
-        <img style="width: 150px; height: 150px;" src="/assets/gimp-icon.png">
+        <img style="width: 150px; height: 150px;" src="/assets/entry-and-visualization/app-logo.png">
         <p class="thinFont1" style="color: white; font-size: 40px; margin-left: 25px;">The SMART Cancer Navigator</p>
       </div>
       
       <div id="patientLinkState" style="margin-left: 15px; margin-right: 15px;">
         <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
           <div id="suggestions">
-            <img src="/assets/info-icon.png">
+            <img src="/assets/entry-and-visualization/info-icon.png">
             <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
           </div>
           <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
         </div>
 
         <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
-          <img [src]="patientObject.gender === 'male' ? '/assets/male-icon.png' : '/assets/female-icon.png'">
+          <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
           <table class="thinFont2" style="border: 0;">
             <tr>
               <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
@@ -80,7 +80,7 @@ class VariantWrapper {
             <variant-visualization [(ngModel)]="variant.variant"></variant-visualization>
           </div>
           <div *ngIf="variant.variant !== undefined && variant.variant !== null" class="informationToggle" (click)="variant.toggleDrawer()">
-            <img src="/assets/dropdown.svg">
+            <img src="/assets/entry-and-visualization/dropdown.svg">
           </div>
         </div>
       </div>

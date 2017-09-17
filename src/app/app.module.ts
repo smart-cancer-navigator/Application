@@ -20,6 +20,8 @@ import { GeneInformationComponent } from "./entry-and-visualization/variant-visu
 import { VariantInformationComponent } from "./entry-and-visualization/variant-visualization/variant/variant-information.component";
 import { VariantVisualizationComponent } from "./entry-and-visualization/variant-visualization/variant-visualization.component";
 import { EHRInstructionsComponent } from "./ehr-instructions/ehr-instructions.component";
+import { FeedbackFormModalComponent } from "./feedback-form/feedback-form-modal.component";
+import { HeaderComponent } from "./universal-components/header.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -33,7 +35,6 @@ import { ClassificationsModalComponent } from "./entry-and-visualization/variant
 import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
 import {LandingPageComponent} from "./landing-page/landing-page.component";
 import {GithubForkUsComponent} from "./universal-components/github-fork-us.component";
-import {FeedbackFormModalComponent} from "./feedback-form/feedback-form-modal.component";
 
 @NgModule({
   imports:      [
@@ -48,6 +49,7 @@ import {FeedbackFormModalComponent} from "./feedback-form/feedback-form-modal.co
   ],
   declarations: [
     AppComponent,
+    HeaderComponent,
     VariantEntryAndVisualizationComponent,
     VariantVisualizationComponent,
     VariantSelectorComponent,

@@ -28,7 +28,7 @@ import { Router } from "@angular/router";
         </div>
         <div class="parallax__layer parallax__layer--back">
           <div class="imagePanel">
-            <img src="/assets/ehr-background.png">
+            <img src="/assets/landing-page/ehr-background.png">
           </div>
         </div>
       </div>
@@ -40,9 +40,9 @@ import { Router } from "@angular/router";
               <br>
               <div
                 style="display: flex; justify-content: center; align-items: center; width: 80%; margin-left: 10%; margin-right: 10%;">
-                <img src="/assets/smart-icon.png" style="float: left; width: 36%; height: auto; margin: 1%">
-                <img src="/assets/angular-icon.svg" style="float: left; width: 18%; height: auto; margin: 1%;">
-                <img src="/assets/fhir-icon.png" style="float: left; width: 40%; height: auto; margin: 1%;">
+                <img src="/assets/landing-page/smart-icon.png" style="float: left; width: 36%; height: auto; margin: 1%">
+                <img src="/assets/landing-page/angular-icon.svg" style="float: left; width: 18%; height: auto; margin: 1%;">
+                <img src="/assets/landing-page/fhir-icon.png" style="float: left; width: 40%; height: auto; margin: 1%;">
               </div>
               <br>
               <p class="thinFont1" style="color: black; font-size: 30px;">In the modern world of oncology,
@@ -52,7 +52,7 @@ import { Router } from "@angular/router";
         </div>
         <div class="parallax__layer parallax__layer--base">
           <div class="imagePanel">
-            <img src="/assets/doctor-tablet.jpg" style="width: 100%; height: auto;">
+            <img src="/assets/landing-page/doctor-tablet.jpg" style="width: 100%; height: auto;">
           </div>
         </div>
       </div>
@@ -72,12 +72,12 @@ import { Router } from "@angular/router";
         </div>
         <div class="parallax__layer parallax__layer--back">
           <div class="imagePanel" style="width: 45%; float: right;">
-            <img src="/assets/ehr-user.png">
+            <img src="/assets/landing-page/ehr-user.png">
           </div>
         </div>
         <div class="parallax__layer parallax__layer--deep">
           <div class="imagePanel" style="width: 55%; background-color: white;">
-            <img src="/assets/example-usage.png">
+            <img src="/assets/landing-page/example-usage.png">
           </div>
         </div>
       </div>
@@ -256,7 +256,7 @@ import { Router } from "@angular/router";
     }
 
     #group7 .parallax__layer--base {
-      background: #33ec4a url("/assets/open-smartco.jpg");
+      background: #33ec4a url("/assets/landing-page/open-smartco.jpg");
       background-size: 100% auto;
     }
 
