@@ -5,7 +5,8 @@ import { HttpModule } from "@angular/http";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppRoutingModule } from "./app-routing.module";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { UiSwitchModule } from "../../node_modules/angular2-ui-switch/src";
 
 // Components
 import { AppComponent } from "./app.component";
@@ -41,7 +42,8 @@ import {GithubForkUsComponent} from "./universal-components/github-fork-us.compo
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    UiSwitchModule
   ],
   declarations: [
     AppComponent,

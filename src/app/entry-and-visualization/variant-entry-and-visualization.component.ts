@@ -10,48 +10,66 @@ class VariantWrapper {
     this.index = _index;
     this.variant = _variant;
     this.drawerState = "closed";
+    this.saved = false;
   }
 
   variant: Variant;
   index: number;
   drawerState: string; // Open or closed.
+  saved: boolean;
 
   public toggleDrawer = () => {
     this.drawerState = this.drawerState === "closed" ? "open" : "closed";
   }
 }
 
-
-// Todo: Fix LAMA2 gene (error upon selection).
 @Component({
   selector: "variant-entry-and-visualization",
   template: `
-    <div id="variantVisualizations">
-      <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
-        <img src="/assets/info-icon.png">
-        <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
-        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
-      </div>
-
-      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
-        <img [src]="patientObject.gender === 'male' ? '/assets/male-icon.png' : '/assets/female-icon.png'">
-        <table class="thinFont2" style="border: 0;">
-          <tr>
-            <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
-          </tr>
-          <tr>
-            <td><b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}}</td>
-          </tr>
-          <tr>
-            <td *ngIf="patientObject.active"><b>Age:</b> {{patientAge}}</td>
-          </tr>
-        </table>
+    <div id="appHeader">
+      <div id="smartCancerNavigator">
+        <img style="width: 150px; height: 150px;" src="/assets/gimp-icon.png">
+        <p class="thinFont1" style="color: white; font-size: 40px; margin-left: 25px;">The SMART Cancer Navigator</p>
       </div>
       
+      <div id="patientLinkState" style="margin-left: 15px; margin-right: 15px;">
+        <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
+          <div id="suggestions">
+            <img src="/assets/info-icon.png">
+            <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+          </div>
+          <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
+        </div>
+
+        <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
+          <img [src]="patientObject.gender === 'male' ? '/assets/male-icon.png' : '/assets/female-icon.png'">
+          <table class="thinFont2" style="border: 0;">
+            <tr>
+              <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
+            </tr>
+            <tr>
+              <td><b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}}</td>
+            </tr>
+            <tr>
+              <td *ngIf="patientObject.active"><b>Age:</b> {{patientAge}}</td>
+            </tr>
+          </table>
+
+          <div id="autosyncToggle">
+            <div>
+              <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
+              <p class="thinFont1">Auto-Sync</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="variantVisualizations">
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
         <div class="variantSelector">
           <div [style.width]="i === variants.length - 1 ? '100%' : 'calc(100% - 38px)'">
-            <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant.variant);"></variant-selector>
+            <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant);"></variant-selector>
           </div>
           <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1">X</button>
         </div>
@@ -69,6 +87,103 @@ class VariantWrapper {
   styles: [`
     p {
       margin: 0;
+    }
+
+    #smartCancerNavigator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background-color: grey;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+
+      user-select: none;
+      cursor: default;
+    }
+    
+    #suggestEHRLink {
+      height: 100px;
+      width: 100%;
+
+      background-color: rgba(255, 163, 8, 0.52);
+      overflow: hidden;
+    }
+    
+    #suggestEHRLink>* {
+      float: left;
+    }
+
+    #suggestEHRLink>#suggestions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: calc(100% - 60px);
+      height: 100%;
+    }
+
+    #suggestEHRLink img {
+      width: 100px;
+      height: auto;
+      margin: 1%;
+    }
+
+    #suggestEHRLink p {
+      width: calc(96% - 100px);
+      margin: 1%;
+      font-size: 20px;
+      color: black;
+    }
+
+    #suggestEHRLink button {
+      width: 60px;
+      height: 30px;
+      color: white;
+      font-size: 15px;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    #patientLinkState>div {
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    #patientInfo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 100px;
+      width: 100%;
+
+      overflow: hidden;
+
+      text-align: center;
+    }
+
+    #patientInfo img {
+      width: 80px;
+      height: 80px;
+      margin: 1%;
+    }
+
+    #patientInfo table {
+      width: calc(96% - 200px);
+      margin: 1%;
+      font-size: 20px;
+      color: black;
+    }
+    
+    #patientInfo #autosyncToggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      width: 100px;
+      height: 100%;
     }
 
     #variantVisualizations {
@@ -117,72 +232,6 @@ class VariantWrapper {
       width: 10px;
       margin: 10px;
     }
-
-    #suggestEHRLink {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      height: 150px;
-      width: 100%;
-
-      background-color: rgba(255, 163, 8, 0.52);
-
-      border-radius: 20px;
-      overflow: hidden;
-
-      margin-bottom: 20px;
-    }
-
-    #suggestEHRLink img {
-      width: 13%;
-      height: auto;
-      margin: 1%;
-    }
-
-    #suggestEHRLink p {
-      width: calc(83% - 100px);
-      margin: 1%;
-      font-size: 30px;
-      color: black;
-    }
-
-    #suggestEHRLink button {
-      width: 100px;
-      height: 100px;
-      color: white;
-      border-radius: 20px;
-      font-size: 50px;
-    }
-
-    #patientInfo {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      height: 150px;
-      width: 100%;
-
-      border-radius: 20px;
-      overflow: hidden;
-
-      margin-bottom: 20px;
-      
-      text-align: center;
-    }
-
-    #patientInfo img {
-      width: 100px;
-      height: 100px;
-      margin: 1%;
-    }
-
-    #patientInfo table {
-      width: calc(96% - 100px);
-      margin: 1%;
-      font-size: 30px;
-      color: black;
-    }
   `],
   animations: [
     trigger("drawerAnimation", [
@@ -201,14 +250,19 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   constructor (private selectorService: VariantSelectorService, private router: Router) {}
 
   variants: VariantWrapper[] = [];
+
   offerToLinkToEHRInstructions = true;
   patientExists = false;
   patientObject: any = null;
   patientAge: number = -1;
 
+  // Toggled by the user depending on whether they want to sync to the EHR their changes right away (as soon as they make them)
+  autosync: boolean = true;
+
   ngOnInit() {
     this.addRow();
 
+    // As soon as the smart client is loaded from the SMART JS library, this creates the patient info header.
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
         return;
@@ -281,7 +335,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       this.addRow();
     }
   }
-
   removeRow(index: number) {
     const variantToRemove = this.variants[index].variant;
 
@@ -302,8 +355,24 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     this.router.navigate(["ehr-link"]);
   }
 
+  onToggleAutosync(newVal: boolean) {
+    this.autosync = newVal;
+
+    if (this.autosync) {
+      for (const variant of this.variants) {
+        if (!variant.saved) {
+          this.saveEHRVariant(variant);
+        }
+      }
+    }
+  }
+
   // Remove and save EHR variants.
-  saveEHRVariant(variant: Variant) {
+  saveEHRVariant(variant: VariantWrapper) {
+    if (!this.autosync) {
+      return;
+    }
+
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
         return;
@@ -313,14 +382,14 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         const dataToTransmit = {
           "resource": {
             "resourceType": "Observation",
-            "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
+            "id": "SMART-Observation-" + p.identifier[0].value + "-variation-" + variant.variant.hgvsID.replace(/[.,\/#!$%\^&\*;:{}<>=\-_`~()]/g, ""),
             "meta": {
               "versionId": "1" // ,
               // "lastUpdated": Date.now().toString()
             },
             "text": {
               "status": "generated",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.getLocation() + "</div>"
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.variant.getLocation() + "</div>"
             },
             "status": "final",
             "extension": [
@@ -353,11 +422,11 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               "coding": [
                 {
                   "system": "http://www.hgvs.org",
-                  "code": variant.hgvsID,
-                  "display": variant.hgvsID
+                  "code": variant.variant.hgvsID,
+                  "display": variant.variant.hgvsID
                 }
               ],
-              "text": variant.hgvsID
+              "text": variant.variant.hgvsID
             },
             "subject": {
               "reference": "Patient/" + p.id
@@ -377,6 +446,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         smartClient.api.update(dataToTransmit)
           .then(result => {
             console.log("Added EHR variant successfully!", result);
+            variant.saved = true;
           })
           .fail(err => {
             console.log("Failed to add EHR variant", err);
@@ -384,8 +454,11 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       });
     });
   }
-
   removeEHRVariant(variant: Variant) {
+    if (!this.autosync) {
+      return;
+    }
+
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
         return;
