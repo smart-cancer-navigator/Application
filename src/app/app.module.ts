@@ -33,6 +33,7 @@ import { ClassificationsModalComponent } from "./entry-and-visualization/variant
 import {VariantEntryAndVisualizationComponent} from "./entry-and-visualization/variant-entry-and-visualization.component";
 import {LandingPageComponent} from "./landing-page/landing-page.component";
 import {GithubForkUsComponent} from "./universal-components/github-fork-us.component";
+import {FeedbackFormModalComponent} from "./feedback-form/feedback-form-modal.component";
 
 @NgModule({
   imports:      [
@@ -60,11 +61,13 @@ import {GithubForkUsComponent} from "./universal-components/github-fork-us.compo
     ClassificationsModalComponent,
     EHRInstructionsComponent,
     LandingPageComponent,
-    GithubForkUsComponent
+    GithubForkUsComponent,
+    FeedbackFormModalComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
-    ClassificationsModalComponent
+    ClassificationsModalComponent,
+    FeedbackFormModalComponent
   ],
   providers: [
     SMARTReferenceService,
