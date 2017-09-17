@@ -28,40 +28,27 @@ class VariantWrapper {
 @Component({
   selector: "variant-entry-and-visualization",
   template: `
-    <div id="appHeader">
-      <div id="smartCancerNavigator">
-        <img style="width: 150px; height: 150px;" src="/assets/entry-and-visualization/app-logo.png">
-        <p class="thinFont1" style="color: white; font-size: 40px; margin-left: 25px;">The SMART Cancer Navigator</p>
-      </div>
-      
-      <div id="patientLinkState" style="margin-left: 15px; margin-right: 15px;">
-        <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
-          <div id="suggestions">
-            <img src="/assets/entry-and-visualization/info-icon.png">
-            <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
-          </div>
-          <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
+    <div id="patientLinkState">
+      <!-- If an EHR link is NOT detected -->
+      <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
+        <div id="suggestions">
+          <img src="/assets/entry-and-visualization/info-icon.png">
+          <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
         </div>
+        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
+      </div>
 
-        <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
-          <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
-          <table class="thinFont2" style="border: 0;">
-            <tr>
-              <td><b>Name:</b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}}</td>
-            </tr>
-            <tr>
-              <td><b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}}</td>
-            </tr>
-            <tr>
-              <td *ngIf="patientObject.active"><b>Age:</b> {{patientAge}}</td>
-            </tr>
-          </table>
+      <!-- If an EHR link is detected -->
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
+        <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
+        
+        <!-- Patient Details -->
+        <p><b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}}</p>
 
-          <div id="autosyncToggle">
-            <div>
-              <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
-              <p class="thinFont1">Auto-Sync</p>
-            </div>
+        <div id="autosyncToggle">
+          <div>
+            <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
+            <p class="thinFont1">Auto-Sync</p>
           </div>
         </div>
       </div>
@@ -98,34 +85,24 @@ class VariantWrapper {
       margin: 0;
     }
 
-    #smartCancerNavigator {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      background-color: grey;
-      padding: 20px;
-      text-align: center;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-
-      user-select: none;
-      cursor: default;
+    #patientLinkState {
+      margin-left: 6%;
+      margin-right: 6%;
     }
-    
+
     #suggestEHRLink {
-      height: 100px;
+      height: 80px;
       width: 100%;
 
-      background-color: rgba(255, 163, 8, 0.52);
+      background-color: rgb(255, 189, 44);
       overflow: hidden;
     }
-    
-    #suggestEHRLink>* {
+
+    #suggestEHRLink > * {
       float: left;
     }
 
-    #suggestEHRLink>#suggestions {
+    #suggestEHRLink > #suggestions {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -134,13 +111,13 @@ class VariantWrapper {
     }
 
     #suggestEHRLink img {
-      width: 100px;
+      width: 80px;
       height: auto;
       margin: 1%;
     }
 
     #suggestEHRLink p {
-      width: calc(96% - 100px);
+      width: calc(96% - 80px);
       margin: 1%;
       font-size: 20px;
       color: black;
@@ -155,9 +132,9 @@ class VariantWrapper {
       padding: 0;
     }
 
-    #patientLinkState>div {
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
+    #patientLinkState > div {
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
     }
 
     #patientInfo {
@@ -165,7 +142,7 @@ class VariantWrapper {
       justify-content: center;
       align-items: center;
 
-      height: 100px;
+      height: 80px;
       width: 100%;
 
       overflow: hidden;
@@ -179,24 +156,28 @@ class VariantWrapper {
       margin: 1%;
     }
 
-    #patientInfo table {
+    #patientInfo p {
       width: calc(96% - 200px);
       margin: 1%;
       font-size: 20px;
       color: black;
     }
-    
+
     #patientInfo #autosyncToggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      
+
       width: 100px;
       height: 100%;
     }
 
     #variantVisualizations {
       padding: 15px;
+      margin-top: 2%;
+      margin-left: 4%;
+      margin-right: 4%;
+      background-color: white;
     }
 
     .variantWrapper {

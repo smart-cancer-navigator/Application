@@ -76,6 +76,7 @@ export interface IFilterableSearchService {
       cursor: pointer;
 
       border: 1px solid #dadada;
+      background-color: white;
       overflow: hidden;
     }
 

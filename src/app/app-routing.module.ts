@@ -8,7 +8,7 @@ import { EHRInstructionsComponent } from "./ehr-instructions/ehr-instructions.co
 import {LandingPageComponent} from "./landing-page/landing-page.component";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/home", pathMatch: "full" },
+  { path: "", redirectTo: "/app", pathMatch: "full" },
   { path: "smart-launch", component: SMARTLaunchComponent },
   { path: "token-reception", component: SMARTTokenReceptionComponent },
   { path: "app", component: VariantEntryAndVisualizationComponent },
