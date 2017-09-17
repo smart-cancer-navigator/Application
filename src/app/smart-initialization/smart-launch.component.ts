@@ -17,7 +17,7 @@ import {isNullOrUndefined} from "util";
       <label class="thinFont1">Client ID: </label><input class="form-control" type="text" [(ngModel)]="clientID" placeholder="Ex: 1e7af332-b27a-4de2-8c51-728ae3ed25c2">
       <label class="thinFont1">Scopes: </label><input class="form-control" type="text" [(ngModel)]="scopes">
       <br>
-      <button (click)="authorizeApp()" class="btn btn-success">Authorize</button>
+      <button (click)="authorizeApp()" class="btn btn-success" style="margin: 20px 5%; width: 90%; height: 60px;">Authorize</button>
     </div>
     
     <p *ngIf="requiredParametersSupplied === false">ISS and Launch parameters were not supplied!  Redirecting in 3 seconds...</p>

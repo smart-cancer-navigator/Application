@@ -111,9 +111,9 @@ class VariantWrapper {
     }
 
     #suggestEHRLink img {
-      width: 80px;
-      height: auto;
-      margin: 1%;
+      width: 60px;
+      height: 60px;
+      margin: 1% 10px;
     }
 
     #suggestEHRLink p {
@@ -151,25 +151,33 @@ class VariantWrapper {
     }
 
     #patientInfo img {
-      width: 80px;
-      height: 80px;
-      margin: 1%;
+      width: 60px;
+      height: 60px;
+      margin: 1% 10px;
     }
 
     #patientInfo p {
-      width: calc(96% - 200px);
+      width: calc(96% - 280px);
       margin: 1%;
       font-size: 20px;
       color: black;
     }
 
-    #patientInfo #autosyncToggle {
+    #autosyncToggle {
       display: flex;
       align-items: center;
       justify-content: center;
 
-      width: 100px;
+      width: 200px;
       height: 100%;
+    }
+    
+    #autosyncToggle>div {
+      width: 100%;
+    }
+    
+    #autosyncToggle>div>p {
+      width: 100%;
     }
 
     #variantVisualizations {

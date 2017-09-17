@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
       <img src="/assets/entry-and-visualization/app-logo.png">
       
       <div id="routingOptions">
-        <div class="routeOption" (click)="routeTo('landing-page')">
+        <div class="routeOption" (click)="routeTo('home')">
           <p>Home</p>
         </div>
         <div class="routeOption">
@@ -27,8 +27,8 @@ import {Router} from "@angular/router";
         </div>
         <div style="width: 6px; height: 76px; float: left; border-left: 1px solid #b8b8b8; margin-top: 2px; margin-bottom: 2px;">
         </div>
-        <div class="routeOption" style="background-color: #27384f;">
-          <p style="color: white;">Try It Out!</p>
+        <div class="routeOption" (click)="routeTo('app');">
+          <p>Try It Out!</p>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@ import {Router} from "@angular/router";
     }
 
     #routingOptions {
-      min-width: 50%;
+      min-width: 600px;
       height: 100%;
       overflow: hidden;
       float: right;
