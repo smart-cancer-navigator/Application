@@ -13,9 +13,15 @@ import {isNullOrUndefined} from "util";
   selector: "smart-launch",
   template: `
     <div *ngIf="requiredParametersSupplied === true">
-      <h3 class="display-3" style="width: 100%">Enter Authorization Info</h3>
-      <label class="thinFont1">Client ID: </label><input class="form-control" type="text" [(ngModel)]="clientID" placeholder="Ex: 1e7af332-b27a-4de2-8c51-728ae3ed25c2">
-      <label class="thinFont1">Scopes: </label><input class="form-control" type="text" [(ngModel)]="scopes">
+      <h3 class="display-3" style="width: 100%; text-align: center;">Enter Authorization Info</h3>
+      <div class="inputPanel">
+        <label class="thinFont1">Client ID: </label>
+        <input class="form-control" type="text" [(ngModel)]="clientID" placeholder="Ex: 1e7af332-b27a-4de2-8c51-728ae3ed25c2">
+      </div>
+      <div class="inputPanel">
+        <label class="thinFont1">Scopes: </label>
+        <input class="form-control" type="text" [(ngModel)]="scopes">
+      </div>
       <br>
       <button (click)="authorizeApp()" class="btn btn-success" style="margin: 20px 5%; width: 90%; height: 60px;">Authorize</button>
     </div>
@@ -31,15 +37,23 @@ import {isNullOrUndefined} from "util";
     div * {
       float: left;
     }
+    
+    .inputPanel {
+      width: 100%;
+    }
+    
+    .inputPanel>* {
+      float: left;
+    }
 
     label {
-      width: 20%;
+      width: 150px;
       font-size: 25px;
       margin: 0;
     }
     
     input {
-      width: calc(80% - 2px);
+      width: calc(90% - 152px);
     }
   `]
 })

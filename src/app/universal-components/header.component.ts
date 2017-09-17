@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: "header",
@@ -10,24 +10,24 @@ import {Router} from "@angular/router";
       <img src="/assets/entry-and-visualization/app-logo.png">
       
       <div id="routingOptions">
-        <div class="routeOption" (click)="routeTo('home')">
+        <div class="routeOption {{currentRoute === '/home' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('home')">
           <p>Home</p>
         </div>
-        <div class="routeOption">
+        <div class="routeOption {{currentRoute === '/about' ? 'selectedRoute' : 'unselectedRoute'}}">
           <p>About</p>
         </div>
-        <div class="routeOption">
+        <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}">
           <p>Team</p>
         </div>
-        <div class="routeOption">
+        <div class="routeOption {{currentRoute === '/news' ? 'selectedRoute' : 'unselectedRoute'}}">
           <p>News</p>
         </div>
-        <div class="routeOption">
+        <div class="routeOption {{currentRoute === '/contact' ? 'selectedRoute' : 'unselectedRoute'}}">
           <p>Contact</p>
         </div>
         <div style="width: 6px; height: 76px; float: left; border-left: 1px solid #b8b8b8; margin-top: 2px; margin-bottom: 2px;">
         </div>
-        <div class="routeOption" (click)="routeTo('app');">
+        <div class="routeOption {{currentRoute === '/app' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('app');">
           <p>Try It Out!</p>
         </div>
       </div>
@@ -76,7 +76,6 @@ import {Router} from "@angular/router";
       float: left;
       color: #2f2f2f;
 
-      background-color: white;
       text-align: center;
       height: 60px;
       width: calc(100% / 6 - 7px); /* +1 px for each for border div */
@@ -90,17 +89,34 @@ import {Router} from "@angular/router";
       border-radius: 5px;
     }
 
-    .routeOption:hover {
+    .unselectedRoute {
+      background-color: white;
+    }
+
+    .unselectedRoute:hover {
       background-color: #dbdbdb;
     }
 
-    .routeOption:active {
+    .unselectedRoute:active {
       background-color: #cbcbcb;
+    }
+
+    .selectedRoute {
+      background-color: #27384f;
+      color: white;
     }
   `]
 })
 export class HeaderComponent {
-  constructor (private router: Router) {}
+  constructor (private router: Router) {
+    router.events.subscribe((val) => {
+      if (val instanceof NavigationEnd) {
+        this.currentRoute = val.urlAfterRedirects;
+      }
+    });
+  }
+
+  currentRoute: string = "/app";
 
   routeTo(routeLoc: string) {
     this.router.navigate([routeLoc]);

@@ -33,40 +33,46 @@ class VariantWrapper {
       <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thinFont1">You don't seem to be connected to an EHR!  <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+          <p class="thinFont1">You don't seem to be connected to an EHR! <a href="javascript:void(0)"
+                                                                            (click)="routeToInstructions()">Learn how
+            here.</a></p>
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
       </div>
 
       <!-- If an EHR link is detected -->
-      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? 'rgba(118, 218, 255, 0.76)' : 'rgba(255, 192, 203, 0.76)'">
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? '#27384f' : '#ff45f7'">
         <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
-        
+
         <!-- Patient Details -->
-        <p><b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}}</p>
+        <p style="color: white"><b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b>
+          {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}}</p>
 
         <div id="autosyncToggle">
           <div>
             <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
-            <p class="thinFont1">Auto-Sync</p>
+            <p class="thinFont1" style="color: white">Auto-Sync</p>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div id="variantVisualizations">
       <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
         <div class="variantSelector">
           <div [style.width]="i === variants.length - 1 ? '100%' : 'calc(100% - 38px)'">
-            <variant-selector [ngModel]="variant.variant" (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant);"></variant-selector>
+            <variant-selector [ngModel]="variant.variant"
+                              (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant);"></variant-selector>
           </div>
-          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1">X</button>
+          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1">X
+          </button>
         </div>
         <div>
           <div class="visualizationContent" [@drawerAnimation]="variant.drawerState">
             <variant-visualization [(ngModel)]="variant.variant"></variant-visualization>
           </div>
-          <div *ngIf="variant.variant !== undefined && variant.variant !== null" class="informationToggle" (click)="variant.toggleDrawer()">
+          <div *ngIf="variant.variant !== undefined && variant.variant !== null" class="informationToggle"
+               (click)="variant.toggleDrawer()">
             <img src="/assets/entry-and-visualization/dropdown.svg">
           </div>
         </div>
@@ -171,12 +177,12 @@ class VariantWrapper {
       width: 200px;
       height: 100%;
     }
-    
-    #autosyncToggle>div {
+
+    #autosyncToggle > div {
       width: 100%;
     }
-    
-    #autosyncToggle>div>p {
+
+    #autosyncToggle > div > p {
       width: 100%;
     }
 
