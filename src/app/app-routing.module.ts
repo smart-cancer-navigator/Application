@@ -3,9 +3,9 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
-import { VariantEntryAndVisualizationComponent } from "./entry-and-visualization/variant-entry-and-visualization.component";
-import { EHRInstructionsComponent } from "./ehr-instructions/ehr-instructions.component";
-import {LandingPageComponent} from "./landing-page/landing-page.component";
+import { VariantEntryAndVisualizationComponent } from "./routes/entry-and-visualization/variant-entry-and-visualization.component";
+import { EHRInstructionsComponent } from "./routes/ehr-instructions/ehr-instructions.component";
+import {LandingPageComponent} from "./routes/home/home.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/app", pathMatch: "full" },

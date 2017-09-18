@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Variant } from "./genomic-data";
-import { SMARTClient } from "../smart-initialization/smart-reference.service";
+import { SMARTClient } from "../../smart-initialization/smart-reference.service";
 import { VariantSelectorService } from "./variant-selector/variant-selector.service";
 import { trigger, state, style, animate, transition } from "@angular/animations";
 import {Router} from "@angular/router";

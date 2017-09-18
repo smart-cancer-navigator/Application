@@ -20,7 +20,7 @@ import {Component} from "@angular/core";
       <div class="instructionBlock">
         <h4 class="display-4 instructionHeading">Building a launch scenario</h4>
         <p class="thinFont1">With your new registered app, create a new Practitioner Persona.  Then, create a new launch scenario for the app with any patient and practitioner persona you desire.</p>
-        <p style="color: red">(NOTE: Ensure that you link the launch scenario to the SMART-CO app registration you created in the previous step).  </p>
+        <p style="color: red">(NOTE: Ensure that you link the launch scenario to the SMART Cancer Navigator app registration you created in the previous step).  </p>
         <img style="width: 40%" src="/assets/ehr-link/launching-scenario.png">
       </div>
       <br>
@@ -40,6 +40,7 @@ import {Component} from "@angular/core";
   styles: [`
     #wrapper {
       padding: 5px;
+      background-color: white;
     }
     
     .instructionBlock {

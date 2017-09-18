@@ -4,7 +4,7 @@ import {Component} from "@angular/core";
   selector: "github-fork-us",
   template: `
     <div>
-      <a href="https://www.github.com/smart-co/Application">
+      <a href="https://www.github.com/smart-cancer-navigator/Application">
         <img src="/assets/github-icon.png">
       </a>
     </div>

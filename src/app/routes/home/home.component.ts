@@ -18,10 +18,10 @@ import { Router } from "@angular/router";
         <div class="parallax__layer parallax__layer--base">
           <div class="centeredContent">
             <div class="darkPanel">
-              <h1 class="thinFont1" style="color: white; font-size: 100px;">SMART-CO</h1>
+              <h1 class="thinFont1" style="color: white; font-size: 100px;">The SMART Cancer Navigator</h1>
             </div>
             <div class="lightPanel">
-              <p class="thinFont2" style="color: black; font-size: 30px;">A SMART EHR Module for Clinical
+              <p class="thinFont2" style="color: black; font-size: 30px;">A SMART on FHIR EHR Module for Clinical
                 Oncologists</p>
             </div>
           </div>
@@ -36,7 +36,7 @@ import { Router } from "@angular/router";
         <div class="parallax__layer parallax__layer--fore">
           <div class="centeredContent">
             <div class="lightPanel">
-              <h1 class="thinFont1" style="color: black; font-size: 100px;">Why SMART-CO?</h1>
+              <h1 class="thinFont1" style="color: black; font-size: 100px;">Why?</h1>
               <br>
               <div
                 style="display: flex; justify-content: center; align-items: center; width: 80%; margin-left: 10%; margin-right: 10%;">
