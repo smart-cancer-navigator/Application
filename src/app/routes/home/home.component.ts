@@ -33,16 +33,17 @@ import { Router } from "@angular/router";
   styles: [`
     .infoCard {
       margin: 10px 5px;
+      overflow: hidden;
     }
 
     .cardContent {
       float: left;
-      width: calc(70% - 6px);
+      width: 70%;
     }
 
     .cardImage {
       float: left;
-      width: calc(30% - 6px);
+      width: 30%;
       min-width: 150px;
       max-width: 100%;
     }

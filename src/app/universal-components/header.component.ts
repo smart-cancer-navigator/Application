@@ -13,14 +13,14 @@ import {NavigationEnd, Router} from "@angular/router";
         <div class="routeOption {{currentRoute === '/home' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('home')">
           <p>Home</p>
         </div>
-        <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('team')">
+        <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}" style="cursor: not-allowed; opacity: 0.5;">
           <p>Team</p>
         </div>
-        <div class="routeOption {{currentRoute === '/news' ? 'selectedRoute' : 'unselectedRoute'}}">
-          <p>News</p>
+        <div class="routeOption {{currentRoute === '/ehr-link' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('ehr-link')">
+          <p>EHR Link</p>
         </div>
         <div class="routeOption {{currentRoute === '/contact' ? 'selectedRoute' : 'unselectedRoute'}}">
-          <p>Contact</p>
+          <p>DB Analysis</p>
         </div>
         <div style="width: 1px; height: 76px; float: left; background-color: #a4a4a4; margin: 2px 3px;">
         </div>

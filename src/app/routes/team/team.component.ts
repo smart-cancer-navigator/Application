@@ -4,7 +4,7 @@ import {Component} from "@angular/core";
   selector: "team",
   template: `
     <div id="makiah">
-      <div class="profileImage" style="background-image: url('/assets/team/jetski.jpg'); background-size: auto 100%; background-position: center;"></div>
+      <div class="profileImage" style="background-image: url('/assets/team/makiah.jpg'); background-size: auto 100%; background-position: center;"></div>
 
       <div class="profileContent">
         <h1 class="thinFont2">Makiah Bennett</h1>

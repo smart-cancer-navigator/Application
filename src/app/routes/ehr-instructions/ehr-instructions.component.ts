@@ -4,8 +4,10 @@ import {Component} from "@angular/core";
   selector: "ehr-instructions",
   template: `
     <div id="wrapper">
-      <h2 class="display-2" style="text-align: center;">EHR Link Example</h2>
-      <br>
+      <div class="instructionBlock">
+        <h2 class="display-2" style="text-align: center;">EHR Link Example</h2>
+      </div>
+      <hr>
       <div class="instructionBlock">
         <h4 class="display-4 instructionHeading">Linking the app to the sandbox</h4>
         <p class="thinFont1">Navigate to <a href="https://sandbox.hspconsortium.org">the HSPC Sandbox</a>, and create a new account.</p>
@@ -40,20 +42,21 @@ import {Component} from "@angular/core";
   styles: [`
     #wrapper {
       padding: 5px;
-      background-color: white;
+      margin: 15px 50px;
     }
-    
+
     .instructionBlock {
-      border: 1px solid grey;
-      border-radius: 15px;
+      border: 1px solid #cecece;
+      box-shadow: 1px 3px #cfcfcf;
+      background-color: white;
       padding: 10px;
       text-align: center;
     }
-    
+
     .instructionHeading {
       text-align: center;
     }
-    
+
     .instructionBlock p {
       font-size: 20px;
     }
