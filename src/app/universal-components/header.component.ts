@@ -3,20 +3,17 @@ import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: "header",
-  template: `    
+  template: `
     <div id="greyBackground"></div>
-    
+
     <div id="container">
       <img src="/assets/entry-and-visualization/app-logo.png">
-      
+
       <div id="routingOptions">
         <div class="routeOption {{currentRoute === '/home' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('home')">
           <p>Home</p>
         </div>
-        <div class="routeOption {{currentRoute === '/about' ? 'selectedRoute' : 'unselectedRoute'}}">
-          <p>About</p>
-        </div>
-        <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}">
+        <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('team')">
           <p>Team</p>
         </div>
         <div class="routeOption {{currentRoute === '/news' ? 'selectedRoute' : 'unselectedRoute'}}">
@@ -25,9 +22,10 @@ import {NavigationEnd, Router} from "@angular/router";
         <div class="routeOption {{currentRoute === '/contact' ? 'selectedRoute' : 'unselectedRoute'}}">
           <p>Contact</p>
         </div>
-        <div style="width: 6px; height: 76px; float: left; border-left: 1px solid #b8b8b8; margin-top: 2px; margin-bottom: 2px;">
+        <div style="width: 1px; height: 76px; float: left; background-color: #a4a4a4; margin: 2px 3px;">
         </div>
-        <div class="routeOption {{currentRoute === '/app' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('app');">
+        <div class="routeOption {{currentRoute === '/app' ? 'selectedRoute' : 'unselectedRoute'}}"
+             (click)="routeTo('app');">
           <p>Try It Out!</p>
         </div>
       </div>
@@ -66,7 +64,7 @@ import {NavigationEnd, Router} from "@angular/router";
     }
 
     #routingOptions {
-      min-width: 600px;
+      min-width: 500px;
       height: 100%;
       overflow: hidden;
       float: right;
@@ -78,7 +76,7 @@ import {NavigationEnd, Router} from "@angular/router";
 
       text-align: center;
       height: 60px;
-      width: calc(100% / 6 - 7px); /* +1 px for each for border div */
+      width: calc(100% / 5 - 8px); /* +1 px for each for border div */
       margin: 10px 3px;
 
       display: flex;

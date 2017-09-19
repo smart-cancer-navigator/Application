@@ -6,14 +6,16 @@ import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token
 import { VariantEntryAndVisualizationComponent } from "./routes/entry-and-visualization/variant-entry-and-visualization.component";
 import { EHRInstructionsComponent } from "./routes/ehr-instructions/ehr-instructions.component";
 import {LandingPageComponent} from "./routes/home/home.component";
+import {TeamComponent} from "./routes/team/team.component";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/app", pathMatch: "full" },
+  { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "smart-launch", component: SMARTLaunchComponent },
   { path: "token-reception", component: SMARTTokenReceptionComponent },
   { path: "app", component: VariantEntryAndVisualizationComponent },
   { path: "ehr-link", component: EHRInstructionsComponent },
-  { path: "home", component: LandingPageComponent }
+  { path: "home", component: LandingPageComponent },
+  { path: "team", component: TeamComponent }
 ];
 
 @NgModule({
