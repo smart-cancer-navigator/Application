@@ -6,6 +6,7 @@ import { trigger, state, style, animate, transition } from "@angular/animations"
 import {Router} from "@angular/router";
 import {FeedbackFormModalComponent} from "../feedback-form/feedback-form-modal.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {isNullOrUndefined} from "util";
 
 class VariantWrapper {
   constructor(_index: number, _variant: Variant) {
@@ -33,9 +34,7 @@ class VariantWrapper {
       <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thinFont1">You don't seem to be connected to an EHR! <a href="javascript:void(0)"
-                                                                            (click)="routeToInstructions()">Learn how
-            here.</a></p>
+          <p class="thinFont1">You don't seem to be connected to an EHR! <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
       </div>
@@ -45,8 +44,14 @@ class VariantWrapper {
         <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
 
         <!-- Patient Details -->
-        <p style="color: white"><b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b>
-          {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}}</p>
+        <p style="color: white">
+          <b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | 
+          <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}} | 
+          <b>Condition:</b> 
+          <select style="font-size: 15px;">
+            <option *ngFor="let condition of patientConditions">{{condition}}</option>
+          </select>
+        </p>
 
         <div id="autosyncToggle">
           <div>
@@ -159,7 +164,7 @@ class VariantWrapper {
     #patientInfo img {
       width: 60px;
       height: 60px;
-      margin: 1% 10px;
+      margin: 10px;
     }
 
     #patientInfo p {
@@ -168,7 +173,7 @@ class VariantWrapper {
       font-size: 20px;
       color: black;
     }
-
+    
     #autosyncToggle {
       display: flex;
       align-items: center;
@@ -270,6 +275,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   patientExists = false;
   patientObject: any = null;
   patientAge: number = -1;
+  patientConditions: string[] = [];
 
   // Toggled by the user depending on whether they want to sync to the EHR their changes right away (as soon as they make them)
   autosync: boolean = true;
@@ -277,7 +283,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   ngOnInit() {
     this.addRow();
 
-    // As soon as the smart client is loaded from the SMART JS library, this creates the patient info header.
+    // As soon as the smart client is loaded from the SMART JS library, this creates the patient info header and populates the patient variants.
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
         return;
@@ -285,6 +291,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
       this.offerToLinkToEHRInstructions = false;
 
+      // Get all patient information.
       smartClient.patient.read().then(p => {
         console.log("Patient read is ", p);
         this.patientObject = p;
@@ -297,6 +304,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         this.patientExists = true;
       });
 
+      // Get all genomic variants attached to this patient.
       smartClient.patient.api.search({type: "Observation", query: {"category": "genomic-variant"}, count: 10})
         .then(results => {
           console.log("Successfully got variants!", results);
@@ -336,7 +344,28 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           }
         })
         .fail(err => {
-          console.log("Couldn't query genomic variants error!" + err);
+          console.log("Couldn't query genomic variants error!", err);
+        });
+
+      smartClient.patient.api.search({type: "Condition"})
+        .then(results => {
+          console.log("Got patient conditions:", results);
+
+          if (!isNullOrUndefined(results.data.entry) && results.data.entry.length > 0) {
+            for (const entry of results.data.entry) {
+              if (!isNullOrUndefined(entry.resource)) {
+                if (!isNullOrUndefined(entry.resource.code)) {
+                  if (!isNullOrUndefined(entry.resource.code.text)) {
+                    this.patientConditions.push(entry.resource.code.text);
+                    console.log("Added " + entry.resource.code.text);
+                  }
+                }
+              }
+            }
+          }
+        })
+        .fail(err => {
+          console.log("The query for patient conditions failed!", err);
         });
     });
   }
