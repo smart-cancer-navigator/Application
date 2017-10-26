@@ -7,6 +7,7 @@ import { VariantEntryAndVisualizationComponent } from "./routes/entry-and-visual
 import { EHRInstructionsComponent } from "./routes/ehr-instructions/ehr-instructions.component";
 import {LandingPageComponent} from "./routes/home/home.component";
 import {TeamComponent} from "./routes/team/team.component";
+import {DBAnalysisComponent} from "./routes/db-analysis/db-analysis.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/home", pathMatch: "full" },
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: "app", component: VariantEntryAndVisualizationComponent },
   { path: "ehr-link", component: EHRInstructionsComponent },
   { path: "home", component: LandingPageComponent },
-  { path: "team", component: TeamComponent }
+  { path: "team", component: TeamComponent },
+  { path: "db-analysis", component: DBAnalysisComponent }
 ];
 
 @NgModule({

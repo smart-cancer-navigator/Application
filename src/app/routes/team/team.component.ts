@@ -28,9 +28,9 @@ import {Component} from "@angular/core";
       <div style="padding: 10px 15px;">
         <h1 class="thinFont2">Additional Credits</h1>
         <hr>
-        <ul class="thinFont2" style="font-size: 30px;">
+        <ul class="thinFont2" style="font-size: 20px;">
           <li>Dr. Gil Alterovitz</li>
-          <li>Jeremy Warner</li>
+          <li>Dr. Jeremy Warner</li>
         </ul>
       </div>
     </div>
@@ -71,6 +71,7 @@ import {Component} from "@angular/core";
     .profileContent {
       width: calc(100% - 210px);
       padding: 10px;
+      font-size: 20px;
     }
   `]
 })

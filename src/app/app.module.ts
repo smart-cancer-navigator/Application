@@ -36,6 +36,7 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
+import {DBAnalysisComponent} from "./routes/db-analysis/db-analysis.component";
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-d
     LandingPageComponent,
     GithubForkUsComponent,
     FeedbackFormModalComponent,
-    TeamComponent
+    TeamComponent,
+    DBAnalysisComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
