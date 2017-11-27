@@ -3,12 +3,12 @@
  * online API.
  */
 import { Observable } from "rxjs/Observable";
-import {Pathway, Variant} from "../genomic-data";
+import { Pathway, Variant } from "../genomic-data";
 
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import {JSONNavigatorService} from "./utilities/json-navigator.service";
-import {IGeneDatabase} from "../variant-selector/variant-selector.service";
+import { JSONNavigatorService } from "./utilities/json-navigator.service";
+import { IGeneDatabase } from "../variant-selector/variant-selector.service";
 
 
 /**
@@ -26,7 +26,7 @@ const GENE_DATA_LOCATIONS = {
 @Injectable()
 export class MyGeneInfoSearchService implements IGeneDatabase {
 
-  constructor (private http: Http, private jsonNavigator: JSONNavigatorService) {}
+  constructor (private http: HttpClient, private jsonNavigator: JSONNavigatorService) {}
 
   public updateVariantOrigin = (variant: Variant): Observable<Variant> => {
     if (!variant.origin || !variant.origin.entrezID) {
@@ -37,36 +37,34 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
     // Query for gene stuff.
     return this.http.get("https://mygene.info/v3/gene/" + variant.origin.entrezID)
       .map(response => {
-        const responseJSON = response.json();
+        console.log("Got for gene annotation ", response);
 
-        console.log("Got for gene annotation ", responseJSON);
-
-        if (responseJSON.name) {
-          variant.origin.name = responseJSON.name;
+        if (response["name"]) {
+          variant.origin.name = response["name"];
         }
-        if (responseJSON.alias) {
-          if (responseJSON.alias instanceof Array) {
-            variant.origin.aliases = responseJSON.alias;
+        if (response["alias"]) {
+          if (response["alias"] instanceof Array) {
+            variant.origin.aliases = response["alias"];
           } else {
-            variant.origin.aliases = [responseJSON.alias];
+            variant.origin.aliases = [response["alias"]];
           }
         }
-        if (responseJSON.summary) {
-          variant.origin.description = responseJSON.summary;
+        if (response["summary"]) {
+          variant.origin.description = response["summary"];
         }
-        if (responseJSON.type_of_gene) {
-          variant.origin.type = responseJSON.type_of_gene;
-        }
-
-        if (responseJSON.genomic_pos) {
-          variant.origin.chromosome = responseJSON.genomic_pos.chr;
-          variant.origin.start = responseJSON.genomic_pos.start;
-          variant.origin.end = responseJSON.genomic_pos.end;
-          variant.origin.strand = responseJSON.genomic_pos.strand;
+        if (response["type_of_gene"]) {
+          variant.origin.type = response["type_of_gene"];
         }
 
-        if (responseJSON.pathway && responseJSON.pathway.wikipathways) {
-          for (const wikipathway of responseJSON.pathway.wikipathways) {
+        if (response["genomic_pos"]) {
+          variant.origin.chromosome = response["genomic_pos"].chr;
+          variant.origin.start = response["genomic_pos"].start;
+          variant.origin.end = response["genomic_pos"].end;
+          variant.origin.strand = response["genomic_pos"].strand;
+        }
+
+        if (response["pathway"] && response["pathway"].wikipathways) {
+          for (const wikipathway of response["pathway"].wikipathways) {
             variant.origin.pathways.push(new Pathway(wikipathway.id, wikipathway.name));
           }
         }
