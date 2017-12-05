@@ -4,22 +4,21 @@
 
 import { Drug, DrugReference, InteractionType, GeneInteraction } from "./drug";
 import { Observable } from "rxjs/Observable";
-import { Http } from "@angular/http";
 import { Injectable } from "@angular/core";
 import { Gene } from "../../genomic-data";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class DrugsSearchService {
-  constructor (private http: Http) {}
+  constructor (private http: HttpClient) {}
 
   public searchByReference(reference: DrugReference): Observable <Drug> {
     return this.http.get("https://dgidb.genome.wustl.edu/api/v1/interactions.json?drugs=" + (reference.name.indexOf(" ") >= 0 ? reference.name.substring(0, reference.name.indexOf(" ")) : reference.name))
       .map(result => {
-        const resultJSON = result.json();
 
         const newDrug = new Drug(reference.name);
 
-        if (!(resultJSON.matchedTerms && resultJSON.matchedTerms.length >= 0 && resultJSON.matchedTerms[0].interactions)) {
+        if (!(result["matchedTerms"] && result["matchedTerms"].length >= 0 && result["matchedTerms"][0].interactions)) {
           return;
         }
 
@@ -49,8 +48,8 @@ export class DrugsSearchService {
 
           newDrug.interactions.push(new GeneInteraction(new Gene(currentGeneTarget), [new InteractionType(currentInteractionType, [currentSource])]));
         };
-        console.log("Interaction JSON is ", resultJSON.matchedTerms[0].interactions);
-        for (const jsonInteraction of resultJSON.matchedTerms[0].interactions) {
+        console.log("Interaction JSON is ", result["matchedTerms"][0].interactions);
+        for (const jsonInteraction of result["matchedTerms"][0].interactions) {
           addInteraction(jsonInteraction);
         }
 

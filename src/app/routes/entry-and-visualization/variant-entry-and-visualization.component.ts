@@ -40,13 +40,13 @@ class VariantWrapper {
       </div>
 
       <!-- If an EHR link is detected -->
-      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject.gender === 'male' ? '#27384f' : '#ff45f7'">
-        <img [src]="patientObject.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject['gender'] === 'male' ? '#27384f' : '#ff45f7'">
+        <img [src]="patientObject['gender'] === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
 
         <!-- Patient Details -->
         <p style="color: white">
-          <b>Name: </b> {{patientObject.name[0].given[0]}} {{patientObject.name[0].family}} | 
-          <b>{{patientObject.active ? 'Lives in' : 'Lived in'}}:</b> {{patientObject.address[0].country}} | <b>Age:</b> {{patientAge}} | 
+          <b>Name: </b> {{patientObject['name'][0].given[0]}} {{patientObject['name'][0].family}} | 
+          <b>{{patientObject['active'] ? 'Lives in' : 'Lived in'}}:</b> {{patientObject['address'][0].country}} | <b>Age:</b> {{patientAge}} | 
           <b>Condition:</b> 
           <select style="font-size: 15px;">
             <option *ngFor="let condition of patientConditions">{{condition}}</option>
@@ -273,7 +273,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   offerToLinkToEHRInstructions = true;
   patientExists = false;
-  patientObject: any = null;
+  patientObject: Object = null;
   patientAge: number = -1;
   patientConditions: string[] = [];
 
@@ -504,14 +504,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     });
   }
   removeEHRVariant(variant: Variant) {
-    if (!this.autosync) {
+    if (!this.autosync)
       return;
-    }
 
     SMARTClient.subscribe(smartClient => {
-      if (smartClient === null) {
+      // We can't do anything without a smartClient!
+      if (smartClient === null)
         return;
-      }
 
       smartClient.patient.read().then((p) => {
         const dataToTransmit = {

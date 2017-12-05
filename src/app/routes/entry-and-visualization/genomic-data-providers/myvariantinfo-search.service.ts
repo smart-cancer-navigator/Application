@@ -6,13 +6,14 @@ import { Observable } from "rxjs/Observable";
 import {Classification, Gene, GeneReference, Variant, VariantReference} from "../genomic-data";
 import { DrugReference } from "../variant-visualization/drugs/drug";
 
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+
+import { JSONNavigatorService } from "./utilities/json-navigator.service";
+import { IVariantDatabase } from "../variant-selector/variant-selector.service";
 
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
-import {JSONNavigatorService} from "./utilities/json-navigator.service";
-import {IVariantDatabase} from "../variant-selector/variant-selector.service";
 
 /**
  * Since the myvariant.info response JSON is MASSIVE and depends to a large extent on the query, these locations
@@ -108,20 +109,25 @@ class VariantSearchKeyword {
 
 @Injectable()
 export class MyVariantInfoSearchService implements IVariantDatabase {
-  constructor(private http: Http, private jsonNavigator: JSONNavigatorService) {
+  constructor(private http: HttpClient, private jsonNavigator: JSONNavigatorService)
+  {
     // Scrub the locations of all bracket indicators.
-    for (const key of Object.keys(MY_VARIANT_LOCATIONS)) {
+    for (const key of Object.keys(MY_VARIANT_LOCATIONS))
+    {
       const compilation: string[] = [];
-      for (let i = 0; i < MY_VARIANT_LOCATIONS[key].length; i++) {
+      for (let i = 0; i < MY_VARIANT_LOCATIONS[key].length; i++)
+      {
         const currentFocus = MY_VARIANT_LOCATIONS[key][i];
-        if (currentFocus.indexOf("[") >= 0) {
+        if (currentFocus.indexOf("[") >= 0)
+        {
 
           // REGULAR EXPRESSIONS AHHHHH (test here: http://regexr.com/)
           const scrubbedString = currentFocus.replace(/\[.*?\]/g, "");
 
           console.log("Scrubbed " + currentFocus + " to " + scrubbedString);
           compilation.push(scrubbedString);
-        } else {
+        } else
+        {
           compilation.push(currentFocus);
         }
       }
@@ -138,11 +144,9 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     this.allFieldsIncludeString = this.allFieldsIncludeString.substring(0, this.allFieldsIncludeString.length - 1);
 
     // Add fields required for references to reference include string.
-    for (const key of ["GeneHUGO", "VariantName", "EntrezID"]) {
-      for (const location of this.scrubbedLocations[key]) {
+    for (const key of ["GeneHUGO", "VariantName", "EntrezID"])
+      for (const location of this.scrubbedLocations[key])
         this.referenceFieldsIncludeString = this.referenceFieldsIncludeString + location + ",";
-      }
-    }
     // Remove the final comma.
     this.referenceFieldsIncludeString = this.referenceFieldsIncludeString.substring(0, this.allFieldsIncludeString.length - 1);
   }
@@ -230,7 +234,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       const determineLikelihoodBasedOnQuery = (queryString: string): Observable <number> => {
         return this.http.get(queryString)
           .map(result => {
-            return result.json().hits.length;
+            return result["hits"].length;
           });
       };
 
@@ -247,15 +251,18 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       };
 
       // Query for relative likelihoods.
-      if (!isNaN(Number(newKeyword))) {
-        if (!purposeAlreadyExists(KeywordPurpose.ENTREZ_ID)) {
+      if (!isNaN(Number(newKeyword)))
+      {
+        if (!purposeAlreadyExists(KeywordPurpose.ENTREZ_ID))
           this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.ENTREZ_ID));
-        }
-      } else if (newKeyword.toLowerCase().indexOf("chr") >= 0 || newKeyword.toLowerCase().indexOf("civic") >= 0) {
-        if (!purposeAlreadyExists(KeywordPurpose.HGVS_ID)) {
+      }
+      else if (newKeyword.toLowerCase().indexOf("chr") >= 0 || newKeyword.toLowerCase().indexOf("civic") >= 0)
+      {
+        if (!purposeAlreadyExists(KeywordPurpose.HGVS_ID))
           this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.HGVS_ID));
-        }
-      } else {
+      }
+      else
+      {
         const geneHUGOQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword) + quickQuerySuffix);
         const variantNameQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword) + quickQuerySuffix);
 
@@ -266,20 +273,29 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
               console.log("Classification results were ", results);
 
               // Figure out purpose of keyword.
-              if (results[0] > results[1]) {
-                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol)) {
+              if (results[0] > results[1])
+              {
+
+                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol))
                   this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Gene_HUGO_Symbol));
-                }
-              } else if (results[0] < results[1]) {
-                if (!purposeAlreadyExists(KeywordPurpose.Variant_Name)) {
+
+              }
+              else if (results[0] < results[1])
+              {
+
+                if (!purposeAlreadyExists(KeywordPurpose.Variant_Name))
                   this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Variant_Name));
-                }
-              } else { // Results must be equal.
-                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol)) {
+
+              }
+              else
+              {
+                // Results must be equal.
+                if (!purposeAlreadyExists(KeywordPurpose.Gene_HUGO_Symbol))
                   this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Gene_HUGO_Symbol));
-                } else if (!purposeAlreadyExists(KeywordPurpose.Variant_Name)) {
+
+                else if (!purposeAlreadyExists(KeywordPurpose.Variant_Name))
                   this.currentKeywords.push(new VariantSearchKeyword(newKeyword, KeywordPurpose.Variant_Name));
-                }
+
               }
             }));
       }
@@ -324,18 +340,15 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
 
       return this.http.get(finalQuery)
         .map(result => {
-          const mappedJSON = result.json();
-
-          console.log("Final Query result from " + finalQuery, mappedJSON);
-          if (!mappedJSON.hits) {
+          console.log("Final Query result from " + finalQuery, result);
+          if (!result["hits"])
             return [];
-          }
 
           // Used to check whether a given property exists in the mapped JSON.
           const variantResults: VariantReference[] = [];
 
           // For every result.
-          for (const hit of mappedJSON.hits) {
+          for (const hit of result["hits"]) {
             // Since names, HUGO symbols, and such shouldn"t include spaces.
             const ensureValidString = (someString: string): string => {
               return someString.indexOf(" ") >= 0 ? someString.substring(0, someString.indexOf(" ")) : someString;
@@ -401,19 +414,15 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
 
     return this.http.get(queryConstruct)
       .map(result => {
-        const mappedJSON = result.json();
-
-        console.log("Final Query result from " + queryConstruct, mappedJSON);
-        if (!mappedJSON.hits) {
+        console.log("Final Query result from " + queryConstruct, result);
+        if (!result["hits"])
           return null;
-        }
 
         // For every result.
-        if (!(mappedJSON.hits && mappedJSON.hits.length > 0)) {
+        if (!(result["hits"] && result["hits"].length > 0))
           return null;
-        }
 
-        const hit = mappedJSON.hits[0];
+        const hit = result["hits"][0];
 
         // Since names, HUGO symbols, and such shouldn"t include spaces.
         const ensureValidString = (someString: string): string => {

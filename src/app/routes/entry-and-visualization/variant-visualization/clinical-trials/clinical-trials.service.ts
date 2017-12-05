@@ -4,7 +4,7 @@
  */
 import { Variant } from "../../genomic-data";
 import { Observable } from "rxjs/Observable";
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ClinicalTrialReference, ClinicalTrial } from "./clinical-trials";
 import { Drug, DrugReference } from "../drugs/drug";
@@ -20,7 +20,7 @@ import "rxjs/add/operator/mergeMap";
  */
 @Injectable()
 export class ClinicalTrialsService {
-  constructor (public http: Http) {}
+  constructor (public http: HttpClient) {}
 
   // Reduces typing involved :P
   queryEndpoint = "https://clinicaltrialsapi.cancer.gov/v1/clinical-trials?";
@@ -34,9 +34,9 @@ export class ClinicalTrialsService {
   searchClinicalTrials = (variant: Variant): Observable<ClinicalTrialReference[]> => {
 
     // Gets a list of clinical trial references from the single JSON object.
-    const clinicalTrialJSONtoReferences = (jsonObject: any): ClinicalTrialReference[] => {
+    const clinicalTrialJSONtoReferences = (jsonObject: Object): ClinicalTrialReference[] => {
       const references: ClinicalTrialReference[] = [];
-      for (const trial of jsonObject.trials) {
+      for (const trial of jsonObject["trials"]) {
         const drugsArray: DrugReference[] = [];
         for (const intervention of trial.arms[0].interventions) {
           if (intervention.intervention_type === "Drug") {
@@ -48,7 +48,7 @@ export class ClinicalTrialsService {
       }
 
       return references;
-    }
+    };
 
     // Requirements before constructing queries.
     const desiredTrials: number = 10;
@@ -66,7 +66,7 @@ export class ClinicalTrialsService {
       .mergeMap(result1 => {
         console.log("1. Got name query results:", result1);
 
-        const result1References = clinicalTrialJSONtoReferences(result1.json());
+        const result1References = clinicalTrialJSONtoReferences(result1);
 
         // If we don"t have the max number of trials already.
         if (result1References.length < desiredTrials) {
@@ -80,7 +80,7 @@ export class ClinicalTrialsService {
               const referenceArray2: ClinicalTrialReference[] = result1References;
 
               // For every HGVS clinical trial reference.
-              for (const result2Reference of clinicalTrialJSONtoReferences(result2.json())) {
+              for (const result2Reference of clinicalTrialJSONtoReferences(result2)) {
                 let existsInArray = false;
 
                 for (const currentReference of referenceArray2) {
@@ -113,7 +113,7 @@ export class ClinicalTrialsService {
               console.log("3. Got HUGO query results:", result3);
 
               const referenceArray3: ClinicalTrialReference[] = result2References;
-              const result3References = clinicalTrialJSONtoReferences(result3.json());
+              const result3References = clinicalTrialJSONtoReferences(result3);
 
               // For every HGVS clinical trial reference.
               for (const result3Reference of result3References) {
@@ -144,9 +144,7 @@ export class ClinicalTrialsService {
   getDetailsFor = (clinicalTrialReference: ClinicalTrialReference): Observable<ClinicalTrial> => {
     return this.http.get(this.queryEndpoint + "size=1&include=official_title&include=brief_summary&nci_id=" + clinicalTrialReference.nci_id)
       .map(response => {
-        const fullTrialData = response.json();
-
-        return new ClinicalTrial(clinicalTrialReference, fullTrialData.trials[0].official_title, fullTrialData.trials[0].brief_summary);
+        return new ClinicalTrial(clinicalTrialReference, response["trials"][0].official_title, response["trials"][0].brief_summary);
       });
   }
 }

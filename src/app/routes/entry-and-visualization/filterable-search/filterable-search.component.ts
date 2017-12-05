@@ -193,7 +193,6 @@ export class FilterableSearchComponent implements OnInit, AfterViewInit, Control
   /**
    * Automatically resize the popup menu upon creating the menu or resizing the window.
    */
-  toggleMenu (): void;
   toggleMenu (newState?: boolean): void {
     if (newState && typeof newState === "boolean") {
       if (this.menuCurrentlyOpen === newState) {

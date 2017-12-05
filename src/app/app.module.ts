@@ -1,7 +1,7 @@
 // Modules
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { HttpModule } from "@angular/http";
+import { HttpClientModule } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppRoutingModule } from "./app-routing.module";
@@ -36,14 +36,13 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
-import {DBAnalysisComponent} from "./routes/db-analysis/db-analysis.component";
-
+import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
 
 @NgModule({
   imports:      [
     BrowserModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,

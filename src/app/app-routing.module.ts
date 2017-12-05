@@ -5,9 +5,9 @@ import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.compon
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
 import { VariantEntryAndVisualizationComponent } from "./routes/entry-and-visualization/variant-entry-and-visualization.component";
 import { EHRInstructionsComponent } from "./routes/ehr-instructions/ehr-instructions.component";
-import {LandingPageComponent} from "./routes/home/home.component";
-import {TeamComponent} from "./routes/team/team.component";
-import {DBAnalysisComponent} from "./routes/db-analysis/db-analysis.component";
+import { LandingPageComponent } from "./routes/home/home.component";
+import { TeamComponent } from "./routes/team/team.component";
+import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/home", pathMatch: "full" },
