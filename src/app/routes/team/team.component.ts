@@ -49,7 +49,7 @@ import { Component } from "@angular/core";
   `]
 })
 export class TeamComponent {
-  contributors: string[] = ["Dr. Gil Alterovitz", "Jeremy Warner MD, MS", "Makiah Bennett", "Ishaan Prasad", "Monica Arniella", "Dr. Alicia Beeghly-Fadiel"];
+  contributors: string[] = ["Gil Alterovitz, PhD", "Jeremy Warner, MD, MS", "Makiah Bennett", "Ishaan Prasad", "Monica Arniella", "Alicia Beeghly-Fadiel, PhD"];
 
   emailDisplay: string = "(Click to reveal)";
   updateEmail(): void
