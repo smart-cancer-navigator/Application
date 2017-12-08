@@ -7,7 +7,7 @@ import {NavigationEnd, Router} from "@angular/router";
     <div id="greyBackground"></div>
 
     <div id="container">
-      <img src="/assets/entry-and-visualization/app-logo.png">
+      <img src="/assets/logo.svg">
 
       <div id="routingOptions">
         <div class="routeOption {{currentRoute === '/home' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('home')">

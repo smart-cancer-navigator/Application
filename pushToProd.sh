@@ -1,6 +1,6 @@
 #! /bin/bash
 
-ng build
+ng build --prod
 
 cd ../Releases
 find . -maxdepth 1 \! \( -name .git -o -name temp \) -exec rm -rf '{}' \;
