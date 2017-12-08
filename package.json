@@ -22,13 +22,13 @@
     "@angular/platform-browser-dynamic": "^5.0.3",
     "@angular/platform-server": "^5.0.3",
     "@angular/router": "^5.0.3",
+    "rxjs": "^5.5.2",
+    "zone.js": "^0.8.4",
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-beta.6",
     "angular2-ui-switch": "^1.2.0",
     "bootstrap": "^4.0.0-beta.2",
     "core-js": "^2.4.1",
-    "fhirclient": "^0.1.11",
-    "rxjs": "^5.5.2",
-    "zone.js": "^0.8.4"
+    "fhirclient": "^0.1.11"
   },
   "devDependencies": {
     "@angular/cli": "^1.5.4",

@@ -23,7 +23,7 @@ import { Router } from "@angular/router";
           </p>
         </div>
       </div>
-      <div class="cardImage">
+      <div class="cardImage" style="min-width: 300px;">
         <div>
           <img src="/assets/landing-page/app-content.png">
         </div>
