@@ -31,7 +31,7 @@ export const VISUALIZATION_CONTROL_VALUE_ACCESSOR: any = {
 
       <ngb-tab title="Clinical Trials">
         <ng-template ngbTabContent>
-          <clinical-trials [forVariant]="currentlySelected"></clinical-trials>
+          <clinical-trials [(ngModel)]="currentlySelected"></clinical-trials>
         </ng-template>
       </ngb-tab>
     </ngb-tabset>

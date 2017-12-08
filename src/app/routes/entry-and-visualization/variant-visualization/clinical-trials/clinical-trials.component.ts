@@ -3,10 +3,17 @@
  * often is the best way to glean such information.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
+import {Component, forwardRef, Input, OnInit} from "@angular/core";
 import { ClinicalTrialsService } from "./clinical-trials.service";
 import { ClinicalTrialReference } from "./clinical-trials";
 import { Variant } from "../../genomic-data";
+import {NG_VALUE_ACCESSOR} from "@angular/forms";
+
+export const CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR: any = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => ClinicalTrialsComponent),
+  multi: true
+};
 
 @Component({
   selector: "clinical-trials",
@@ -38,25 +45,48 @@ import { Variant } from "../../genomic-data";
       </ng-container>
       </tbody>
     </table>
-  `
+  `,
+  styles: [``],
+  providers: [CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR]
 })
-export class ClinicalTrialsComponent implements OnInit {
+export class ClinicalTrialsComponent {
   constructor (public clinicalTrialsService: ClinicalTrialsService) {}
 
-  // One set of clinical trials per gene variant.
-  @Input() forVariant: Variant;
+  // Clinical trials references.
   clinicalTrials: ClinicalTrialReference[] = [];
 
-  ngOnInit(): void {
-    console.log("Called");
-    if (!this.forVariant) {
-      return;
-    }
+  // The internal data model (for ngModel)
+  _currentlySelected: Variant = null;
+  get currentlySelected(): any {
+    return this._currentlySelected;
+  }
+  set currentlySelected(v: any) {
+    if (v !== this.currentlySelected) {
+      this._currentlySelected = v;
+      this.clinicalTrialsService.searchClinicalTrials(v).subscribe(trials => this.clinicalTrials = trials);
 
-    // Populate clinical trials.
-    this.clinicalTrialsService.searchClinicalTrials(this.forVariant).subscribe(trials => this.clinicalTrials = trials);
+      this.onChangeCallback(v);
+    }
   }
 
+  // From ControlValueAccessor interface
+  writeValue(value: any) {
+    if (value !== this.currentlySelected) {
+      this.currentlySelected = value;
+    }
+  }
+
+  // Placeholders for the callbacks which are later providesd by the Control Value Accessor
+  private onTouchedCallback: () => void = () => {};
+  registerOnTouched(fn: any) {
+    this.onTouchedCallback = fn;
+  }
+  private onChangeCallback: (_: any) => void = () => {};
+  registerOnChange(fn: any) {
+    this.onChangeCallback = fn;
+  }
+
+  // Currently only logs to console.
   getDataFor(reference: ClinicalTrialReference) {
     this.clinicalTrialsService.getDetailsFor(reference).subscribe(details => console.log(details));
   }
