@@ -7,8 +7,10 @@ import {Injectable} from "@angular/core";
  * The gene reference class includes only the base properties for a given gene; those which are required for merging
  * and such.
  */
-export class GeneReference implements IMergeable {
-  constructor (_hugoSymbol: string, _entrezID: number) {
+export class GeneReference implements IMergeable
+{
+  constructor (_hugoSymbol: string, _entrezID: number)
+  {
     this.hugoSymbol = _hugoSymbol;
     this.entrezID = _entrezID;
   }
@@ -16,14 +18,21 @@ export class GeneReference implements IMergeable {
   entrezID: number;
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
-  mergeable = (other: GeneReference) => {
-    if (!this.hugoSymbol || this.hugoSymbol === "") {
+  mergeable = (other: GeneReference) =>
+  {
+    if (!this.hugoSymbol || this.hugoSymbol === "")
       return false;
-    }
+
     return this.hugoSymbol === other.hugoSymbol;
   }
-  merge = (other: GeneReference) => {
+
+  merge = (other: GeneReference) =>
+  {
     this.entrezID = MergeProperties(this.entrezID, other.entrezID);
+  }
+
+  toString = (): string => {
+    return this.hugoSymbol + " " + this.entrezID;
   }
 }
 
@@ -40,14 +49,21 @@ export class Pathway {
   id: string;
   name: string;
 }
-export class Gene {
-  static fromReference(reference: GeneReference) {
+
+/**
+ * Contains additional data than the GeneReference.
+ */
+export class Gene
+{
+  static fromReference(reference: GeneReference)
+  {
     const newGene = new Gene(reference.hugoSymbol);
     newGene.entrezID = reference.entrezID;
     return newGene;
   }
 
-  constructor(_hugoSymbol: string) {
+  constructor(_hugoSymbol: string)
+  {
     this.hugoSymbol = _hugoSymbol;
   }
 
@@ -64,10 +80,14 @@ export class Gene {
   end: number;
   strand: number;
 
-  pathwaysString = (): string => {
-    if (!this.pathways || this.pathways.length === 0) {
+  /**
+   * Concatenates all genomic pathways for the variant in question.
+   * @returns {string}
+   */
+  pathwaysString = (): string =>
+  {
+    if (!this.pathways || this.pathways.length === 0)
       return "";
-    }
 
     let current = "The " + this.pathways[0].name;
     for (let i = 1; i < this.pathways.length; i++) {
@@ -81,13 +101,16 @@ export class Gene {
   }
 
   // Merges another gene into this gene (overwriting properties if the property of one is undefined).
-  mergeable = (other: Gene) => {
-    if (!this.hugoSymbol || this.hugoSymbol === "") {
+  mergeable = (other: Gene) =>
+  {
+    if (!this.hugoSymbol || this.hugoSymbol === "")
       return false;
-    }
+
     return this.hugoSymbol === other.hugoSymbol;
   }
-  merge = (other: Gene) => {
+
+  merge = (other: Gene) =>
+  {
     this.entrezID = MergeProperties(this.entrezID, other.entrezID);
     this.name = MergeProperties(this.name, other.name);
     this.description = MergeProperties(this.description, other.description);
@@ -99,8 +122,10 @@ export class Gene {
 /**
  * The variant reference is better way to get only the basic info required for a given variant.
  */
-export class VariantReference implements IFilterableSearchOption, IMergeable {
-  constructor(_origin: GeneReference, _variantName: string, _hgvsID: string) {
+export class VariantReference implements IFilterableSearchOption, IMergeable
+{
+  constructor(_origin: GeneReference, _variantName: string, _hgvsID: string)
+  {
     this.origin = _origin;
     this.variantName = _variantName;
     this.hgvsID = _hgvsID;
@@ -109,21 +134,37 @@ export class VariantReference implements IFilterableSearchOption, IMergeable {
   variantName: string;
   hgvsID: string;
 
-  optionName = () => {
+  optionName = () =>
+  {
     return this.origin.hugoSymbol + " " + this.variantName + " " + this.origin.entrezID + " " + this.hgvsID;
   }
 
   /**
    * Merging methods
    */
-  mergeable = (other: VariantReference) => {
-    return this.hgvsID === other.hgvsID && this.origin.mergeable(other.origin);
+  mergeable = (other: VariantReference) =>
+  {
+    return this.variantName === other.variantName && this.origin.mergeable(other.origin);
   }
 
   // Merges another variant reference into this variant reference (overwriting properties if the property of one is undefined).
-  merge = (other: VariantReference) => {
+  merge = (other: VariantReference) =>
+  {
+    // Determine which HGVS ID to use since we don't want to mess this one up.
+    if (other.hgvsID.indexOf("chr") !== -1)
+      this.hgvsID = other.hgvsID;
+    else if (this.hgvsID.indexOf("chr") !== -1)
+      other.hgvsID = this.hgvsID;
+
+    // Merge both genes.
     this.origin.merge(other.origin);
-    this.variantName = MergeProperties(this.variantName, other.variantName);
+
+    console.log("Merged " + this.toString() + " and " + other.toString());
+  }
+
+  toString = (): string =>
+  {
+    return this.origin.toString() + " " + this.variantName + " " + this.hgvsID;
   }
 }
 
@@ -131,24 +172,34 @@ export class VariantReference implements IFilterableSearchOption, IMergeable {
  * Gene variants vary in their pathogenicity (danger to their host), and are important to consider
  * alongside the genes which they vary from.
  */
-export class Classification {
-  constructor (_name: string, _source: string) {
+export class Classification
+{
+  constructor (_name: string, _source: string)
+  {
     this.name = _name;
     this.sources = [_source];
   }
   name: string;
   sources: string[];
 }
-export class Variant {
-  static fromReference(reference: VariantReference) {
+
+/**
+ * Contains the data required to display a variant.
+ */
+export class Variant
+{
+  static fromReference(reference: VariantReference)
+  {
     return new Variant(Gene.fromReference(reference.origin), reference.variantName, reference.hgvsID);
   }
 
-  constructor(_origin: Gene, _variantName: string, _hgvsID: string) {
+  constructor(_origin: Gene, _variantName: string, _hgvsID: string)
+  {
     this.origin = _origin;
     this.variantName = _variantName;
     this.hgvsID = _hgvsID;
   }
+
   origin: Gene;
   variantName: string;
   hgvsID: string;
@@ -163,11 +214,13 @@ export class Variant {
   start: number;
   end: number;
 
-  optionName = () => {
+  optionName = () =>
+  {
     return this.origin.hugoSymbol + " " + this.variantName + " " + this.origin.entrezID + " " + this.hgvsID;
   }
 
-  getClassification = () => {
+  getClassification = () =>
+  {
     let maxAgreements = 0;
     let verdict = "";
     for (const classification of this.classifications) {
@@ -182,12 +235,14 @@ export class Variant {
   /**
    * Merging methods
    */
-  mergeable = (other: Variant) => {
+  mergeable = (other: Variant) =>
+  {
     return this.hgvsID === other.hgvsID && this.origin.mergeable(other.origin);
   }
 
   // Merges another variant reference into this variant reference (overwriting properties if the property of one is undefined).
-  merge = (other: Variant) => {
+  merge = (other: Variant) =>
+  {
     this.origin.merge(other.origin);
     this.variantName = MergeProperties(this.variantName, other.variantName);
     this.hgvsID = MergeProperties(this.hgvsID, other.hgvsID);

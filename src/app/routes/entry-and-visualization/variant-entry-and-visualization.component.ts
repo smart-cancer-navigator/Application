@@ -280,7 +280,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   // Toggled by the user depending on whether they want to sync to the EHR their changes right away (as soon as they make them)
   autosync: boolean = true;
 
-  ngOnInit() {
+  ngOnInit()
+  {
     this.addRow();
 
     // As soon as the smart client is loaded from the SMART JS library, this creates the patient info header and populates the patient variants.

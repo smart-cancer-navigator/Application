@@ -377,7 +377,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       this.lastSuggestionSet = getVariantArrayObservable();
       return this.lastSuggestionSet;
     }
-  }
+  };
 
   getByReference = (reference: VariantReference): Observable<Variant> => {
     console.log("Creating final observable with keywords", this.currentKeywords);
