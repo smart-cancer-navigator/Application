@@ -28,7 +28,7 @@ const MY_VARIANT_LOCATIONS = {
     "docm.gene_name",
     "snpeff.genename",
     "snpeff.gene_id",
-    "clinvar.gene.symbol"
+    "clinvar.gene.symbol" 
   ],
   "VariantName": [
     "civic.name",
@@ -166,12 +166,24 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
    * @param {string} desiredVal
    * @returns {string}
    */
-  public constructORConcatenation(stringArray: string[], desiredVal: string): string {
+  public constructORConcatenation(stringArray: string[], desiredVal: string, include_prefixed_args: boolean): string {
     desiredVal = desiredVal.replace(/[:]/g, "\\$&");
     // desiredVal = encodeURIComponent(desiredVal);
-    let currentString = stringArray[0] + ":" + desiredVal + "*" + "%20OR%20" + stringArray[0] + ":" + desiredVal;
+    let currentString = "";
+    if (include_prefixed_args) 
+    {
+      currentString = stringArray[0] + ":" + desiredVal + "*" + "%20OR%20" + stringArray[0] + ":" + desiredVal;
+    }
+    else
+    {
+      currentString = stringArray[0] + ":" + desiredVal;
+    }
+
     for (let i = 1; i < stringArray.length; i++) {
-      currentString = currentString + "%20OR%20" + stringArray[i] + ":" + desiredVal + "*" + "%20OR%20" + stringArray[i] + ":" + desiredVal;
+      if (include_prefixed_args) {
+        currentString = currentString + "%20OR%20" + stringArray[i] + ":" + desiredVal + "*";
+      }
+      currentString = currentString + "%20OR%20" + stringArray[i] + ":" + desiredVal;
     }
     return currentString;
   }
@@ -263,8 +275,8 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
       }
       else
       {
-        const geneHUGOQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword) + quickQuerySuffix);
-        const variantNameQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword) + quickQuerySuffix);
+        const geneHUGOQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, newKeyword, true) + quickQuerySuffix);
+        const variantNameQuery = determineLikelihoodBasedOnQuery(this.queryEndpoint + this.constructORConcatenation(this.scrubbedLocations.VariantName, newKeyword, true) + quickQuerySuffix);
 
         // Create large observable fork.
         checkObservables.push(
@@ -324,7 +336,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
             arrayToUse = this.scrubbedLocations.EntrezID;
         }
 
-        finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, this.currentKeywords[i].keyword);
+        finalQuery = finalQuery + this.constructORConcatenation(arrayToUse, this.currentKeywords[i].keyword, true);
 
         // Add "AND" requirement
         if (i < this.currentKeywords.length - 1) {
@@ -396,18 +408,18 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     };
     if (reference.origin) {
       if (reference.origin.hugoSymbol && reference.origin.hugoSymbol !== "") {
-        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, reference.origin.hugoSymbol));
+        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.GeneHUGO, reference.origin.hugoSymbol, true));
       }
       if (reference.origin.entrezID && reference.origin.entrezID !== -1) {
-        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.EntrezID, reference.origin.entrezID.toString()));
+        addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.EntrezID, reference.origin.entrezID.toString(), false));
       }
     }
 
     if (reference.hgvsID && reference.hgvsID !== "") {
-      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.HGVSID, reference.hgvsID));
+      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.HGVSID, reference.hgvsID, false));
     }
     if (reference.variantName && reference.variantName !== "") {
-      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.VariantName, reference.variantName));
+      addORConstructToQuery(this.constructORConcatenation(this.scrubbedLocations.VariantName, reference.variantName, true));
     }
     // Add suffix.
     queryConstruct = queryConstruct + "&fields=" + this.allFieldsIncludeString + "&size=15";
@@ -430,6 +442,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
         };
 
         // Gene construction.
+        console.log("Constructing from reference " + reference.toString())
         const newVariant: Variant = Variant.fromReference(reference);
 
         newVariant.description = this.jsonNavigator.mergePathsData(hit, MY_VARIANT_LOCATIONS.Description, false)[0];

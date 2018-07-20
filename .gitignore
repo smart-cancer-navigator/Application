@@ -46,3 +46,6 @@ Thumbs.db
 .js.map
 !karma.conf.js
 !protractor.conf.js
+
+# VSCode
+.angulardoc.json

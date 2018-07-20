@@ -30,7 +30,8 @@ export class MyGeneInfoSearchService implements IGeneDatabase {
 
   public updateVariantOrigin = (variant: Variant): Observable<Variant> => {
     if (!variant.origin || !variant.origin.entrezID) {
-      console.log("Required fields were not provided");
+      console.log("Resulting variant is ", variant);
+      console.log("Required fields for a gene query were not provided, variant.origin is " + variant.origin + " and entrez ID is " + variant.origin.entrezID);
       return Observable.of(variant);
     }
 
