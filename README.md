@@ -8,7 +8,7 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ## Development Testing Instructions 
-###Setting up the EHR
+### Setting up the EHR
 1. Create a new account on the [HSPC sandbox](sandbox.hspconsortium.org).  
 2. Create a new sandbox from your HSPC account.  
 3. Navigate to the Registered Apps tab on the left side of the page, and click 'register a new app manually'.  
@@ -16,7 +16,7 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 5. Create a new persona with the default practitioner (John Smith).  
 6. Create a new launch scenario with a random patient and this new persona.  Link it to this newly registered app. 
 
-###Running a local instance of SMART Cancer Navigator
+### Running a local instance of SMART Cancer Navigator
 1. ```cd``` to the cloned repository on your local machine and run ```ng serve```.  
 2. Launch your app by either navigating to [localhost:4200](http://localhost:4200), which provides no SMART context, or via the HSPC sandbox and launch it using your new launch scenario.  
 
