@@ -9,5 +9,10 @@
   "exclude": [
     "test.ts",
     "**/*.spec.ts"
+  ],
+  "include": [
+    "../node_modules/angular2-ui-switch/src/*.ts",
+    "main.ts",
+    "./**/*.ts"
   ]
 }
