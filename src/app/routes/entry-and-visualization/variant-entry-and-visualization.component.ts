@@ -34,7 +34,7 @@ class VariantWrapper {
       <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thinFont1">You don't seem to be connected to an EHR! <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+          <p class="thick">You don't seem to be connected to an EHR! <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
       </div>
@@ -56,7 +56,7 @@ class VariantWrapper {
         <div id="autosyncToggle">
           <div>
             <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
-            <p class="thinFont1" style="color: white">Auto-Sync</p>
+            <p class="thick" style="color: white">Auto-Sync</p>
           </div>
         </div>
       </div>

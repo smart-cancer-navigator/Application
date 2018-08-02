@@ -1,13 +1,12 @@
 body {
   margin: 0;
-}
-
-.thinFont1 {
-  font-family: "Avenir Next";
-  font-weight: 100;
-}
-
-.thinFont2 {
   font-family: "Helvetica Neue";
-  font-weight: 100;
+}
+
+.thick {						
+  font-weight: 700;
+}
+
+.regular {
+  font-weight: 350;
 }
