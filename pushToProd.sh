@@ -2,10 +2,10 @@
 
 ng build --prod
 
-cd ../Releases
+cd ../Production
 find . -maxdepth 1 \! \( -name .git -o -name temp \) -exec rm -rf '{}' \;
 
-cp -R ../Application/dist/. .
+cp -R ../Development/dist/. .
 
 git add .
 git commit -m "Auto Update"
