@@ -23,5 +23,5 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ### Deploying to Production
-1. See: [smart-cancer-navigator.github.io](https://github.com/smart-cancer-navigator/smart-cancer-navigator.github.io)
+1. See the [smart-cancer-navigator.github.io](https://github.com/smart-cancer-navigator/smart-cancer-navigator.github.io) repo
 
