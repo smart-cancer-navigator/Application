@@ -34,9 +34,9 @@ class VariantWrapper {
       <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thinFont1">You don't seem to be connected to an EHR! <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+          <p class="thick" style="color:#fff">SMART Cancer Navigator is not connected to an EHR. <a style="color:#891924" href="javascript:void(0)" (click)="routeToInstructions()">Learn how to connect.</a></p>
         </div>
-        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false">X</button>
+        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
       </div>
 
       <!-- If an EHR link is detected -->
@@ -56,7 +56,7 @@ class VariantWrapper {
         <div id="autosyncToggle">
           <div>
             <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
-            <p class="thinFont1" style="color: white">Auto-Sync</p>
+            <p class="thick" style="color: white">Auto-Sync</p>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ class VariantWrapper {
             <variant-selector [ngModel]="variant.variant"
                               (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant);"></variant-selector>
           </div>
-          <button class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1">X
+          <button style="font-size:200%" class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1"><div style="margin-top:-8px; margin-right:-2px;">&times;</div>
           </button>
         </div>
         <div>
@@ -105,7 +105,7 @@ class VariantWrapper {
       height: 80px;
       width: 100%;
 
-      background-color: rgb(255, 189, 44);
+      background-color: #dc3545;
       overflow: hidden;
     }
 
@@ -135,12 +135,13 @@ class VariantWrapper {
     }
 
     #suggestEHRLink button {
-      width: 60px;
+      width: 30px;
       height: 30px;
       color: white;
-      font-size: 15px;
-      border-radius: 0;
+      font-size: 130%;
+      border-radius: 0px 0px 0px 10px;
       padding: 0;
+      float: right;
     }
 
     #patientLinkState > div {

@@ -15,11 +15,11 @@ import {isNullOrUndefined} from "util";
     <div *ngIf="requiredParametersSupplied === true">
       <h3 class="display-3" style="width: 100%; text-align: center;">Enter Authorization Info</h3>
       <div class="inputPanel">
-        <label class="thinFont1">Client ID: </label>
+        <label class="thick">Client ID: </label>
         <input class="form-control" type="text" [(ngModel)]="clientID" placeholder="Ex: 1e7af332-b27a-4de2-8c51-728ae3ed25c2">
       </div>
       <div class="inputPanel">
-        <label class="thinFont1">Scopes: </label>
+        <label class="thick">Scopes: </label>
         <input class="form-control" type="text" [(ngModel)]="scopes">
       </div>
       <br>

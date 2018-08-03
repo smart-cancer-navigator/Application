@@ -4,9 +4,9 @@ import { Component } from "@angular/core";
   selector: "team",
   template: `
     <div style="overflow: hidden">
-      <div class="cardContent" *ngFor="let contributor of contributors" style="margin: 5px 8px; width: calc(50% - 16px); min-width: 300px;">
+      <div class="cardContent" *ngFor="let contributor of contributors" style="margin: 15px 8px; width: calc(50% - 16px); min-width: 300px;">
         <div style="width: 100%;">
-          <h2 class="thinFont1">{{contributor}}</h2>
+          <h2 class="thick">{{contributor}}</h2>
         </div>
       </div>
     </div>
@@ -16,7 +16,7 @@ import { Component } from "@angular/core";
     <div>
       <div class="cardContent" style="margin: 8px; width: calc(100% - 16px);">
         <div style="width: 100%;">
-          <h2 class="thinFont1">Questions?  You can reach us at <a href="javascript:void(0)" (click)="updateEmail()">{{emailDisplay}}</a></h2>
+          <h2 class="thick">Questions?  You can reach us at <a href="javascript:void(0)" (click)="updateEmail()">{{emailDisplay}}</a></h2>
         </div>
       </div>
     </div>
