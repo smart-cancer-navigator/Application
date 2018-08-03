@@ -34,7 +34,7 @@ class VariantWrapper {
       <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thick">You don't seem to be connected to an EHR! <a href="javascript:void(0)" (click)="routeToInstructions()">Learn how here.</a></p>
+          <p class="thick" style="color:#fff">SMART Cancer Navigator is not connected to an EHR. <a style="color:#891924" href="javascript:void(0)" (click)="routeToInstructions()">Learn how to connect.</a></p>
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
       </div>

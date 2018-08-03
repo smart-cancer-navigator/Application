@@ -4,7 +4,7 @@ import { Component } from "@angular/core";
   selector: "team",
   template: `
     <div style="overflow: hidden">
-      <div class="cardContent" *ngFor="let contributor of contributors" style="margin: 5px 8px; width: calc(50% - 16px); min-width: 300px;">
+      <div class="cardContent" *ngFor="let contributor of contributors" style="margin: 15px 8px; width: calc(50% - 16px); min-width: 300px;">
         <div style="width: 100%;">
           <h2 class="thick">{{contributor}}</h2>
         </div>

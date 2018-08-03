@@ -8,7 +8,7 @@ import {Component} from "@angular/core";
         <div>
           <h1 class="thick">Why Database Analysis?</h1>
           <hr>
-          <p class="thick">A pressing issue currently in the research community is that of "research parasites": those who profit off of the research done by other labs without contributing anything meaningful and new.  By carrying out analysis on the each prominent oncology database, we hope to foster a symbiotic relationship between this app and its information sources.  </p>
+          <p class="regular">A pressing issue currently in the research community is that of "research parasites": those who profit off of the research done by other labs without contributing anything meaningful and new.  By carrying out analysis on the each prominent oncology database, we hope to foster a symbiotic relationship between this app and its information sources.  </p>
         </div>
       </div>
       <div class="cardImage">
