@@ -18,10 +18,10 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ### Running a local instance of SMART Cancer Navigator
-1. ```cd``` to the cloned local [Development](https://github.com/smart-cancer-navigator/Development) repository on your local machine and run ```ng serve```.  
+1. ```cd``` to the cloned local [Application](https://github.com/smart-cancer-navigator/Application) repository on your local machine and run ```ng serve```.  
 2. Launch your app by either navigating to [localhost:4200](http://localhost:4200), which provides no SMART context, or via the HSPC sandbox and launch it using your new launch scenario.  
 
 
 ### Deploying to Production
-1. See: [Production](https://github.com/smart-cancer-navigator/Production)
+1. See: [smart-cancer-navigator.github.io](https://github.com/smart-cancer-navigator/smart-cancer-navigator.github.io)
 
