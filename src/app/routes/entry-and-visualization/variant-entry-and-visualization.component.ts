@@ -306,7 +306,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         this.patientExists = true;
       });
 
-      // Get all genomic variants attached to this patient carrying HGVS component (LOINC 81290-9)
+      // Get all genomic variants (LOINC 69548-6) attached to this patient carrying HGVS component (LOINC 81290-9)
       smartClient.patient.api.search({type: "Observation", query: {"code": "69548-6"}, count: 10})
         .then(results => {
           console.log("Successfully got variants!", results);
@@ -507,6 +507,27 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               	  ],
               	  "text": variant.variant.hgvsID
             	}
+              },
+              {
+              "code": {
+                  "coding": [
+                  {
+                      "system": "http://loinc.org",
+                      "code": "48018-6",
+                      "display": "Gene studied ID (HGNC)"
+                  }
+                  ]
+              },
+              "valueCodeableConcept" : {
+                  "coding" : [
+                  {
+                      "system" : "http://hl7.org/fhir/uv/genomics-reporting/ValueSet/hgnc",
+                      "code": variant.variant.origin.hugoSymbol,
+                      "display": variant.variant.origin.hugoSymbol
+                  }
+                  ],
+                  "text": variant.variant.origin.hugoSymbol
+              }
               }
             ],
             "subject": {
@@ -610,6 +631,27 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               	  ],
               	  "text": variant.hgvsID
             	}
+              },
+              {
+              "code": {
+                  "coding": [
+                  {
+                      "system": "http://loinc.org",
+                      "code": "48018-6",
+                      "display": "Gene studied ID (HGNC)"
+                  }
+                  ]
+              },
+              "valueCodeableConcept" : {
+                  "coding" : [
+                  {
+                      "system" : "http://hl7.org/fhir/uv/genomics-reporting/ValueSet/hgnc",
+                      "code": variant.origin.hugoSymbol,
+                      "display": variant.origin.hugoSymbol
+                  }
+                  ],
+                  "text": variant.origin.hugoSymbol
+              }
               }
             ],
             "subject": {
