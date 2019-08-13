@@ -14,6 +14,7 @@ import { VariantSelectorComponent } from "./routes/entry-and-visualization/varia
 import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.component";
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
 import { FilterableSearchComponent } from "./routes/entry-and-visualization/filterable-search/filterable-search.component";
+import { AssocsComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/assocs.component";
 import { ClinicalTrialsComponent } from "./routes/entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.component";
 import { DrugDetailsModalComponent } from "./routes/entry-and-visualization/variant-visualization/drugs/drug-details-modal.component";
 import { GeneInformationComponent } from "./routes/entry-and-visualization/variant-visualization/gene/gene-information.component";
@@ -31,6 +32,7 @@ import { TeamComponent } from "./routes/team/team.component";
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
 import { MyVariantInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/myvariantinfo-search.service";
+import { AssocsService } from "./routes/entry-and-visualization/variant-visualization/assocs/assocs.service";
 import { ClinicalTrialsService } from "./routes/entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.service";
 import { VariantSelectorService } from "./routes/entry-and-visualization/variant-selector/variant-selector.service";
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
@@ -60,6 +62,7 @@ import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component"
     FilterableSearchComponent,
     VariantInformationComponent,
     ClinicalTrialsComponent,
+    AssocsComponent,
     GeneInformationComponent,
     DrugDetailsModalComponent,
     ClassificationsModalComponent,
@@ -80,6 +83,7 @@ import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component"
     VariantSelectorService,
     MyVariantInfoSearchService,
     MyGeneInfoSearchService,
+    AssocsService,
     ClinicalTrialsService,
     DrugsSearchService,
     JSONNavigatorService
