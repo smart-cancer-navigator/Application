@@ -14,7 +14,7 @@ import "rxjs/add/operator/mergeMap";
 export class AssocsService {
   constructor (public http: HttpClient) {}
 
-  queryEndpoint = "https://search.cancervariants.org/api/v1/associations?size=10&from=1&q=";
+  queryEndpoint = "https://search.cancervariants.org/api/v1/associations?size=20&from=1&q=";
 
 
   searchAssocs = (variant: Variant): Observable<AssocReference[]> => {
@@ -24,9 +24,33 @@ export class AssocsService {
       console.log("assoc json:", jsonObject);
       const references: AssocReference[] = [];
       for (const hits of jsonObject["hits"].hits) {
-        references.push(new AssocReference(
+
+        const envContexts: string[] = [];
+        // if (hits.association.environmentalContexts.length > 0){
+        //   console.log("envContexts", hits.association.environmentalContexts);
+        //   for (const envContext of hits.association.environmentalContexts) {
+        //     console.log("envContext", hits.association.envContext);
+        //     envContexts.push(envContext.id);
+        //   }
+        // }
+        // else{
+        //   console.log("no envContexts", hits.association);
+        // }
+
+
+        const phenotypes: string[] = [];
+        if (hits.association.phenotypes.length > 0){
+          for (const phenotype of hits.association.phenotypes) {
+            phenotypes.push(phenotype.id);
+          }
+        }
+        else{
+          console.log("no phenotypes", hits.association);
+        }
+          references.push(new AssocReference(
           variant.variantName,
-          hits.association.phenotypes[0].id,
+          envContexts,
+          phenotypes,
           hits.publications,
           hits.diseases,
           hits.drugs,

@@ -15,30 +15,33 @@ export class AssocReference {
    */
   constructor(
     _variantName: string,
-    _phenotypes: string,
-    _publicationUrl: string,
+    _envContexts: string[],
+    _phenotypes: string[],
+    _publicationUrls: string,
     _diseases: string,
-    _drugs: string,
+    _drug: string,
     _response: string,
     _evidence_level: string,
     _evidence_label: string
 )
   {
     this.variantName = _variantName;
+    this.envContexts = _envContexts;
     this.phenotypes = _phenotypes;
-    this.publicationUrl = _publicationUrl;
-    this.diseases = _diseases;
-    this.drugs = _drugs;
+    this.publicationUrls = _publicationUrls.split(",");
+    this.diseases = _diseases.split(",");
+    this.drug = _drug;
     this.response = _response;
     this.evidence_level = _evidence_level;
     this.evidence_label = _evidence_label;
 
   }
   variantName: string;
-  phenotypes: string;
-  publicationUrl: string;
-  diseases: string;
-  drugs: string;
+  envContexts: string[];
+  phenotypes: string[];
+  publicationUrls: string[];
+  diseases: string[];
+  drug: string;
   response: string;
   evidence_level: string;
   evidence_label: string;

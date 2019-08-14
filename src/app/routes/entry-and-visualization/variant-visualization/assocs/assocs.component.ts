@@ -9,7 +9,7 @@ import { AssocReference } from "./assocs";
 import { Variant } from "../../genomic-data";
 import {NG_VALUE_ACCESSOR} from "@angular/forms";
 
-export const CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR: any = {
+export const ASSOCS_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => AssocsComponent),
   multi: true
@@ -18,10 +18,11 @@ export const CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR: any = {
 @Component({
   selector: "assocs",
   template: `    
-    <table class="table table-hover table-bordered table-striped">
+    <table class="table table-sm table-bordered">
       <thead>
-      <tr>
+      <tr class="text-left">
           <th>Variant Name</th>
+<!--          <th>Enviromental Contexts</th>-->
           <th>Phenotypes</th>
           <th>Diseases</th>
           <th>Drugs</th>
@@ -29,33 +30,73 @@ export const CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR: any = {
           <th>Evidence Level</th>
           <th>Evidence Label</th>
           <th>Publication Url</th>
-
       </tr>
       </thead>
       <ng-container>
           <tr *ngFor="let assoc of assocs">
               <td>{{assoc.variantName}}</td>
+<!--              <td>-->
+<!--                  <table class="table table-borderless table-responsive table-sm">-->
+<!--                      <ng-container>-->
+<!--                          <tr *ngFor="let envContexts of getEnvContexts(assoc)">-->
+<!--                              <td>-->
+<!--                                  {{envContexts}}-->
+<!--                              </td>-->
+<!--                          </tr>-->
+<!--                      </ng-container>-->
+<!--                  </table>-->
+<!--              </td>-->
               <td>
-                  {{assoc.phenotypes}}
+                  <table class="table table-borderless table-responsive table-sm">
+                      <ng-container>
+                          <tr *ngFor="let phenotype of getPhenotypes(assoc)">
+                              <td>
+                                  <button class="btn btn-light">{{phenotype}}</button>
+                              </td>
+                          </tr>
+                      </ng-container>
+                  </table>
               </td>
-              <td>{{assoc.diseases}}</td>
-              <td>{{assoc.drugs}}</td>
+              <td>
+                  <table class="table table-borderless table-responsive table-sm">
+                      <ng-container>
+                          <tr *ngFor="let disease of getDiseases(assoc)">
+                              <td>
+                                  <button class="btn btn-light">{{disease}}</button>
+                              </td>
+                          </tr>
+                      </ng-container>
+                  </table>
+              </td>
+              <td>{{assoc.drug}}</td>
               <td>{{assoc.response}}</td>
               <td>{{assoc.evidence_level}}</td>
               <td>{{assoc.evidence_label}}</td>
-              <td>{{assoc.publicationUrl}}</td>
+              <td>
+                  <table class="table table-borderless table-sm">
+                      <ng-container>
+                          <tr *ngFor="let url of getUrls(assoc)">
+                              <td>
+                                  <button class="btn btn-link" (click)="openUrl(url)">{{url}}</button>
+                              </td>
+                          </tr>
+                      </ng-container>
+                  </table>
+              </td>
           </tr>
       </ng-container>
     </table>
   `,
   styles: [``],
-  providers: [CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR]
+  providers: [ASSOCS_CONTROL_VALUE_ACCESSOR]
 })
+
 export class AssocsComponent {
   constructor (public assocsService: AssocsService) {
   }
   // association references.
   assocs: AssocReference[] = [];
+  publicationUrl: string[] = [];
 
   // The internal data model (for ngModel)
   _currentlySelected: Variant = null;
@@ -88,5 +129,22 @@ export class AssocsComponent {
     this.onChangeCallback = fn;
   }
 
+  getUrls(reference: AssocReference) {
+    return reference.publicationUrls;
+  }
+  getPhenotypes(reference: AssocReference) {
+    return reference.phenotypes;
+  }
+  getDiseases(reference: AssocReference) {
+    return reference.diseases;
+  }
+  getEnvContexts(reference: AssocReference) {
+    return reference.envContexts;
+  }
+
+
+  openUrl(url: string) {
+    window.open(url, "_blank");
+  }
 
 }
