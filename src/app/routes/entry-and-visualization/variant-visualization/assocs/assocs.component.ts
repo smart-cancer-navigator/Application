@@ -4,10 +4,11 @@
  */
 
 import {Component, forwardRef, Input, OnInit} from "@angular/core";
-import { AssocsService } from "./assocs.service";
-import { AssocReference } from "./assocs";
-import { Variant } from "../../genomic-data";
+import {AssocsService} from "./assocs.service";
+import {AssocReference, AssocRelation, Assocs} from "./assocs";
+import {Variant} from "../../genomic-data";
 import {NG_VALUE_ACCESSOR} from "@angular/forms";
+import {Observable} from "rxjs";
 
 export const ASSOCS_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -18,85 +19,110 @@ export const ASSOCS_CONTROL_VALUE_ACCESSOR: any = {
 @Component({
   selector: "assocs",
   template: `    
-    <table class="table table-sm table-bordered">
-      <thead>
-      <tr class="text-left">
-          <th>Variant Name</th>
-<!--          <th>Enviromental Contexts</th>-->
-          <th>Phenotypes</th>
-          <th>Diseases</th>
-          <th>Drugs</th>
-          <th>Response</th>
-          <th>Evidence Level</th>
-          <th>Evidence Label</th>
-          <th>Publication Url</th>
-      </tr>
-      </thead>
-      <ng-container>
-          <tr *ngFor="let assoc of assocs">
+      <table class="table table-sm table-bordered">
+          <thead>
+          <tr class="text-left">
+              <th class="name">Variant Name</th>
+              <th class="env">Enviromental Contexts</th>
+              <th class="phenotype">Phenotypes</th>
+              <th class="disease">Diseases</th>
+              <th class="drug">Drugs</th>
+              <th class="response">Response</th>
+              <th class="level">Evidence Level</th>
+              <th class="label">Evidence Label</th>
+              <th class="feature">Features</th>
+              <th class="url">Publication Url</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let assoc of assocs.assocReference">
               <td>{{assoc.variantName}}</td>
-<!--              <td>-->
-<!--                  <table class="table table-borderless table-responsive table-sm">-->
-<!--                      <ng-container>-->
-<!--                          <tr *ngFor="let envContexts of getEnvContexts(assoc)">-->
-<!--                              <td>-->
-<!--                                  {{envContexts}}-->
-<!--                              </td>-->
-<!--                          </tr>-->
-<!--                      </ng-container>-->
-<!--                  </table>-->
-<!--              </td>-->
-              <td>
-                  <table class="table table-borderless table-responsive table-sm">
-                      <ng-container>
-                          <tr *ngFor="let phenotype of getPhenotypes(assoc)">
-                              <td>
-                                  <button class="btn btn-light">{{phenotype}}</button>
-                              </td>
-                          </tr>
-                      </ng-container>
-                  </table>
-              </td>
-              <td>
-                  <table class="table table-borderless table-responsive table-sm">
-                      <ng-container>
-                          <tr *ngFor="let disease of getDiseases(assoc)">
-                              <td>
-                                  <button class="btn btn-light">{{disease}}</button>
-                              </td>
-                          </tr>
-                      </ng-container>
-                  </table>
-              </td>
-              <td>{{assoc.drug}}</td>
+              <td>{{assoc.envContexts}}</td>
+              <td>{{assoc.phenotypes}}</td>
+              <td>{{assoc.diseases}}</td>
+              <td>{{assoc.drugs}}</td>
               <td>{{assoc.response}}</td>
               <td>{{assoc.evidence_level}}</td>
               <td>{{assoc.evidence_label}}</td>
+              <td>{{assoc.features}}</td>
               <td>
-                  <table class="table table-borderless table-sm">
-                      <ng-container>
-                          <tr *ngFor="let url of getUrls(assoc)">
-                              <td>
-                                  <button class="btn btn-link" (click)="openUrl(url)">{{url}}</button>
-                              </td>
-                          </tr>
-                      </ng-container>
-                  </table>
+                  <button *ngFor="let url of getUrls(assoc)" class="btn btn-light btn-link"
+                          (click)="openUrl(url)">{{url}}</button>
               </td>
           </tr>
-      </ng-container>
-    </table>
+          </tbody>
+      </table>
+      
+      <br>
+      <h3 class="display-5">gene-drug</h3>
+      <table class="table table-sm table-bordered">
+          <thead>
+          <tr>
+              <th></th>
+              <th *ngFor="let drug of assocs.drugs">{{drug}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let relation of assocs.assocRelations">
+              <td>{{relation.gene}}</td>
+              <td *ngFor="let geneDrug of relation.geneDrugs">{{geneDrug}}</td>
+          </tr>
+          </tbody>
+      </table>
+      
+      <br>
+      <h3 class="display-5">gene-disease</h3>
+      <table class="table table-sm table-bordered">
+          <thead>
+          <tr>
+              <th></th>
+              <th *ngFor="let disease of assocs.diseases">{{disease}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let relation of assocs.assocRelations">
+              <td>{{relation.gene}}</td>
+              <td *ngFor="let geneDisease of relation.geneDiseases">{{geneDisease}}</td>
+          </tr>
+          </tbody>
+      </table>
+
   `,
-  styles: [``],
+  styles: [` 
+    tr {
+        white-space: normal;
+    }
+    table {
+        width: 100%;
+        table-layout: auto;
+    }
+    .feature {
+        width:30px;
+    }
+    .response {
+        width:10%;
+    }
+    .level {
+        width:7.5%;
+    }
+    .label {
+        width:7.5%;
+    }
+    .drug {
+        overflow: scroll;
+        width:20px;
+    }
+  `],
   providers: [ASSOCS_CONTROL_VALUE_ACCESSOR]
 })
 
 export class AssocsComponent {
-  constructor (public assocsService: AssocsService) {
+  constructor(public assocsService: AssocsService) {
   }
+
   // association references.
-  assocs: AssocReference[] = [];
-  publicationUrl: string[] = [];
+  assocs: Assocs;
+
 
   // The internal data model (for ngModel)
   _currentlySelected: Variant = null;
@@ -119,12 +145,19 @@ export class AssocsComponent {
     }
   }
 
+
   // Placeholders for the callbacks which are later provided by the Control Value Accessor
-  private onTouchedCallback: () => void = () => {};
+  private onTouchedCallback: () => void = () => {
+  }
+
+
   registerOnTouched(fn: any) {
     this.onTouchedCallback = fn;
   }
-  private onChangeCallback: (_: any) => void = () => {};
+
+  private onChangeCallback: (_: any) => void = () => {
+  }
+
   registerOnChange(fn: any) {
     this.onChangeCallback = fn;
   }
@@ -132,15 +165,7 @@ export class AssocsComponent {
   getUrls(reference: AssocReference) {
     return reference.publicationUrls;
   }
-  getPhenotypes(reference: AssocReference) {
-    return reference.phenotypes;
-  }
-  getDiseases(reference: AssocReference) {
-    return reference.diseases;
-  }
-  getEnvContexts(reference: AssocReference) {
-    return reference.envContexts;
-  }
+
 
 
   openUrl(url: string) {

@@ -2,6 +2,7 @@ import { IFilterableSearchOption } from "./filterable-search/filterable-search.c
 import { IMergeable, MergeProperties } from "./data-merging";
 import { DrugReference } from "./variant-visualization/drugs/drug";
 import {Injectable} from "@angular/core";
+import {AssocReference} from "./variant-visualization/assocs/assocs";
 
 /**
  * The gene reference class includes only the base properties for a given gene; those which are required for merging
@@ -208,6 +209,8 @@ export class Variant
   somatic: boolean;
   types: string[];
   drugs: DrugReference[];
+
+
   classifications: Classification[];
   diseases: string[];
   chromosome: string; // For potential edge cases when the variant has no associated gene.
