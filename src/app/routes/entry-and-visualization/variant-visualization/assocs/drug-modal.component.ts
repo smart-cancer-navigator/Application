@@ -3,8 +3,12 @@ import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Variant} from "../../genomic-data";
 import {AssocReference, Assoc, AssocDrug} from "./assocs";
 
+/**
+ * A modal to show association detail for a specific drug
+ */
+
 @Component({
-  selector: "assocs-modal",
+  selector: "drug-modal",
   template: `
       <div class="modal-header">
           <h4 class="modal-title text-muted">Drug Detail</h4>
@@ -13,7 +17,6 @@ import {AssocReference, Assoc, AssocDrug} from "./assocs";
           </button>
       </div>
       <div class="modal-body">
-          <br>
           <h4 class="display-4 text-muted">{{assocDrug.drug}}</h4>
           <br>
           <table class="table table-sm table-bordered">
@@ -30,24 +33,29 @@ import {AssocReference, Assoc, AssocDrug} from "./assocs";
               <tr *ngFor="let assocReference of assocDrug.assocReferences">
                   <td class="text-center">{{assocReference.response}}</td>
                   <td class="text-center">{{assocReference.evidence_label}}</td>
-                  <td>
-                      <button *ngFor="let url of getSourceUrls(assocReference)" class="btn btn-light btn-link"
-                              placement="left" ngbTooltip="{{assocReference.description}}"
-                              (click)="openUrl(url)">{{url}}</button>
+                  <td class="">
+                      <div class="" *ngFor="let url of getSourceUrls(assocReference)">
+                                <span class="overflow-hide btn-link"
+                                      placement="left" ngbTooltip="{{assocReference.description}}"
+                                      (click)="openUrl(url)">{{url}}</span>
+                      </div>
+
                   </td>
 
-                  <td>
-                      <button *ngFor="let url of getPublicationUrls(assocReference)" class="btn btn-light btn-link"
-                              (click)="openUrl(url)">{{url}}</button>
+                  <td class="">
+                      <div class="" *ngFor="let url of getPublicationUrls(assocReference)">
+                                <span class="overflow-hide btn-link"
+                                      placement="left" ngbTooltip="{{assocReference.description}}"
+                                      (click)="openUrl(url)">{{url}}</span>
+                      </div>
+
                   </td>
+
               </tr>
               </tbody>
           </table>
           <br>
-          <br>
-          <br>
-          <br>
-          <br>
+
 
       </div>
       <div class="modal-footer">
@@ -57,9 +65,6 @@ import {AssocReference, Assoc, AssocDrug} from "./assocs";
 
   `,
   styles: [`
-      .modal-title {
-          width: 75%;
-      }
 
       .modal-body {
           overflow-x: auto;
@@ -70,18 +75,13 @@ import {AssocReference, Assoc, AssocDrug} from "./assocs";
           width: initial;
           overflow: scroll;
       }
-
-      .response {
-          width: 25%;
-      }
-
-      .label {
-          width: 25%;
-      }
-
-      .label {
-          width: 50%;
-          overflow-x: hidden;
+      .overflow-hide{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          -o-text-overflow: ellipsis;
+          white-space:nowrap;
+          width:250px;
+          display:block;
       }
 
   `],

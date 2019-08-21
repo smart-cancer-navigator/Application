@@ -3,16 +3,6 @@
  */
 
 export class AssocReference {
-  /**
-   <th>Variant Name</th>
-   <th>Phenotypes</th>
-   <th>Drug Labels</th>
-   <th>Publication Url</th>
-   <th>Diseases</th>
-   <th>Drugs</th>
-   <th>Response</th>
-   <th>Evidence Level</th>
-   */
   constructor(
     _hgvsID: string,
     _variantName: string,
@@ -64,6 +54,10 @@ export class AssocReference {
   evidence_label: string;
 }
 
+/**
+ * A relation between a drug and related associations
+ */
+
 export class AssocDrug {
 
   constructor(
@@ -86,6 +80,9 @@ export class AssocDrug {
   assocReferences: AssocReference[];
 }
 
+/**
+ * A relation between a disease and related associations
+ */
 export class AssocDisease {
 
   constructor(
@@ -108,6 +105,9 @@ export class AssocDisease {
   assocReferences: AssocReference[];
 }
 
+/**
+ * A collection contains all the associations of a hgvs_id
+ */
 export class Assoc {
 
   constructor(
@@ -117,7 +117,6 @@ export class Assoc {
     _diseases: string[],
     _assocDrugs: AssocDrug[],
     _assocDiseases: AssocDisease[],
-
     _assocReferences: AssocReference[]
   )
   {

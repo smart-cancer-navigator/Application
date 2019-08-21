@@ -19,7 +19,6 @@ export class AssocsService {
 
 
   searchAssocs = (variant: Variant): Observable<Assoc> => {
-
     // Gets a list of assoc references from the single JSON object.
     const jsontoReferences = (jsonObject: Object): AssocReference[] => {
       console.log("assoc json:", jsonObject);
@@ -137,12 +136,13 @@ export class AssocsService {
 
     };
 
+    // Gets a list of assocDrug from the searching-gene assocReference.
     const getAssocDrugs = (resultGenes: AssocReference[]): AssocDrug[] => {
       const gene: string = variant.origin.hugoSymbol;
       const drugs: string[] = [];
       const geneDrugs = new Map();
       const assocDrugs: AssocDrug[] = [];
-      // filter for assocDrug to faster the page load
+      // filter for response
       const resultDrugs: AssocReference[] = [];
       for (const result of resultGenes) {
           if (result.response !== "NA" && result.response !== "N/A") {
@@ -196,6 +196,7 @@ export class AssocsService {
 
     };
 
+    // Gets a list of assocDiseases from the searching-gene assocReference.
     const getAssocDiseases = (resultDiseases: AssocReference[]): AssocDisease[] => {
       const gene: string = variant.origin.hugoSymbol;
       const diseases: string[] = [];
@@ -247,7 +248,6 @@ export class AssocsService {
       return assocDiseases;
 
     };
-
 
     // Requirements before constructing queries.
     return this.http

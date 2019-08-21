@@ -25,7 +25,7 @@ export const ASSOCS_CONTROL_VALUE_ACCESSOR: any = {
   selector: "assocs",
   template: `    
       <br>
-      <h3 class="display-5" *ngIf="assoc !== null">gene-drug</h3>
+      <h3 class="display-5" *ngIf="assoc !== null">Gene-Drug Associations</h3>
       <table class="table table-bordered"  *ngIf="assoc !== null">
           <thead>
           </thead>
@@ -46,7 +46,7 @@ export const ASSOCS_CONTROL_VALUE_ACCESSOR: any = {
       </table>
 
       <br>
-      <h3 class="display-5" *ngIf="assoc !== null">gene-disease</h3>
+      <h3 class="display-5" *ngIf="assoc !== null">Gene-Disease Associations</h3>
       <table class="table table-bordered"  *ngIf="assoc !== null">
           <thead>
           </thead>
