@@ -14,7 +14,9 @@ export class AssocReference {
    <th>Evidence Level</th>
    */
   constructor(
+    _hgvsID: string,
     _variantName: string,
+    _description: string,
     _envContexts: string,
     _phenotypes: string,
     _diseases: string,
@@ -23,15 +25,19 @@ export class AssocReference {
     _evidence_level: string,
     _evidence_label: string,
     _features: string,
+    _sourceUrls: string,
     _publicationUrls: string,
     _genes: string[],
 
   )
   {
+    this.hgvsID = _hgvsID;
     this.variantName = _variantName;
+    this.description = _description;
     this.envContexts = _envContexts;
     this.phenotypes = _phenotypes;
     this.publicationUrls = _publicationUrls.split(",");
+    this.sourceUrls = _sourceUrls.split(",");
     this.genes = _genes;
 
     this.diseases = _diseases;
@@ -42,11 +48,13 @@ export class AssocReference {
     this.features = _features;
 
   }
-
+  hgvsID: string;
   variantName: string;
+  description: string;
   envContexts: string;
   phenotypes: string;
   genes: string[];
+  sourceUrls: string[];
   publicationUrls: string[];
   features: string;
   diseases: string;
@@ -56,50 +64,77 @@ export class AssocReference {
   evidence_label: string;
 }
 
-export class AssocRelation {
+export class AssocDrug {
 
   constructor(
+
+    _hgvsID: string,
+    _gene: string,
+    _drug: string,
+    _assocAmount: number,
+    _assocReferences: AssocReference[],
+  )
+  {
+    this.hgvsID = _hgvsID;
+    this.drug = _drug;
+    this.assocAmount = _assocAmount;
+    this.assocReferences = _assocReferences;
+  }
+  hgvsID: string;
+  drug: string;
+  assocAmount: number;
+  assocReferences: AssocReference[];
+}
+
+export class AssocDisease {
+
+  constructor(
+
+    _hgvsID: string,
+    _gene: string,
+    _disease: string,
+    _assocAmount: number,
+    _assocReferences: AssocReference[],
+  )
+  {
+    this.hgvsID = _hgvsID;
+    this.disease = _disease;
+    this.assocAmount = _assocAmount;
+    this.assocReferences = _assocReferences;
+  }
+  hgvsID: string;
+  disease: string;
+  assocAmount: number;
+  assocReferences: AssocReference[];
+}
+
+export class Assoc {
+
+  constructor(
+    _hgvsID: string,
     _gene: string,
     _drugs: string[],
     _diseases: string[],
-    _geneDrugs: number[],
-    _geneDiseases: number[],
+    _assocDrugs: AssocDrug[],
+    _assocDiseases: AssocDisease[],
+
+    _assocReferences: AssocReference[]
   )
   {
+
+    this.hgvsID = _hgvsID;
     this.diseases = _diseases;
     this.drugs = _drugs;
     this.gene = _gene;
-    this.geneDiseases = _geneDiseases;
-    this.geneDrugs = _geneDrugs;
+    this.assocDrugs = _assocDrugs;
+    this.assocDiseases = _assocDiseases;
+    this.assocReferences = _assocReferences;
   }
-
+  hgvsID: string;
   diseases: string[];
   gene: string;
   drugs: string[];
-  geneDrugs: number[];
-  geneDiseases: number[];
-}
-
-export class Assocs{
-  constructor(
-    _genes: string[],
-    _drugs: string[],
-    _diseases: string[],
-    _assocReference: AssocReference[],
-    _assocRelations: AssocRelation[]
-  )
-  {
-    this.diseases = _diseases;
-    this.drugs = _drugs;
-    this.genes = _genes;
-    this.assocReference = _assocReference;
-    this.assocRelations = _assocRelations;
-
-  }
-  diseases: string[];
-  genes: string[];
-  drugs: string[];
-  assocReference: AssocReference[];
-  assocRelations: AssocRelation[];
-
+  assocDrugs: AssocDrug[];
+  assocDiseases: AssocDisease[];
+  assocReferences: AssocReference[];
 }

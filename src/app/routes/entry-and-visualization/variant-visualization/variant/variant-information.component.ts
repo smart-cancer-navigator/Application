@@ -14,8 +14,8 @@ import {ClassificationsModalComponent} from "./classifications-modal.component";
     <ng-container *ngIf="variant">
       <br>
       <h3 class="display-3">{{variant.variantName}}</h3>
-  
-      <!-- A bit of info about the variant/gene -->
+
+        <!-- A bit of info about the variant/gene -->
       <table class="table table-bordered table-striped">
         <thead>
         </thead>
@@ -38,16 +38,16 @@ import {ClassificationsModalComponent} from "./classifications-modal.component";
           <td>Variant Type</td>
           <td>{{variant.types.join(", ")}}</td>
         </tr>
-        <tr *ngIf="variant.drugs && variant.drugs.length > 0">
-          <td>Effective Drugs</td>
-          <td>
-            <button *ngFor="let drugReference of variant.drugs" class="btn btn-light" (click)="viewDrugDetails(drugReference)">{{drugReference.name}}</button>
-          </td>
-        </tr>
-        <tr *ngIf="variant.diseases && variant.diseases.length > 0">
-          <td>Known Diseases</td>
-          <td>{{variant.diseases.join(", ")}}</td>
-        </tr>
+<!--        <tr *ngIf="variant.drugs && variant.drugs.length > 0">-->
+<!--          <td>Effective Drugs</td>-->
+<!--          <td>-->
+<!--            <button *ngFor="let drugReference of variant.drugs" class="btn btn-light" (click)="viewDrugDetails(drugReference)">{{drugReference.name}}</button>-->
+<!--          </td>-->
+<!--        </tr>-->
+<!--        <tr *ngIf="variant.diseases && variant.diseases.length > 0">-->
+<!--          <td>Known Diseases</td>-->
+<!--          <td>{{variant.diseases.join(", ")}}</td>-->
+<!--        </tr>-->
         <tr>
           <td>Variant Location</td>
           <td>Chromosome {{variant.getLocation()}}</td>
@@ -75,10 +75,11 @@ export class VariantInformationComponent {
 
   @Input() variant;
 
-  viewDrugDetails(reference: DrugReference) {
-    const modalRef = this.modalService.open(DrugDetailsModalComponent, {size: "lg"});
-    modalRef.componentInstance.drugReference = reference;
-  }
+
+  // viewDrugDetails(reference: DrugReference) {
+  //   const modalRef = this.modalService.open(DrugDetailsModalComponent, {size: "lg"});
+  //   modalRef.componentInstance.drugReference = reference;
+  // }
 
   viewClassifications() {
     const modalRef = this.modalService.open(ClassificationsModalComponent, {size: "lg"});

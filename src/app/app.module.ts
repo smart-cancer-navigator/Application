@@ -15,6 +15,9 @@ import { SMARTLaunchComponent } from "./smart-initialization/smart-launch.compon
 import { SMARTTokenReceptionComponent } from "./smart-initialization/smart-token-reception.component";
 import { FilterableSearchComponent } from "./routes/entry-and-visualization/filterable-search/filterable-search.component";
 import { AssocsComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/assocs.component";
+import { DrugModalComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/drug-modal.component";
+import { DiseaseModalComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/disease-modal.component";
+
 import { ClinicalTrialsComponent } from "./routes/entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.component";
 import { DrugDetailsModalComponent } from "./routes/entry-and-visualization/variant-visualization/drugs/drug-details-modal.component";
 import { GeneInformationComponent } from "./routes/entry-and-visualization/variant-visualization/gene/gene-information.component";
@@ -63,6 +66,8 @@ import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component"
     VariantInformationComponent,
     ClinicalTrialsComponent,
     AssocsComponent,
+    DrugModalComponent,
+    DiseaseModalComponent,
     GeneInformationComponent,
     DrugDetailsModalComponent,
     ClassificationsModalComponent,
@@ -76,6 +81,8 @@ import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component"
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
     ClassificationsModalComponent,
+    DrugModalComponent,
+    DiseaseModalComponent,
     FeedbackFormModalComponent
   ],
   providers: [
