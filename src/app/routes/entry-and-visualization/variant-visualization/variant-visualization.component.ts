@@ -29,11 +29,17 @@ export const VISUALIZATION_CONTROL_VALUE_ACCESSOR: any = {
         </ng-template>
       </ngb-tab>
 
-      <ngb-tab title="Clinical Trials">
-        <ng-template ngbTabContent>
-          <clinical-trials [(ngModel)]="currentlySelected"></clinical-trials>
-        </ng-template>
-      </ngb-tab>
+        <ngb-tab title="Clinical Trials">
+            <ng-template ngbTabContent>
+                <clinical-trials [(ngModel)]="currentlySelected"></clinical-trials>
+            </ng-template>
+        </ngb-tab>
+
+        <ngb-tab title="Associations">
+            <ng-template ngbTabContent>
+                <assocs [(ngModel)]="currentlySelected"></assocs>
+            </ng-template>
+        </ngb-tab>
     </ngb-tabset>
   `,
   styles: [`    

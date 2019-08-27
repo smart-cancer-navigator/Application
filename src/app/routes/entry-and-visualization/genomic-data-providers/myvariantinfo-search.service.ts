@@ -172,7 +172,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     let currentString = "";
     if (include_prefixed_args) 
     {
-      currentString = stringArray[0] + ":" + desiredVal + "*" + "%20OR%20" + stringArray[0] + ":" + desiredVal;
+      currentString = stringArray[0].replace(/_/g, "") + ":" + desiredVal + "*" + "%20OR%20" + stringArray[0] + ":" + desiredVal;
     }
     else
     {

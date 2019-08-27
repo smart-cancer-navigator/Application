@@ -306,48 +306,57 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         this.patientExists = true;
       });
 
-      // Get all genomic variants attached to this patient.
-      smartClient.patient.api.search({type: "Observation", query: {"category": "genomic-variant"}, count: 10})
+      // Get all genomic variants (LOINC 69548-6) attached to this patient carrying HGVS component (LOINC 81290-9)
+      smartClient.patient.api.search({type: "Observation", query: {"code": "69548-6"}, count: 10})
         .then(results => {
           console.log("Successfully got variants!", results);
 
           if (!results.data.entry) {
             return;
           }
-
           if (results.data.entry.length > 0) {
             this.removeRow(0); // Start at the first index if we find other variants.
           }
-
-          // For every variant.
+          // For every variant in the query, loop through components and codings to find HGVS = "81290-9"
           let resultIndex = 0;
           for (const result of results.data.entry) {
-            console.log("Will now add " + result.resource.code.text);
-            this.selectorService.search(result.resource.code.text).subscribe(variants => {
-              if (variants.length === 0) {
-                console.log("NOT GOOD: Couldn't find any search results for " + result.resource.code.text);
-                return;
-              }
+          	let hgvsID = "0";
+          	for (const myComponent of result.resource.component) {
+          	  for (const myCoding of myComponent.code.coding) {
+          	  	if (myCoding.code === "81290-9") {
+          	  	  console.log("found HGVS");
+          	  	  let index = myComponent.code.coding.indexOf(myCoding);
+          	  	  hgvsID = myComponent.valueCodeableConcept.coding[index].code;
+          	  	}
+          	  }          		
+          	}
+          	
+          console.log("Will now add " + hgvsID);
+          this.selectorService.search(hgvsID).subscribe(variants => {
+            if (variants.length === 0) {
+              console.log("NOT GOOD: Couldn't find any search results for " + result.resource.code.text);
+              return;
+            }
+            // Add the first search result to the list (the one with the correct HGVS ID).
+            console.log("Adding", variants[0]);
 
-              // Add the first search result to the list (the one with the correct HGVS ID).
-              console.log("Adding", variants[0]);
-
-              this.selectorService.getByReference(variants[0])
-                .subscribe(variant => {
-                  const newWrapper = new VariantWrapper(resultIndex, variant);
-                  if (this.variants.length === resultIndex) {
-                    this.variants.push(newWrapper);
-                  } else {
-                    this.variants[resultIndex] = newWrapper;
-                  }
-                  resultIndex++;
-                });
-            });
+            this.selectorService.getByReference(variants[0])
+              .subscribe(variant => {
+                const newWrapper = new VariantWrapper(resultIndex, variant);
+                if (this.variants.length === resultIndex) {
+                  this.variants.push(newWrapper);
+                } else {
+                  this.variants[resultIndex] = newWrapper;
+                }
+                resultIndex++;
+              });
+            });  
           }
         })
         .fail(err => {
           console.log("Couldn't query genomic variants error!", err);
         });
+
 
       smartClient.patient.api.search({type: "Condition"})
         .then(results => {
@@ -420,9 +429,12 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   // Remove and save EHR variants.
   saveEHRVariant(variant: VariantWrapper) {
+  	
     if (!this.autosync) {
       return;
     }
+
+    console.log("saving variant");
 
     SMARTClient.subscribe(smartClient => {
       if (smartClient === null) {
@@ -443,27 +455,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.variant.getLocation() + "</div>"
             },
             "status": "final",
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
-                "valueCodeableConcept": {
-                  "coding": [
-                    {
-                      "system": "http://www.genenames.org",
-                      "code": "12014",
-                      "display": "TPMT"
-                    }
-                  ]
-                }
-              }
-            ],
             "category": [
               {
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/observation-category",
-                    "code": "genomic-variant",
-                    "display": "Genomic Variant"
+                    "code": "laboratory",
+                    "display": "Laboratory"
                   }
                 ],
                 "text": "Genomic Variant"
@@ -472,13 +470,66 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
             "code": {
               "coding": [
                 {
-                  "system": "http://www.hgvs.org",
-                  "code": variant.variant.hgvsID,
-                  "display": variant.variant.hgvsID
+                  "system": "http://loinc.org",
+                  "code": "69548-6",
+                  "display": "Genetic variant assessment"
                 }
               ],
-              "text": variant.variant.hgvsID
+              "text": "Genetic variant assessment"
             },
+            "valueCodeableConcept": {
+          	  "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "LA9633-4",
+                  "display": "Present"
+                }
+              ]
+            },
+			"component": [
+          	  {
+            	"code": {
+              	  "coding": [
+                	{
+                  	  "system": "http://loinc.org",
+                      "code": "81290-9",
+                      "display": "Genomic DNA change (gHGVS)"
+                	}
+              	  ]
+            	},
+            	"valueCodeableConcept" : {
+              	  "coding" : [
+                	{
+                  	  "system" : "http://varnomen.hgvs.org",
+                  	  "code": variant.variant.hgvsID,
+                  	  "display": variant.variant.hgvsID
+                	}
+              	  ],
+              	  "text": variant.variant.hgvsID
+            	}
+              },
+              {
+              "code": {
+                  "coding": [
+                  {
+                      "system": "http://loinc.org",
+                      "code": "48018-6",
+                      "display": "Gene studied ID (HGNC)"
+                  }
+                  ]
+              },
+              "valueCodeableConcept" : {
+                  "coding" : [
+                  {
+                      "system" : "http://hl7.org/fhir/uv/genomics-reporting/ValueSet/hgnc",
+                      "code": variant.variant.origin.hugoSymbol,
+                      "display": variant.variant.origin.hugoSymbol
+                  }
+                  ],
+                  "text": variant.variant.origin.hugoSymbol
+              }
+              }
+            ],
             "subject": {
               "reference": "Patient/" + p.id
             },
@@ -506,7 +557,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     });
   }
   removeEHRVariant(variant: Variant) {
-    if (!this.autosync)
+    if (!this.autosync || variant === null)
       return;
 
     SMARTClient.subscribe(smartClient => {
@@ -528,27 +579,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Variation at " + variant.getLocation() + "</div>"
             },
             "status": "final",
-            "extension": [
-              {
-                "url": "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene",
-                "valueCodeableConcept": {
-                  "coding": [
-                    {
-                      "system": "http://www.genenames.org",
-                      "code": "12014",
-                      "display": "TPMT"
-                    }
-                  ]
-                }
-              }
-            ],
             "category": [
               {
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/observation-category",
-                    "code": "genomic-variant",
-                    "display": "Genomic Variant"
+                    "code": "laboratory",
+                    "display": "Laboratory"
                   }
                 ],
                 "text": "Genomic Variant"
@@ -557,13 +594,66 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
             "code": {
               "coding": [
                 {
-                  "system": "http://www.hgvs.org",
-                  "code": variant.hgvsID,
-                  "display": variant.hgvsID
+                  "system": "http://loinc.org",
+                  "code": "69548-6",
+                  "display": "Genetic variant assessment"
                 }
               ],
-              "text": variant.hgvsID
+              "text": "Genetic variant assessment"
             },
+            "valueCodeableConcept" : {
+          	  "coding" : [
+                {
+                  "system" : "http://loinc.org",
+                  "code" : "LA9633-4",
+                  "display" : "Present"
+                }
+              ]
+            },
+			"component" : [
+          	  {
+            	"code" : {
+              	  "coding" : [
+                	{
+                  	  "system" : "http://loinc.org",
+                      "code" : "81290-9",
+                      "display" : "Genomic DNA change (gHGVS)"
+                	}
+              	  ]
+            	},
+            	"valueCodeableConcept" : {
+              	  "coding" : [
+                	{
+                  	  "system" : "http://varnomen.hgvs.org",
+                  	  "code": variant.hgvsID,
+                  	  "display": variant.hgvsID
+                	}
+              	  ],
+              	  "text": variant.hgvsID
+            	}
+              },
+              {
+              "code": {
+                  "coding": [
+                  {
+                      "system": "http://loinc.org",
+                      "code": "48018-6",
+                      "display": "Gene studied ID (HGNC)"
+                  }
+                  ]
+              },
+              "valueCodeableConcept" : {
+                  "coding" : [
+                  {
+                      "system" : "http://hl7.org/fhir/uv/genomics-reporting/ValueSet/hgnc",
+                      "code": variant.origin.hugoSymbol,
+                      "display": variant.origin.hugoSymbol
+                  }
+                  ],
+                  "text": variant.origin.hugoSymbol
+              }
+              }
+            ],
             "subject": {
               "reference": "Patient/" + p.id
             },
