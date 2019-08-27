@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppRoutingModule } from "./app-routing.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { UiSwitchModule } from "../../node_modules/angular2-ui-switch/src";
+import { UiSwitchModule } from "./angular2-ui-switch/src";
 
 // Components
 import { AppComponent } from "./app.component";

@@ -23,7 +23,6 @@
     "@angular/platform-server": "^6.1.0",
     "@angular/router": "^6.1.0",
     "@ng-bootstrap/ng-bootstrap": "^2.2.1",
-    "angular2-ui-switch": "^1.2.0",
     "bootstrap": "^4.0.0-beta.2",
     "core-js": "^2.4.1",
     "fhirclient": "^0.1.11",
