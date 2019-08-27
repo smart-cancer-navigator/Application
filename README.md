@@ -18,8 +18,12 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ### Running a local instance of SMART Cancer Navigator
-1. ```cd``` to the cloned local [Application](https://github.com/smart-cancer-navigator/Application) repository on your local machine and run ```ng serve```.  
-2. Launch your app by either navigating to [localhost:4200](http://localhost:4200), which provides no SMART context, or via the HSPC sandbox and launch it using your new launch scenario.  
+1. Ensure you have node and the Angular CLI installed: ```npm install -g @angular/cli```.  
+2. ```git clone https://github.com/smart-cancer-navigator/Application /your/folder/path```
+3. ```cd /your/folder/path```
+4. ```npm install``` to install npm packages.  
+5. ```git submodule init``` and then ```git submodule update --recursive``` to get required submodules.  
+6. ```ng serve``` to serve the application, and then open it by either navigating to [localhost:4200](http://localhost:4200), which provides no SMART context, or via the HSPC sandbox and launch it using your new launch scenario.  
 
 
 ### Deploying to Production

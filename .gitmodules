@@ -1,3 +1,3 @@
 [submodule "src/app/angular2-ui-switch"]
-	path = src/app/angular2-ui-switch
+	path = angular2-ui-switch
 	url = https://github.com/Makiah/angular2-ui-switch
