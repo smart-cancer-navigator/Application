@@ -2,8 +2,8 @@
 
 ng build --prod
 
-cd ../Releases
-find . -maxdepth 1 \! \( -name .git -o -name temp \) -exec rm -rf '{}' \;
+cd ../smart-cancer-navigator.github.io
+find . -maxdepth 1 \! \( -name .git -o -name . -o -name .. -o -name .gitignore \) -exec rm -rf '{}' \;
 
 cp -R ../Application/dist/. .
 

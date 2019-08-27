@@ -18,7 +18,7 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ### Running a local instance of SMART Cancer Navigator
-1. Ensure you have node and the Angular CLI installed: ```npm install -g @angular/cli```.  
+1. Ensure you have node/npm and the Angular CLI installed: ```npm install -g @angular/cli```.  
 2. ```git clone https://github.com/smart-cancer-navigator/Application /your/folder/path```
 3. ```cd /your/folder/path```
 4. ```npm install``` to install npm packages.  
@@ -27,5 +27,5 @@ In a typical genomic non-SMART Cancer Navigator workflow, oncologists will presc
 
 
 ### Deploying to Production
-1. See the [smart-cancer-navigator.github.io](https://github.com/smart-cancer-navigator/smart-cancer-navigator.github.io) repository.
-
+1. ```cd /to/cloned/application/path```, and ensure that you've cloned [the prod repository](https://github.com/smart-cancer-navigator/smart-cancer-navigator.github.io) as a sibling folder to the cloned application folder.   
+2. Run ```pushToProd.sh``` if you're on a Mac, otherwise run ```ng build --prod``` and move everything for the app over to the cloned production repository.  
