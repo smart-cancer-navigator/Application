@@ -31,6 +31,7 @@ import { VariantEntryAndVisualizationComponent } from "./routes/entry-and-visual
 import { LandingPageComponent } from "./routes/home/home.component";
 import { GithubForkUsComponent } from "./universal-components/github-fork-us.component";
 import { TeamComponent } from "./routes/team/team.component";
+import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -41,7 +42,7 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
-import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
+
 
 @NgModule({
   imports:      [
