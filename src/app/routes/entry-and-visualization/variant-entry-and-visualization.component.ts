@@ -7,6 +7,9 @@ import {Router} from "@angular/router";
 import {FeedbackFormModalComponent} from "../feedback-form/feedback-form-modal.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {isNullOrUndefined} from "util";
+import { Patient, Condition } from "./patient";
+import { CMSService } from "../login-services/cms.service";
+import { ActivatedRoute } from "@angular/router";
 
 class VariantWrapper {
   constructor(_index: number, _variant: Variant) {
@@ -40,16 +43,16 @@ class VariantWrapper {
       </div>
 
       <!-- If an EHR link is detected -->
-      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patientObject['gender'] === 'male' ? '#27384f' : '#ff45f7'">
-        <img [src]="patientObject['gender'] === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patient.gender === 'male' ? '#27384f' : '#ff45f7'">
+        <img [src]="patient.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
 
         <!-- Patient Details -->
         <p style="color: white">
-          <b>Name: </b> {{patientObject['name'][0].given[0]}} {{patientObject['name'][0].family}} | 
-          <b>{{patientObject['active'] ? 'Lives in' : 'Lived in'}}:</b> {{patientObject['address'][0].country}} | <b>Age:</b> {{patientAge}} | 
+        <b>Name: </b> {{patient.firstName}} {{patient.lastName}} |
+          <b>Zip Code:</b> {{patient.zipCode}} | <b>Age:</b> {{patient.age}} | 
           <b>Condition:</b> 
           <select style="font-size: 15px;">
-            <option *ngFor="let condition of patientConditions">{{condition}}</option>
+            <option *ngFor="let condition of patient.conditions">{{condition.display}}</option>
           </select>
         </p>
 
@@ -264,7 +267,12 @@ class VariantWrapper {
   ]
 })
 export class VariantEntryAndVisualizationComponent implements OnInit {
-  constructor (private selectorService: VariantSelectorService, private router: Router, private modalService: NgbModal) {}
+  constructor(
+    private selectorService: VariantSelectorService,
+    private router: Router,
+    private modalService: NgbModal,
+    private cmsService: CMSService,
+    private activatedRoute: ActivatedRoute) {}
 
   // This is what we're using to determine whether the user is worthy to rate our service (has interacted enough with the service).
   userInteractionPoints: number = 0;
@@ -277,13 +285,85 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   patientObject: Object = null;
   patientAge: number = -1;
   patientConditions: string[] = [];
+  patient: Patient = null;
 
   // Toggled by the user depending on whether they want to sync to the EHR their changes right away (as soon as they make them)
   autosync: boolean = true;
 
   ngOnInit()
   {
-    this.addRow();
+    this.addRow();   
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      const code = params['code'];
+      this.cmsService.getCMSToken('currentUser', code).subscribe(data => {
+        this.offerToLinkToEHRInstructions = false;
+        this.patientExists = true;
+        console.log(data);
+        this.cmsService.getPatientInfo(data.patient).subscribe(patient => {
+          var parsing = JSON.parse(patient);
+          var justPatient = JSON.stringify(parsing.entry);
+          var bigResource = JSON.stringify(JSON.parse(justPatient)[0]);
+          var justResource = JSON.stringify(JSON.parse(bigResource).resource)
+          var bigName = JSON.stringify(JSON.parse(justResource).name);
+          var given = JSON.parse(bigName)[0].given;
+          var last = JSON.parse(bigName)[0].family;
+          var first = given[0];
+          
+          var fullAddress = JSON.stringify(JSON.parse(justResource).address);
+          var justAddress = JSON.stringify(JSON.parse(fullAddress)[0]);
+          var zipCode = JSON.parse(justAddress).postalCode;
+          
+          var gender = JSON.parse(justResource).gender;
+
+          var birthDateAsIs = JSON.parse(justResource).birthDate;
+          var birthDate = birthDateAsIs.split("-");
+          var timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDate[0]), parseInt(birthDate[1]), parseInt(birthDate[2])).getTime());
+          var age = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
+          this.createPatient(first, last, zipCode, gender, age);
+        });
+
+        this.cmsService.getEOB(data.patient).subscribe(eob => {
+          var entry = JSON.parse(eob).entry;
+          var entryString = JSON.stringify(entry);
+          for (var i = 0; i < entry.length; i++) { // looping through all entries to find 
+            var entryHere = JSON.stringify(JSON.parse(entryString)[i]);
+            
+            var resource = JSON.stringify(JSON.parse(entryHere).resource);
+            var allDiagnoses = JSON.parse(resource).diagnosis;
+            console.log(allDiagnoses);
+            // console.log(allDiagnoses.length);
+
+            for (var j = 0; j < allDiagnoses.length; j++) {
+              var diagnosisHere = allDiagnoses[j];
+              // console.log(diagnosisHere);
+              var diagnosisHereString = JSON.stringify(diagnosisHere);
+              var diagnosisCodeableConcept = JSON.stringify(JSON.parse(diagnosisHereString).diagnosisCodeableConcept);
+              // console.log(diagnosisCodeableConcept);
+              var coding = JSON.parse(diagnosisCodeableConcept).coding;
+              
+              
+              var indexHere = JSON.stringify(coding[0]);
+              // console.log(indexHere);
+              var code = JSON.parse(indexHere).code;
+              var display = JSON.parse(indexHere).display;
+              console.log(code + " " + display);
+              if (code != "9999999") {
+                if (!this.patient.alreadyContainedCodes.includes(code)) {
+                  var condition = new Condition(code, display);
+                  this.patient.conditions.push(condition);
+                  this.patient.alreadyContainedCodes.push(code);
+                }
+                
+              }
+            }
+          }
+        }); 
+
+      })
+    },
+    error => {
+    });
 
     // As soon as the smart client is loaded from the SMART JS library, this creates the patient info header and populates the patient variants.
     SMARTClient.subscribe(smartClient => {
@@ -379,6 +459,11 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           console.log("The query for patient conditions failed!", err);
         });
     });
+  }
+
+  createPatient(first: string, last: string, zip: string, gender: string, age: number) {
+    var patient = new Patient(first, last, zip, gender, age);
+    this.patient = patient;
   }
 
   // Row management.
