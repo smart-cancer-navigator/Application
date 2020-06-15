@@ -9,6 +9,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {isNullOrUndefined} from "util";
 import { Patient, Condition } from "./patient";
 import { CMSService } from "../login-services/cms.service";
+import { VAService } from "../login-services/va.service";
 import { ActivatedRoute } from "@angular/router";
 
 class VariantWrapper {
@@ -272,6 +273,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     private router: Router,
     private modalService: NgbModal,
     private cmsService: CMSService,
+    private vaService: VAService,
     private activatedRoute: ActivatedRoute) {}
 
   // This is what we're using to determine whether the user is worthy to rate our service (has interacted enough with the service).
@@ -293,10 +295,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   ngOnInit()
   {
     this.addRow();   
-
+    // everything inside this activatedRoute statement is going towards getting VA/CMS API data
     this.activatedRoute.queryParams.subscribe(params => {
-      const code = params['code'];
-      this.cmsService.getCMSToken('currentUser', code).subscribe(data => {
+      const code = params['code']; // necessary for both logins
+      const state = params['state']; // necessary for VA login
+
+      // Everthing inside this cmsService.getCMSToken goes towards logging into CMS.
+      this.cmsService.getCMSToken('User', code).subscribe(data => {
         this.offerToLinkToEHRInstructions = false;
         this.patientExists = true;
         console.log(data);
@@ -316,10 +321,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           
           var gender = JSON.parse(justResource).gender;
 
-          var birthDateAsIs = JSON.parse(justResource).birthDate;
-          var birthDate = birthDateAsIs.split("-");
-          var timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDate[0]), parseInt(birthDate[1]), parseInt(birthDate[2])).getTime());
-          var age = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
+          var birthDate = JSON.parse(justResource).birthDate;
+          var age = this.calculateAge(birthDate);
           this.createPatient(first, last, zipCode, gender, age);
         });
 
@@ -332,19 +335,14 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
             var resource = JSON.stringify(JSON.parse(entryHere).resource);
             var allDiagnoses = JSON.parse(resource).diagnosis;
             console.log(allDiagnoses);
-            // console.log(allDiagnoses.length);
-
             for (var j = 0; j < allDiagnoses.length; j++) {
               var diagnosisHere = allDiagnoses[j];
-              // console.log(diagnosisHere);
               var diagnosisHereString = JSON.stringify(diagnosisHere);
               var diagnosisCodeableConcept = JSON.stringify(JSON.parse(diagnosisHereString).diagnosisCodeableConcept);
-              // console.log(diagnosisCodeableConcept);
               var coding = JSON.parse(diagnosisCodeableConcept).coding;
               
               
               var indexHere = JSON.stringify(coding[0]);
-              // console.log(indexHere);
               var code = JSON.parse(indexHere).code;
               var display = JSON.parse(indexHere).display;
               console.log(code + " " + display);
@@ -360,7 +358,49 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           }
         }); 
 
-      })
+      });
+
+      this.vaService.getToken('User', code, state).subscribe(data => {
+        this.offerToLinkToEHRInstructions = false;
+        this.patientExists = true;
+        this.vaService.patientInfo(data.patient).subscribe(patient =>  {
+          var stringified = JSON.stringify(patient);
+          var name = JSON.stringify((JSON.parse(stringified).name)[0]);
+          var lastName = (JSON.parse(name).family)[0];
+          var firstName = (JSON.parse(name).given)[0];
+
+          var birthDate = JSON.parse(stringified).birthDate;
+          var age = this.calculateAge(birthDate);
+          
+          var address = JSON.stringify((JSON.parse(stringified).address)[0]);
+          var zipCode = JSON.parse(address).postalCode;
+          
+          var gender = JSON.parse(stringified).gender;
+
+          this.createPatient(firstName, lastName, zipCode, gender, age);
+        });
+        this.vaService.conditionInfo(data.patient).subscribe(patient => {
+          console.log(patient);
+          var stringified = JSON.stringify(patient);
+          var entry = JSON.parse(stringified).entry;
+          for (var i = 0; i < entry.length; i++) {
+            var thisIndex = JSON.stringify(entry[i]);
+            var resource = JSON.stringify(JSON.parse(thisIndex).resource);
+            var clinicalStatus = JSON.parse(resource).clinicalStatus; // has a tracker of active vs resolved
+            var codeOutside = JSON.stringify(JSON.parse(resource).code);
+            var coding = JSON.stringify((JSON.parse(codeOutside).coding)[0]);
+            var code = JSON.parse(coding).code;
+            var display = JSON.parse(coding).display;
+            console.log(code + " " + display);
+            if (!this.patient.alreadyContainedCodes.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
+              var condition = new Condition(code, display);
+              this.patient.conditions.push(condition);
+              this.patient.alreadyContainedCodes.push(code);
+            } 
+          }
+        });
+      });
+
     },
     error => {
     });
@@ -464,6 +504,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   createPatient(first: string, last: string, zip: string, gender: string, age: number) {
     var patient = new Patient(first, last, zip, gender, age);
     this.patient = patient;
+  }
+
+  calculateAge(birthDateString: string) {
+    var birthDate = birthDateString.split("-");
+    var timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDate[0]), parseInt(birthDate[1]), parseInt(birthDate[2])).getTime());
+    var age = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
+    return age;
   }
 
   // Row management.
