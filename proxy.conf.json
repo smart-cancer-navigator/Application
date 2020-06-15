@@ -1,0 +1,9 @@
+{
+    "/oauth2/*": {
+        "target": "https://sandbox-api.va.gov",  
+        "secure": false,  
+        "logLevel": "debug" ,
+        "changeOrigin": true 
+     }  
+  }  
+  

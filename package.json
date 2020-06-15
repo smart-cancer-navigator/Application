@@ -4,7 +4,7 @@
   "license": "Apache-2",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 4200 --proxy-config proxy.conf.json --ssl",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
