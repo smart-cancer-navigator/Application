@@ -8,7 +8,7 @@ import {NavigationEnd, Router} from "@angular/router";
 
     <div id="container">
       <img src="/assets/logo.svg">
-
+      <button (click)="logout()">Logout</button>
       <div id="routingOptions">
         <div class="routeOption {{currentRoute === '/home' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('home')">
           <p>Home</p>
@@ -118,5 +118,10 @@ export class HeaderComponent {
 
   routeTo(routeLoc: string) {
     this.router.navigate([routeLoc]);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/home']);
   }
 }
