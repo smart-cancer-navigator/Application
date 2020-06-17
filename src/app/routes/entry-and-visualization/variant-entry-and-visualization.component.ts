@@ -323,7 +323,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       // can occur after the auto-refresh, or if the user refreshes/navigates to another page
       if (localStorage.getItem("vaUser") == 'in' && localStorage.getItem("cmsUser") == null) {
         var currentUser = this.vaService.getLocalStorageToken();
-        console.log(currentUser);
         this.vaService.accessToken = currentUser['access_token'];
         this.getVAInfo(currentUser['patient']);
       }
@@ -537,7 +536,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       this.vaService.conditionInfo(patientId).subscribe(patient => {
         this.offerToLinkToEHRInstructions = false;
         this.patientExists = true;
-        console.log(patient);
         var stringified = JSON.stringify(patient);
         var entry = JSON.parse(stringified).entry;
         var conditionsArray: Condition[] = [];
@@ -588,7 +586,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       this.vaService.conditionInfo(vaPatientId).subscribe(patient => {
         this.offerToLinkToEHRInstructions = false;
         this.patientExists = true;
-        console.log(patient);
         var stringified = JSON.stringify(patient);
         var entry = JSON.parse(stringified).entry;
         var conditionsArray: Condition[] = [];
@@ -603,7 +600,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           var display = JSON.parse(coding).display;
           if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
             var condition = new Condition(code, display);
-            console.log(condition.display);
             conditionsArray.push(condition);
             codesInArray.push(code);
           } 
@@ -629,7 +625,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               if (code != "9999999") {
                 if (!codesInArray.includes(code)) {
                   var condition = new Condition(code, display);
-                  console.log(condition.display);
                   conditionsArray.push(condition);
                   codesInArray.push(code);
                 }
