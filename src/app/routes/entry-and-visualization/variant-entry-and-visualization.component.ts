@@ -294,112 +294,53 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   ngOnInit()
   {
-    this.addRow();   
+    this.addRow();
+    this.offerToLinkToEHRInstructions = true;
+    this.patientExists = false;
+    
     // everything inside this activatedRoute statement is going towards getting VA/CMS API data
     this.activatedRoute.queryParams.subscribe(params => {
       const code = params['code']; // necessary for both logins
-      const state = params['state']; // necessary for VA login
-
-      // Everthing inside this cmsService.getCMSToken goes towards logging into CMS.
-      this.cmsService.getCMSToken('User', code).subscribe(data => {
-        this.offerToLinkToEHRInstructions = false;
-        this.patientExists = true;
-        console.log(data);
-        this.cmsService.getPatientInfo(data.patient).subscribe(patient => {
-          var parsing = JSON.parse(patient);
-          var justPatient = JSON.stringify(parsing.entry);
-          var bigResource = JSON.stringify(JSON.parse(justPatient)[0]);
-          var justResource = JSON.stringify(JSON.parse(bigResource).resource)
-          var bigName = JSON.stringify(JSON.parse(justResource).name);
-          var given = JSON.parse(bigName)[0].given;
-          var last = JSON.parse(bigName)[0].family;
-          var first = given[0];
-          
-          var fullAddress = JSON.stringify(JSON.parse(justResource).address);
-          var justAddress = JSON.stringify(JSON.parse(fullAddress)[0]);
-          var zipCode = JSON.parse(justAddress).postalCode;
-          
-          var gender = JSON.parse(justResource).gender;
-
-          var birthDate = JSON.parse(justResource).birthDate;
-          var age = this.calculateAge(birthDate);
-          this.createPatient(first, last, zipCode, gender, age);
+      const state = params['state']; // necessary for VA logim
+      
+      // va trying to log on for the first time
+      if (localStorage.getItem("vaUser") == "attempt") {
+        this.vaService.getToken("User", code, state).subscribe(data => {
+          this.vaService.accessToken = data.access_token;
+          localStorage.setItem("vaUser", "in");
+          location.reload();
         });
-
-        this.cmsService.getEOB(data.patient).subscribe(eob => {
-          var entry = JSON.parse(eob).entry;
-          var entryString = JSON.stringify(entry);
-          for (var i = 0; i < entry.length; i++) { // looping through all entries to find 
-            var entryHere = JSON.stringify(JSON.parse(entryString)[i]);
-            
-            var resource = JSON.stringify(JSON.parse(entryHere).resource);
-            var allDiagnoses = JSON.parse(resource).diagnosis;
-            console.log(allDiagnoses);
-            for (var j = 0; j < allDiagnoses.length; j++) {
-              var diagnosisHere = allDiagnoses[j];
-              var diagnosisHereString = JSON.stringify(diagnosisHere);
-              var diagnosisCodeableConcept = JSON.stringify(JSON.parse(diagnosisHereString).diagnosisCodeableConcept);
-              var coding = JSON.parse(diagnosisCodeableConcept).coding;
-              
-              
-              var indexHere = JSON.stringify(coding[0]);
-              var code = JSON.parse(indexHere).code;
-              var display = JSON.parse(indexHere).display;
-              console.log(code + " " + display);
-              if (code != "9999999") {
-                if (!this.patient.alreadyContainedCodes.includes(code)) {
-                  var condition = new Condition(code, display);
-                  this.patient.conditions.push(condition);
-                  this.patient.alreadyContainedCodes.push(code);
-                }
-                
-              }
-            }
-          }
-        }); 
-
-      });
-
-      this.vaService.getToken('User', code, state).subscribe(data => {
-        this.offerToLinkToEHRInstructions = false;
-        this.patientExists = true;
-        this.vaService.patientInfo(data.patient).subscribe(patient =>  {
-          var stringified = JSON.stringify(patient);
-          var name = JSON.stringify((JSON.parse(stringified).name)[0]);
-          var lastName = (JSON.parse(name).family)[0];
-          var firstName = (JSON.parse(name).given)[0];
-
-          var birthDate = JSON.parse(stringified).birthDate;
-          var age = this.calculateAge(birthDate);
-          
-          var address = JSON.stringify((JSON.parse(stringified).address)[0]);
-          var zipCode = JSON.parse(address).postalCode;
-          
-          var gender = JSON.parse(stringified).gender;
-
-          this.createPatient(firstName, lastName, zipCode, gender, age);
+      }
+      // cms log on for first time
+      if (localStorage.getItem("cmsUser") == "attempt") {
+        this.cmsService.getToken("User", code).subscribe(data => {
+          this.cmsService.accessToken = data.access_token;
+          localStorage.setItem("cmsUser", "in");
+          location.reload();
         });
-        this.vaService.conditionInfo(data.patient).subscribe(patient => {
-          console.log(patient);
-          var stringified = JSON.stringify(patient);
-          var entry = JSON.parse(stringified).entry;
-          for (var i = 0; i < entry.length; i++) {
-            var thisIndex = JSON.stringify(entry[i]);
-            var resource = JSON.stringify(JSON.parse(thisIndex).resource);
-            var clinicalStatus = JSON.parse(resource).clinicalStatus; // has a tracker of active vs resolved
-            var codeOutside = JSON.stringify(JSON.parse(resource).code);
-            var coding = JSON.stringify((JSON.parse(codeOutside).coding)[0]);
-            var code = JSON.parse(coding).code;
-            var display = JSON.parse(coding).display;
-            console.log(code + " " + display);
-            if (!this.patient.alreadyContainedCodes.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
-              var condition = new Condition(code, display);
-              this.patient.conditions.push(condition);
-              this.patient.alreadyContainedCodes.push(code);
-            } 
-          }
-        });
-      });
+      }
+
+      // can occur after the auto-refresh, or if the user refreshes/navigates to another page
+      if (localStorage.getItem("vaUser") == 'in' && localStorage.getItem("cmsUser") == null) {
+        var currentUser = this.vaService.getLocalStorageToken();
+        console.log(currentUser);
+        this.vaService.accessToken = currentUser['access_token'];
+        this.getVAInfo(currentUser['patient']);
+      }
+      if (localStorage.getItem("cmsUser") == 'in' && localStorage.getItem("vaUser") == null) {
+        var currentUser = this.cmsService.getLocalStorageToken();
+        console.log(currentUser);
+        this.cmsService.accessToken = currentUser['access_token'];
+        this.getCMSInfo(currentUser['patient']);
+      }
+      // if we have the access token for both VA and CMS, then we run a different function to combine their informations
+      if (localStorage.getItem("vaUser") == 'in' && localStorage.getItem("cmsUser") == "in") {
+        var vaUser = this.vaService.getLocalStorageToken();
+        var cmsUser = this.cmsService.getLocalStorageToken();
+        this.vaService.accessToken = vaUser['access_token'];
+        this.cmsService.accessToken = cmsUser['access_token'];
+        this.getBothInfo(vaUser['patient'], cmsUser['patient']);
+      }
 
     },
     error => {
@@ -501,17 +442,206 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     });
   }
 
-  createPatient(first: string, last: string, zip: string, gender: string, age: number) {
-    var patient = new Patient(first, last, zip, gender, age);
+  // create a patient using information gotten from files, and put that into the class patient object
+  createPatient(first: string, last: string, zip: string, gender: string, age: number, conditionsArray: Condition[], codesInArray: string[]) {
+    var patient = new Patient(first, last, zip, gender, age, conditionsArray, codesInArray);
     this.patient = patient;
   }
-
+  
+  // age calculator given birthdate and current date
   calculateAge(birthDateString: string) {
     var birthDate = birthDateString.split("-");
     var timeDiff = Math.abs(Date.now() - new Date(parseInt(birthDate[0]), parseInt(birthDate[1]), parseInt(birthDate[2])).getTime());
     var age = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
     return age;
   }
+
+
+  // runs if just CMS is logged in
+  getCMSInfo(patientId: string) {
+    this.offerToLinkToEHRInstructions = false;
+    this.patientExists = true;
+    // patient info file reading
+    this.cmsService.patientInfo(patientId).subscribe(patient => {
+      var parsing = JSON.parse(patient);
+      var justPatient = JSON.stringify(parsing.entry);
+      var bigResource = JSON.stringify(JSON.parse(justPatient)[0]);
+      var justResource = JSON.stringify(JSON.parse(bigResource).resource)
+      var bigName = JSON.stringify(JSON.parse(justResource).name);
+      var given = JSON.parse(bigName)[0].given;
+      var last = JSON.parse(bigName)[0].family;
+      var first = given[0];
+      
+      var fullAddress = JSON.stringify(JSON.parse(justResource).address);
+      var justAddress = JSON.stringify(JSON.parse(fullAddress)[0]);
+      var zipCode = JSON.parse(justAddress).postalCode;
+      
+      var gender = JSON.parse(justResource).gender;
+
+      var birthDate = JSON.parse(justResource).birthDate;
+      var age = this.calculateAge(birthDate);
+      // EOB info file reading
+      this.cmsService.eobInfo(patientId).subscribe(eob => {
+        var entry = JSON.parse(eob).entry;
+        var entryString = JSON.stringify(entry);
+        var conditionsArray: Condition[] = [];
+        var codesInArray: string[] = [];
+        for (var i = 0; i < entry.length; i++) { // looping through all entries to find 
+          var entryHere = JSON.stringify(JSON.parse(entryString)[i]);
+          
+          var resource = JSON.stringify(JSON.parse(entryHere).resource);
+          var allDiagnoses = JSON.parse(resource).diagnosis;
+
+          for (var j = 0; j < allDiagnoses.length; j++) {
+            var diagnosisHere = allDiagnoses[j];
+            var diagnosisHereString = JSON.stringify(diagnosisHere);
+            var diagnosisCodeableConcept = JSON.stringify(JSON.parse(diagnosisHereString).diagnosisCodeableConcept);
+            var coding = JSON.parse(diagnosisCodeableConcept).coding;
+            var indexHere = JSON.stringify(coding[0]);
+            var code = JSON.parse(indexHere).code;
+            var display = JSON.parse(indexHere).display;
+            if (code != "9999999") {
+              if (!codesInArray.includes(code)) {
+                var condition = new Condition(code, display);
+                conditionsArray.push(condition);
+                codesInArray.push(code);
+              }
+              
+            }
+          }
+        }
+        // create patient based on information collected in the files
+        this.createPatient(first, last, zipCode, gender, age, conditionsArray, codesInArray);
+      }); 
+    });
+  }
+  
+
+  // same as the getCMSInfo function, but instead this is for VA.
+  getVAInfo(patientId: string) {
+    this.vaService.patientInfo(patientId).subscribe(patient =>  {
+      this.offerToLinkToEHRInstructions = false;
+      this.patientExists = true;
+      var stringified = JSON.stringify(patient);
+      var name = JSON.stringify((JSON.parse(stringified).name)[0]);
+      var lastName = (JSON.parse(name).family)[0];
+      var firstName = (JSON.parse(name).given)[0];
+
+      var birthDate = JSON.parse(stringified).birthDate;
+      var age = this.calculateAge(birthDate);
+      
+      var address = JSON.stringify((JSON.parse(stringified).address)[0]);
+      var zipCode = JSON.parse(address).postalCode;
+      
+      var gender = JSON.parse(stringified).gender;
+      this.vaService.conditionInfo(patientId).subscribe(patient => {
+        this.offerToLinkToEHRInstructions = false;
+        this.patientExists = true;
+        console.log(patient);
+        var stringified = JSON.stringify(patient);
+        var entry = JSON.parse(stringified).entry;
+        var conditionsArray: Condition[] = [];
+        var codesInArray: string[] = [];
+        for (var i = 0; i < entry.length; i++) {
+          var thisIndex = JSON.stringify(entry[i]);
+          var resource = JSON.stringify(JSON.parse(thisIndex).resource);
+          var clinicalStatus = JSON.parse(resource).clinicalStatus; // has a tracker of active vs resolved
+          var codeOutside = JSON.stringify(JSON.parse(resource).code);
+          var coding = JSON.stringify((JSON.parse(codeOutside).coding)[0]);
+          var code = JSON.parse(coding).code;
+          var display = JSON.parse(coding).display;
+          if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
+            var condition = new Condition(code, display);
+            conditionsArray.push(condition);
+            codesInArray.push(code);
+          } 
+        }
+        this.createPatient(firstName, lastName, zipCode, gender, age, conditionsArray, codesInArray);
+      });
+      
+    });
+  }
+
+  // if both are logged in, here are the steps that we follow:
+  //    - get patient demographics from VA
+  //    - get patient conditions from VA
+  //    - get patient conditions from CMS (we only get demographics from VA)
+  //    - put it all into a Patient object and sent it away
+  getBothInfo(vaPatientId: string, cmsPatientId: string) {
+    // VA demographics
+    this.vaService.patientInfo(vaPatientId).subscribe(patient =>  {
+      this.offerToLinkToEHRInstructions = false;
+      this.patientExists = true;
+      var stringified = JSON.stringify(patient);
+      var name = JSON.stringify((JSON.parse(stringified).name)[0]);
+      var lastName = (JSON.parse(name).family)[0];
+      var firstName = (JSON.parse(name).given)[0];
+
+      var birthDate = JSON.parse(stringified).birthDate;
+      var age = this.calculateAge(birthDate);
+      
+      var address = JSON.stringify((JSON.parse(stringified).address)[0]);
+      var zipCode = JSON.parse(address).postalCode;
+      
+      var gender = JSON.parse(stringified).gender;
+      // VA conditions
+      this.vaService.conditionInfo(vaPatientId).subscribe(patient => {
+        this.offerToLinkToEHRInstructions = false;
+        this.patientExists = true;
+        console.log(patient);
+        var stringified = JSON.stringify(patient);
+        var entry = JSON.parse(stringified).entry;
+        var conditionsArray: Condition[] = [];
+        var codesInArray: string[] = [];
+        for (var i = 0; i < entry.length; i++) {
+          var thisIndex = JSON.stringify(entry[i]);
+          var resource = JSON.stringify(JSON.parse(thisIndex).resource);
+          var clinicalStatus = JSON.parse(resource).clinicalStatus; // has a tracker of active vs resolved
+          var codeOutside = JSON.stringify(JSON.parse(resource).code);
+          var coding = JSON.stringify((JSON.parse(codeOutside).coding)[0]);
+          var code = JSON.parse(coding).code;
+          var display = JSON.parse(coding).display;
+          if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
+            var condition = new Condition(code, display);
+            console.log(condition.display);
+            conditionsArray.push(condition);
+            codesInArray.push(code);
+          } 
+        }
+        // CMS conditions
+        this.cmsService.eobInfo(cmsPatientId).subscribe(eob => {
+          var entry = JSON.parse(eob).entry;
+          var entryString = JSON.stringify(entry);
+          for (var i = 0; i < entry.length; i++) { // looping through all entries to find 
+            var entryHere = JSON.stringify(JSON.parse(entryString)[i]);
+            
+            var resource = JSON.stringify(JSON.parse(entryHere).resource);
+            var allDiagnoses = JSON.parse(resource).diagnosis;
+  
+            for (var j = 0; j < allDiagnoses.length; j++) {
+              var diagnosisHere = allDiagnoses[j];
+              var diagnosisHereString = JSON.stringify(diagnosisHere);
+              var diagnosisCodeableConcept = JSON.stringify(JSON.parse(diagnosisHereString).diagnosisCodeableConcept);
+              var coding = JSON.parse(diagnosisCodeableConcept).coding;
+              var indexHere = JSON.stringify(coding[0]);
+              var code = JSON.parse(indexHere).code;
+              var display = JSON.parse(indexHere).display;
+              if (code != "9999999") {
+                if (!codesInArray.includes(code)) {
+                  var condition = new Condition(code, display);
+                  console.log(condition.display);
+                  conditionsArray.push(condition);
+                  codesInArray.push(code);
+                }
+              }
+            }
+          }
+        }); 
+        this.createPatient(firstName, lastName, zipCode, gender, age, conditionsArray, codesInArray);
+      });
+    });
+  }
+
 
   // Row management.
   addRow() {
