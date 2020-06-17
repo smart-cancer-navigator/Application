@@ -21,17 +21,22 @@ export class Patient {
         lastName: string,
         zipCode: string,
         gender: string,
-        age: number
+        age: number,
+        conditions: Condition[],
+        alreadyContainedCodes: string[]
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.zipCode = zipCode;
         this.gender = gender;
         this.age = age;
+        this.conditions = conditions;
+        this.alreadyContainedCodes = alreadyContainedCodes;
     }
+    
 }
 
-
+// Condition class as described at the top of the file
 export class Condition {
     code: string;
     name: string;
