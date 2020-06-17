@@ -122,6 +122,6 @@ export class HeaderComponent {
 
   logout() {
     localStorage.clear();
-    this.router.navigate(['/home']);
+    location.reload();
   }
 }
