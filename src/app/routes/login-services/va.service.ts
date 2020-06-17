@@ -10,8 +10,16 @@ const options = {
 export class VAService {
     clientId: string = '0oa7hyx727mtpNfKi2p7';
     clientSecret: string = 'VcN_x8AIuFEnZ8oTHUMd3UnzsTeYp3XWUKscToWy';
+    accessToken: string = '';
+
     constructor(private http: HttpClient, private router: Router) {}
 
+    // get access token and related information from localStorage
+    getLocalStorageToken() {
+        return JSON.parse(localStorage.getItem('vaData'));
+    }
+
+    // we get the access token from this function.
     getToken(username: string, code: string, state: string) {
         options.headers = options.headers.set('Content-Type', 'application/x-www-form-urlencoded');
         var idSecretEncode = btoa(this.clientId + ":" + this.clientSecret);
@@ -25,21 +33,25 @@ export class VAService {
         var queryInputs = accessTokenAppend.toString();
 
         return this.http.post<any>('https://sandbox-api.va.gov/oauth2/token', queryInputs, options).pipe(map(data => {
-            localStorage.setItem('vaUser', JSON.stringify({username, token: data.access_token}));
+            localStorage.setItem('vaData',  JSON.stringify(data));  
             options.headers = options.headers.set('Authorization', `Bearer ${data.access_token}`);
+            
             return data;
         }, err => {}));
     }
 
+    // the patient file contains information on patient demographics
     patientInfo(patientId: string) {
         const patientParams = new HttpParams({fromString: `${patientId}`});
         options['params'] = patientParams;
-        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Patient/' + patientId, options)
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>(`https://sandbox-api.va.gov/services/fhir/v0/argonaut/data-query/Patient/${patientId}`, options)
         .pipe(map(patientReturnedData => {
           return patientReturnedData;
       }));
     }
 
+    // the conditions file contains information about conditions
     conditionInfo(patientId: string) {
         const patientParams = new HttpParams({fromString: `${patientId}`});
         options['params'] = patientParams;
