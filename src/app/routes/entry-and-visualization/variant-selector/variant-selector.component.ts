@@ -16,17 +16,7 @@ export const SELECTOR_CONTROL_VALUE_ACCESSOR: any = {
 
 @Component({
   selector: "variant-selector",
-  template: `
-    <!-- Gene Variation List -->
-    <div>
-      <filterable-search [searchService]="selectorService" [placeholderString]="'Add New Variant'" [ngModel]="currentReference" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
-    </div>
-  `,
-  styles: [`
-    div {
-      height: 100%;
-    }
-  `],
+  templateUrl: 'variant-selector.component.html',
   providers: [SELECTOR_CONTROL_VALUE_ACCESSOR]
 })
 export class VariantSelectorComponent implements ControlValueAccessor {

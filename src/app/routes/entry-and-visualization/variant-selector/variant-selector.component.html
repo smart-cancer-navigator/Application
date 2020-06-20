@@ -1,0 +1,10 @@
+<!-- Gene Variation List -->
+<div>
+    <filterable-search [searchService]="selectorService" [placeholderString]="'Add New Variant'" [ngModel]="currentReference" (ngModelChange)="onNewReferenceSelection($event)"></filterable-search>
+</div>
+
+<style>
+    div {
+      height: 100%;
+    }
+</style>
