@@ -501,7 +501,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
             var display = JSON.parse(indexHere).display;
             if (code != "9999999") {
               if (!codesInArray.includes(code)) {
-                var condition = new Condition(code, display);
+                var condition = new Condition(code, display, "CMS");
                 conditionsArray.push(condition);
                 codesInArray.push(code);
               }
@@ -549,7 +549,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           var code = JSON.parse(coding).code;
           var display = JSON.parse(coding).display;
           if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
-            var condition = new Condition(code, display);
+            var condition = new Condition(code, display, "VA");
             conditionsArray.push(condition);
             codesInArray.push(code);
           } 
@@ -599,7 +599,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           var code = JSON.parse(coding).code;
           var display = JSON.parse(coding).display;
           if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
-            var condition = new Condition(code, display);
+            var condition = new Condition(code, display, "VA");
             conditionsArray.push(condition);
             codesInArray.push(code);
           } 
@@ -624,7 +624,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               var display = JSON.parse(indexHere).display;
               if (code != "9999999") {
                 if (!codesInArray.includes(code)) {
-                  var condition = new Condition(code, display);
+                  var condition = new Condition(code, display, "CMS");
                   conditionsArray.push(condition);
                   codesInArray.push(code);
                 }
