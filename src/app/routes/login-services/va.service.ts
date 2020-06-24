@@ -32,7 +32,7 @@ export class VAService {
 
         var queryInputs = accessTokenAppend.toString();
 
-        return this.http.post<any>('https://sandbox-api.va.gov/oauth2/token', queryInputs, options).pipe(map(data => {
+        return this.http.post<any>('/oauth2/token', queryInputs, options).pipe(map(data => {
             localStorage.setItem('vaData',  JSON.stringify(data));  
             options.headers = options.headers.set('Authorization', `Bearer ${data.access_token}`);
             
