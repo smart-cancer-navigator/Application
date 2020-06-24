@@ -14,7 +14,36 @@ export const VISUALIZATION_CONTROL_VALUE_ACCESSOR: any = {
 
 @Component({
   selector: "variant-visualization",
-  templateUrl: 'variant-visualization.component.html',
+  template: `
+    <!-- Tabs to view the variant's info.  -->
+    <ngb-tabset [destroyOnHide]="false" *ngIf="currentlySelected !== undefined && currentlySelected !== null">
+      <ngb-tab title="Gene">
+        <ng-template ngbTabContent>
+          <gene-information [gene]="currentlySelected.origin"></gene-information>
+        </ng-template>
+      </ngb-tab>
+
+      <ngb-tab title="Variant">
+        <ng-template ngbTabContent>
+          <variant-information [variant]="currentlySelected"></variant-information>
+        </ng-template>
+      </ngb-tab>
+
+        <ngb-tab title="Clinical Trials">
+            <ng-template ngbTabContent>
+                <clinical-trials [(ngModel)]="currentlySelected"></clinical-trials>
+            </ng-template>
+        </ngb-tab>
+
+        <ngb-tab title="Associations">
+            <ng-template ngbTabContent>
+                <assocs [(ngModel)]="currentlySelected"></assocs>
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
+  `,
+  styles: [`    
+  `],
   providers: [VISUALIZATION_CONTROL_VALUE_ACCESSOR]
 })
 export class VariantVisualizationComponent implements ControlValueAccessor {

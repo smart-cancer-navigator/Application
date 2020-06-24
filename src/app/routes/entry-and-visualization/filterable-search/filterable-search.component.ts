@@ -44,7 +44,85 @@ export interface IFilterableSearchService {
 
 @Component({
   selector: "filterable-search",
-  templateUrl: 'filterable-search.component.html',
+  template: `
+    <div #PopupToggle class="filterToggle" (click)="toggleMenu(true)" [style.border-bottom]="menuCurrentlyOpen ? '0' : '1px solid #dadada'">
+      <img src="/assets/entry-and-visualization/dropdown.svg"/>
+      
+      <!-- Display selected option before click -->
+      <p *ngIf="currentlySelected !== undefined && currentlySelected !== null" [hidden]="menuCurrentlyOpen" style="font-style: normal; font-weight: bold;">{{currentlySelected.optionName()}}</p>
+      <p *ngIf="currentlySelected === undefined || currentlySelected === null" [hidden]="menuCurrentlyOpen" style="font-style: italic; font-weight: normal;">{{placeholderString}}</p>
+      
+      <!-- Switch from p to input on click -->
+      <input autocomplete="off" #SearchBox [hidden]="!menuCurrentlyOpen" (keyup)="search(SearchBox.value)" placeholder="Search" class="filterInput form-control"/>
+    </div>
+
+    <!-- Suggestions for potential selections -->
+    <div #PopupPanel class="filterPanel" [hidden]="!menuCurrentlyOpen" [style.width.px]="desiredPopupWidth" [style.height.px]="(options | async)?.length < 6 ? (options | async)?.length * 48 : 288">
+      <table class="table table-hover">
+        <tr *ngFor="let option of options | async">
+          <td (click)="onSelection(option)">{{option.optionName()}}</td>
+        </tr>
+      </table>
+    </div>
+  `,
+  styles: [`
+    .filterToggle {
+      width: 100%;
+      height: 38px;
+
+      margin: 0;
+
+      font-size: 18px;
+      cursor: pointer;
+
+      border: 1px solid #dadada;
+      background-color: white;
+      overflow: hidden;
+    }
+
+    .filterToggle:hover {
+      background-color: #efefef;
+    }
+
+    .filterToggle p {
+      float: left;
+      width: calc(100% - 43px);
+      margin: 5px 5px 5px 10px;
+    }
+
+    .filterToggle img {
+      float: right;
+      width: 20px;
+      height: 20px;
+      margin-top: 9px;
+      margin-right: 5px;
+    }
+
+    .filterToggle input {
+      width: calc(100% - 28px);
+      height: 36px;
+      margin: 0;
+    }
+
+    .filterPanel {
+      display: block;
+      position: absolute;
+      z-index: 1000;
+
+      background-color: white;
+
+      border: 1px solid #dadada;
+      border-top: 0;
+      
+      height: 95px;
+
+      overflow: scroll;
+    }
+
+    .filterInput {
+      width: 100%;
+    }
+  `],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR]
 })
 export class FilterableSearchComponent implements OnInit, AfterViewInit, ControlValueAccessor {

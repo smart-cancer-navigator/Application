@@ -17,7 +17,36 @@ export const CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR: any = {
 
 @Component({
   selector: "clinical-trials",
-  templateUrl: 'clinical-trials.component.html',
+  template: `    
+    <table class="table table-hover table-bordered">
+      <thead>
+      <tr>
+        <th>Clinical Trial ID</th>
+        <th>Phase</th>
+        <th>Brief Title</th>
+        <th>Drugs</th>
+        <th>Principal Investigator</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="clinicalTrials.length >= 0" >
+        <tr *ngFor="let clinicalTrial of clinicalTrials" class="variantRow" (click)="getDataFor(clinicalTrial)">
+          <td>{{clinicalTrial.nci_id}}</td>
+          <td>{{clinicalTrial.phase}}</td>
+          <td>{{clinicalTrial.brief_title}}</td>
+          <td>{{clinicalTrial.drugsToString()}}</td>
+          <td>{{clinicalTrial.principal_investigator}}</td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="clinicalTrials.length === 0" >
+        <tr>
+          <td>Loading...</td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  `,
+  styles: [``],
   providers: [CLINICAL_TRIALS_CONTROL_VALUE_ACCESSOR]
 })
 export class ClinicalTrialsComponent {

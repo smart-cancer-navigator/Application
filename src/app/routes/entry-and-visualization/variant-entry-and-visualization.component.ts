@@ -32,7 +32,228 @@ class VariantWrapper {
 
 @Component({
   selector: "variant-entry-and-visualization",
-  templateUrl: 'variant-entry-and-visualization.component.html',
+  template: `
+    <div id="patientLinkState">
+      <!-- If an EHR link is NOT detected -->
+      <div id="suggestEHRLink" *ngIf="offerToLinkToEHRInstructions">
+        <div id="suggestions">
+          <img src="/assets/entry-and-visualization/info-icon.png">
+          <p class="thick" style="color:#fff">SMART Cancer Navigator is not connected to an EHR. <a style="color:#891924" href="javascript:void(0)" (click)="routeToInstructions()">Learn how to connect.</a></p>
+        </div>
+        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
+      </div>
+
+      <!-- If an EHR link is detected -->
+      <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patient.gender === 'male' ? '#27384f' : '#ff45f7'">
+        <img [src]="patient.gender === 'male' ? '/assets/entry-and-visualization/male-icon.png' : '/assets/entry-and-visualization/female-icon.png'">
+
+        <!-- Patient Details -->
+        <p style="color: white">
+        <b>Name: </b> {{patient.firstName}} {{patient.lastName}} |
+          <b>Zip Code:</b> {{patient.zipCode}} | <b>Age:</b> {{patient.age}} | 
+          <b>Condition:</b> 
+          <select style="font-size: 15px;">
+            <option *ngFor="let condition of patient.conditions">{{condition.display}}</option>
+          </select>
+        </p>
+
+        <div id="autosyncToggle">
+          <div>
+            <ui-switch [ngModel]="autosync" (ngModelChange)="onToggleAutosync($event)"></ui-switch>
+            <p class="thick" style="color: white">Auto-Sync</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="variantVisualizations">
+      <div class="variantWrapper" *ngFor="let variant of variants; let i = index">
+        <div class="variantSelector">
+          <div [style.width]="i === variants.length - 1 ? '100%' : 'calc(100% - 38px)'">
+            <variant-selector [ngModel]="variant.variant"
+                              (ngModelChange)="variant.variant = $event; addRowMaybe(i); saveEHRVariant(variant);"></variant-selector>
+          </div>
+          <button style="font-size:200%" class="removeRowButton btn btn-danger" (click)="removeRow(i)" *ngIf="i !== variants.length - 1"><div style="margin-top:-8px; margin-right:-2px;">&times;</div>
+          </button>
+        </div>
+        <div>
+          <div class="visualizationContent" [@drawerAnimation]="variant.drawerState">
+            <variant-visualization [(ngModel)]="variant.variant"></variant-visualization>
+          </div>
+          <div *ngIf="variant.variant !== undefined && variant.variant !== null" class="informationToggle"
+               (click)="variant.toggleDrawer()">
+            <img src="/assets/entry-and-visualization/dropdown.svg">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review form question -->
+    <div id="askForReviewDiv" *ngIf="userInteractionPoints >= 3 && askForReview">
+      <a href="javascript:void(0)" (click)="openFeedbackForm()">
+        <ngb-alert [type]="'primary'" (close)="askForReview = false">Please review our service!</ngb-alert>
+      </a>
+    </div>
+  `,
+  styles: [`
+    p {
+      margin: 0;
+    }
+
+    #patientLinkState {
+      margin-left: 6%;
+      margin-right: 6%;
+    }
+
+    #suggestEHRLink {
+      height: 80px;
+      width: 100%;
+
+      background-color: #dc3545;
+      overflow: hidden;
+    }
+
+    #suggestEHRLink > * {
+      float: left;
+    }
+
+    #suggestEHRLink > #suggestions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: calc(100% - 60px);
+      height: 100%;
+    }
+
+    #suggestEHRLink img {
+      width: 60px;
+      height: 60px;
+      margin: 1% 10px;
+    }
+
+    #suggestEHRLink p {
+      width: calc(96% - 80px);
+      margin: 1%;
+      font-size: 20px;
+      color: black;
+    }
+
+    #suggestEHRLink button {
+      width: 30px;
+      height: 30px;
+      color: white;
+      font-size: 130%;
+      border-radius: 0px 0px 0px 10px;
+      padding: 0;
+      float: right;
+    }
+
+    #patientLinkState > div {
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    #patientInfo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 80px;
+      width: 100%;
+
+      overflow: hidden;
+
+      text-align: center;
+    }
+
+    #patientInfo img {
+      width: 60px;
+      height: 60px;
+      margin: 10px;
+    }
+
+    #patientInfo p {
+      width: calc(96% - 280px);
+      margin: 1%;
+      font-size: 20px;
+      color: black;
+    }
+    
+    #autosyncToggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 200px;
+      height: 100%;
+    }
+
+    #autosyncToggle > div {
+      width: 100%;
+    }
+
+    #autosyncToggle > div > p {
+      width: 100%;
+    }
+
+    #variantVisualizations {
+      padding: 15px;
+      margin-top: 2%;
+      margin-left: 4%;
+      margin-right: 4%;
+      background-color: white;
+    }
+
+    .variantWrapper {
+      margin-bottom: 5px;
+    }
+
+    .variantSelector {
+      height: 38px;
+    }
+
+    .variantSelector > * {
+      float: left;
+      height: 100%;
+    }
+
+    .removeRowButton {
+      width: 38px;
+      font-size: 20px;
+      color: white;
+      padding: 0;
+    }
+
+    .informationToggle {
+      width: 100%;
+      background-color: #e2e2e2;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      text-align: center;
+      height: 30px;
+    }
+
+    .visualizationContent {
+      overflow: scroll;
+    }
+
+    .informationToggle:hover {
+      background-color: #b2b2b2;
+    }
+
+    .informationToggle img {
+      height: 10px;
+      width: 10px;
+      margin: 10px;
+    }
+
+    #askForReviewDiv {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+  `],
   animations: [
     trigger("drawerAnimation", [
       state("closed", style({
@@ -280,7 +501,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
             var display = JSON.parse(indexHere).display;
             if (code != "9999999") {
               if (!codesInArray.includes(code)) {
-                var condition = new Condition(code, display, "CMS");
+                var condition = new Condition(code, display);
                 conditionsArray.push(condition);
                 codesInArray.push(code);
               }
@@ -328,7 +549,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           var code = JSON.parse(coding).code;
           var display = JSON.parse(coding).display;
           if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
-            var condition = new Condition(code, display, "VA");
+            var condition = new Condition(code, display);
             conditionsArray.push(condition);
             codesInArray.push(code);
           } 
@@ -378,7 +599,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
           var code = JSON.parse(coding).code;
           var display = JSON.parse(coding).display;
           if (!codesInArray.includes(code) && clinicalStatus == "active") { // not already listed, and still an ongoing issue
-            var condition = new Condition(code, display, "VA");
+            var condition = new Condition(code, display);
             conditionsArray.push(condition);
             codesInArray.push(code);
           } 
@@ -403,7 +624,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
               var display = JSON.parse(indexHere).display;
               if (code != "9999999") {
                 if (!codesInArray.includes(code)) {
-                  var condition = new Condition(code, display, "CMS");
+                  var condition = new Condition(code, display);
                   conditionsArray.push(condition);
                   codesInArray.push(code);
                 }

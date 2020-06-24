@@ -40,15 +40,13 @@ export class Patient {
 export class Condition {
     code: string;
     name: string;
-    source: string;
     display: string;
     constructor(
         code: string,
-        name: string,
-        source: string
+        name: string
     ) {
         this.code = code;
         this.name = name;
-        this.display = source + ": " + code + " " + name;
+        this.display = code + " " + name;
     }
 }
