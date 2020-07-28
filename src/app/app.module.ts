@@ -77,6 +77,7 @@ import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-d
     FeedbackFormModalComponent,
     TeamComponent,
     DBAnalysisComponent,
+
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
