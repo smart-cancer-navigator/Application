@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { CMSService } from "../login-services/cms.service"
 import { VAService } from "../login-services/va.service"
+import { FileParsingService } from "../entry-and-visualization/vcf-reader/file-parsing.service"
 
 
 @Component({templateUrl: 'ehr-instructions.component.html'})
@@ -8,9 +9,9 @@ import { VAService } from "../login-services/va.service"
 export class EHRInstructionsComponent {
     constructor(
         private cmsService: CMSService,
-        private vaService: VAService
+        private vaService: VAService,
+        private fileParsingService: FileParsingService
     ) {}
-
     // called when the "Login to CMS" button is clicked.
     public cmsSignIn() {
         localStorage.setItem("cmsUser", "attempt");
@@ -26,4 +27,22 @@ export class EHRInstructionsComponent {
         var auth: string = `https://sandbox-api.va.gov/oauth2/authorization/?client_id=${this.vaService.clientId}&redirect_uri=http://localhost:4200/app&response_type=code&scope=${scope}&state=test1`;
         location.href = auth;
     }
+
+    uploadFile($event) {
+        this.fileParsingService.createVariantObjects($event);
+        // var file = $event.target.files[0]; // outputs the first file
+        // let fileReader = new FileReader();
+        // fileReader.onload = (e) => {
+        //     var fileName = file.name;
+        //     var fileContents = fileReader.result;
+        //     var nameSplit = fileName.split(".");
+        //     var geneName = nameSplit[2];
+        //     console.log(geneName);
+        //     console.log(fileContents);
+            
+        // }
+        // fileReader.readAsText(file);
+
+    }
+    
 }
