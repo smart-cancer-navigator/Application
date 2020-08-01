@@ -170,7 +170,7 @@ export class MyVariantInfoSearchService implements IVariantDatabase {
     desiredVal = desiredVal.replace(/[:]/g, "\\$&");
     // desiredVal = encodeURIComponent(desiredVal);
     let currentString = "";
-    if (include_prefixed_args) 
+    if (include_prefixed_args)  
     {
       currentString = stringArray[0].replace(/_/g, "") + ":" + desiredVal + "*" + "%20OR%20" + stringArray[0] + ":" + desiredVal;
     }
