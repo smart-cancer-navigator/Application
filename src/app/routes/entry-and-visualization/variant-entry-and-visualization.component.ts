@@ -3,14 +3,15 @@ import { Variant } from "./genomic-data";
 import { SMARTClient } from "../../smart-initialization/smart-reference.service";
 import { VariantSelectorService } from "./variant-selector/variant-selector.service";
 import { trigger, state, style, animate, transition } from "@angular/animations";
-import {Router} from "@angular/router";
-import {FeedbackFormModalComponent} from "../feedback-form/feedback-form-modal.component";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {isNullOrUndefined} from "util";
+import { Router } from "@angular/router";
+import { FeedbackFormModalComponent } from "../feedback-form/feedback-form-modal.component";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { isNullOrUndefined } from "util";
 import { Patient, Condition } from "./patient";
 import { CMSService } from "../login-services/cms.service";
 import { VAService } from "../login-services/va.service";
 import { ActivatedRoute } from "@angular/router";
+import { ObjectConvertToVariantService } from "./vcf-reader/object-convert-to-variant.service"
 
 class VariantWrapper {
   constructor(_index: number, _variant: Variant) {
@@ -274,7 +275,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     private modalService: NgbModal,
     private cmsService: CMSService,
     private vaService: VAService,
-    private activatedRoute: ActivatedRoute) {}
+    private activatedRoute: ActivatedRoute,
+    private objectConvertToVariantService: ObjectConvertToVariantService) {}
 
   // This is what we're using to determine whether the user is worthy to rate our service (has interacted enough with the service).
   userInteractionPoints: number = 0;
@@ -294,10 +296,18 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   ngOnInit()
   {
-    this.addRow();
+    
     this.offerToLinkToEHRInstructions = true;
     this.patientExists = false;
-    
+    if (localStorage.getItem("vcfVariants") != null) {
+      var objVariants = JSON.parse(localStorage.getItem("vcfVariants"));
+      for (var i = 0; i < objVariants.length; i++) {
+        var objVariant = objVariants[i];
+        var variant = this.objectConvertToVariantService.convertToVariant(objVariant);
+        this.variants.push(new VariantWrapper(i, variant));
+      }
+    }
+    else this.addRow();
     // everything inside this activatedRoute statement is going towards getting VA/CMS API data
     this.activatedRoute.queryParams.subscribe(params => {
       const code = params['code']; // necessary for both logins
@@ -328,7 +338,6 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       }
       if (localStorage.getItem("cmsUser") == 'in' && localStorage.getItem("vaUser") == null) {
         var currentUser = this.cmsService.getLocalStorageToken();
-        console.log(currentUser);
         this.cmsService.accessToken = currentUser['access_token'];
         this.getCMSInfo(currentUser['patient']);
       }
@@ -637,6 +646,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     });
   }
 
+  
 
   // Row management.
   addRow() {
