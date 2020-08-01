@@ -42,6 +42,9 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
+import { FileParsingService } from "./routes/entry-and-visualization/vcf-reader/file-parsing.service"
+import { VCFMyVariantInfoSearchService } from "./routes/entry-and-visualization/vcf-reader/vcf-myvariantinfo-search.service"
+import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/vcf-reader/object-convert-to-variant.service"
 
 @NgModule({
   imports:      [
@@ -94,7 +97,10 @@ import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-d
     AssocsService,
     ClinicalTrialsService,
     DrugsSearchService,
-    JSONNavigatorService
+    JSONNavigatorService,
+    FileParsingService,
+    VCFMyVariantInfoSearchService,
+    ObjectConvertToVariantService
   ],
   bootstrap: [
     AppComponent
