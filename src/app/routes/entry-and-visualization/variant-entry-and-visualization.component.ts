@@ -43,6 +43,13 @@ class VariantWrapper {
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
       </div>
+      <div id="vcfIsImported" *ngIf="!patientExists && vcfImported">
+        <div id="suggestions">
+          <img src="/assets/entry-and-visualization/info-icon.png">
+          <p class="thick" style="color:#fff">VCF imported.</p>
+        </div>
+        <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
+      </div>
 
       <!-- If an EHR link is detected -->
       <div id="patientInfo" *ngIf="patientExists" [style.background-color]="patient.gender === 'male' ? '#27384f' : '#ff45f7'">
@@ -140,6 +147,49 @@ class VariantWrapper {
     }
 
     #suggestEHRLink button {
+      width: 30px;
+      height: 30px;
+      color: white;
+      font-size: 130%;
+      border-radius: 0px 0px 0px 10px;
+      padding: 0;
+      float: right;
+    }
+
+    #vcfIsImported {
+      height: 80px;
+      width: 100%;
+
+      background-color: #32f520;
+      overflow: hidden;
+    }
+
+    #vcfIsImported > * {
+      float: left;
+    }
+
+    #vcfIsImported > #suggestions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: calc(100% - 60px);
+      height: 100%;
+    }
+
+    #vcfIsImported img {
+      width: 60px;
+      height: 60px;
+      margin: 1% 10px;
+    }
+
+    #vcfIsImported p {
+      width: calc(96% - 80px);
+      margin: 1%;
+      font-size: 20px;
+      color: black;
+    }
+
+    #vcfIsImported button {
       width: 30px;
       height: 30px;
       color: white;
@@ -286,6 +336,8 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
 
   offerToLinkToEHRInstructions = true;
   patientExists = false;
+  vcfImported = false;
+
   patientObject: Object = null;
   patientAge: number = -1;
   patientConditions: string[] = [];
@@ -299,7 +351,10 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     
     this.offerToLinkToEHRInstructions = true;
     this.patientExists = false;
+    this.vcfImported = false;
     if (localStorage.getItem("vcfVariants") != null) {
+      this.vcfImported = true;
+      this.offerToLinkToEHRInstructions = false;
       var objVariants = JSON.parse(localStorage.getItem("vcfVariants"));
       for (var i = 0; i < objVariants.length; i++) {
         var objVariant = objVariants[i];
@@ -674,7 +729,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   }
 
   routeToInstructions() {
-    this.router.navigate(["ehr-link"]);
+    this.router.navigate(["ehr-login"]);
   }
 
   onToggleAutosync(newVal: boolean) {

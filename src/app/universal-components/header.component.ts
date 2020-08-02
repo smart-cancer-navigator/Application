@@ -1,5 +1,5 @@
-import {Component} from "@angular/core";
-import {NavigationEnd, Router} from "@angular/router";
+import { Component } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
 
 @Component({
   selector: "header",
@@ -16,8 +16,11 @@ import {NavigationEnd, Router} from "@angular/router";
         <div class="routeOption {{currentRoute === '/team' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('team')">
           <p>Team</p>
         </div>
-        <div class="routeOption {{currentRoute === '/ehr-link' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('ehr-link')">
-          <p>EHR Link</p>
+        <div class="routeOption {{currentRoute === '/ehr-login' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('ehr-login')">
+          <p>EHR Login</p>
+        </div>
+        <div class="routeOption {{currentRoute === '/vcf-upload' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('vcf-upload')">
+          <p>VCF Upload</p>
         </div>
         <div class="routeOption {{currentRoute === '/db-analysis' ? 'selectedRoute' : 'unselectedRoute'}}" (click)="routeTo('db-analysis')">
           <p>DB Analysis</p>
@@ -64,7 +67,7 @@ import {NavigationEnd, Router} from "@angular/router";
     }
 
     #routingOptions {
-      min-width: 500px;
+      min-width: 750px;
       height: 100%;
       overflow: hidden;
       float: right;
@@ -76,7 +79,7 @@ import {NavigationEnd, Router} from "@angular/router";
 
       text-align: center;
       height: 60px;
-      width: calc(100% / 5 - 8px); /* +1 px for each for border div */
+      width: calc(100% / 6 - 8px); /* +1 px for each for border div */
       margin: 10px 3px;
 
       display: flex;

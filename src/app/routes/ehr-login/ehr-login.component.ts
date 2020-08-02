@@ -4,13 +4,12 @@ import { VAService } from "../login-services/va.service"
 import { FileParsingService } from "../entry-and-visualization/vcf-reader/file-parsing.service"
 
 
-@Component({templateUrl: 'ehr-instructions.component.html'})
+@Component({templateUrl: 'ehr-login.component.html'})
 
-export class EHRInstructionsComponent {
+export class EHRLoginComponent {
     constructor(
         private cmsService: CMSService,
-        private vaService: VAService,
-        private fileParsingService: FileParsingService
+        private vaService: VAService
     ) {}
     // called when the "Login to CMS" button is clicked.
     public cmsSignIn() {
@@ -28,21 +27,6 @@ export class EHRInstructionsComponent {
         location.href = auth;
     }
 
-    uploadFile($event) {
-        this.fileParsingService.createVariantObjects($event);
-        // var file = $event.target.files[0]; // outputs the first file
-        // let fileReader = new FileReader();
-        // fileReader.onload = (e) => {
-        //     var fileName = file.name;
-        //     var fileContents = fileReader.result;
-        //     var nameSplit = fileName.split(".");
-        //     var geneName = nameSplit[2];
-        //     console.log(geneName);
-        //     console.log(fileContents);
-            
-        // }
-        // fileReader.readAsText(file);
-
-    }
+    
     
 }

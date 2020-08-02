@@ -23,7 +23,7 @@ import { DrugDetailsModalComponent } from "./routes/entry-and-visualization/vari
 import { GeneInformationComponent } from "./routes/entry-and-visualization/variant-visualization/gene/gene-information.component";
 import { VariantInformationComponent } from "./routes/entry-and-visualization/variant-visualization/variant/variant-information.component";
 import { VariantVisualizationComponent } from "./routes/entry-and-visualization/variant-visualization/variant-visualization.component";
-import { EHRInstructionsComponent } from "./routes/ehr-instructions/ehr-instructions.component";
+import { EHRLoginComponent } from "./routes/ehr-login/ehr-login.component";
 import { FeedbackFormModalComponent } from "./routes/feedback-form/feedback-form-modal.component";
 import { HeaderComponent } from "./universal-components/header.component";
 import { ClassificationsModalComponent } from "./routes/entry-and-visualization/variant-visualization/variant/classifications-modal.component";
@@ -32,6 +32,7 @@ import { LandingPageComponent } from "./routes/home/home.component";
 import { GithubForkUsComponent } from "./universal-components/github-fork-us.component";
 import { TeamComponent } from "./routes/team/team.component";
 import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
+import { VCFUploadComponent } from "./routes/vcf-upload/vcf-upload.component"
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -42,9 +43,9 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
-import { FileParsingService } from "./routes/entry-and-visualization/vcf-reader/file-parsing.service"
-import { VCFMyVariantInfoSearchService } from "./routes/entry-and-visualization/vcf-reader/vcf-myvariantinfo-search.service"
-import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/vcf-reader/object-convert-to-variant.service"
+import { FileParsingService } from "./routes/entry-and-visualization/vcf-reader/file-parsing.service";
+import { VCFMyVariantInfoSearchService } from "./routes/entry-and-visualization/vcf-reader/vcf-myvariantinfo-search.service";
+import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/vcf-reader/object-convert-to-variant.service";
 
 @NgModule({
   imports:      [
@@ -74,13 +75,13 @@ import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/
     GeneInformationComponent,
     DrugDetailsModalComponent,
     ClassificationsModalComponent,
-    EHRInstructionsComponent,
+    EHRLoginComponent,
     LandingPageComponent,
     GithubForkUsComponent,
     FeedbackFormModalComponent,
     TeamComponent,
     DBAnalysisComponent,
-
+    VCFUploadComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.

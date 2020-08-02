@@ -47,29 +47,8 @@ button {
         <br><br><br>
         <button (click)="cmsSignIn()">  
             Login to CMS  
-        </button> 
-        
-    </div><br>
-
-    <div class="instructionBlock">
-        <h4 class="display-4 instructionHeading">File Upload</h4>
-       <!--
-        <div>
-            <label for="file">Choose File</label>
-            <input type="file"
-                   id="file"
-                   (change)="handleFileInput($event.target.files)">
-        </div>
-        --> 
-        <input 
-             
-            type="file" 
-            #uploader
-            (change)="uploadFile($event)"
-        />
-        <button (click)="uploader.click()">
-            Upload
         </button>
+        
     </div><br>
 
     <div class="instructionBlock">
