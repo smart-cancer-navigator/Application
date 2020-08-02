@@ -23,6 +23,7 @@ export class FileParsingService {
         fileReader.readAsText(file);
         fileReader.onload = (e) => {
             var fileName = file.name;
+            localStorage.setItem("fileName", fileName);
         
             var fileContents = String(fileReader.result);
             var nameSplit = fileName.split(".");

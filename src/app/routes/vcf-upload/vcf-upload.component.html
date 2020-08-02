@@ -35,12 +35,14 @@
     
     
     <div id="wrapper">
-        
-    
+        <div class="instructionBlock">
+            <h2 class="display-2" style="text-align: center;">VCF Upload</h2>
+        </div>
+        <hr>
         <div class="instructionBlock">
             <h4 class="display-4 instructionHeading">File Upload</h4>
             <input 
-                
+                hidden
                 type="file" 
                 #uploader
                 (change)="uploadFile($event)"
@@ -48,14 +50,15 @@
             <button type="submit" (click)="uploader.click()">
                 Upload
             </button>
+            <p>{{fileName}}</p>
         </div><br>
     
         <div class="instructionBlock">
             <h4 class="display-4 instructionHeading">VCF Information</h4>
             <p>The SMART Cancer Navigator can accept Variant Call Format (VCF) files and display them in an organized fashion, allowing patients to easily import any gene-variants that they may have into the app.</p>
-            <br>
+            
             <p>To import your VCF file, click the Upload button above. Then, click the "Try It Out!" tab to see detailed information regarding your variants.</p>
-            <br>
+            
             <p>To remove your variants from the app, simply click the Logout button.</p>
         </div>
         <br>
