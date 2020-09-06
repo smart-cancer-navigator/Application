@@ -11,7 +11,7 @@ import { Patient, Condition } from "./patient";
 import { CMSService } from "../login-services/cms.service";
 import { VAService } from "../login-services/va.service";
 import { ActivatedRoute } from "@angular/router";
-import { ObjectConvertToVariantService } from "./vcf-reader/object-convert-to-variant.service"
+import { ObjectConvertToVariantService } from "../vcf-reader/object-convert-to-variant.service"
 
 class VariantWrapper {
   constructor(_index: number, _variant: Variant) {
@@ -46,7 +46,7 @@ class VariantWrapper {
       <div id="vcfIsImported" *ngIf="!patientExists && vcfImported">
         <div id="suggestions">
           <img src="/assets/entry-and-visualization/info-icon.png">
-          <p class="thick" style="color:#fff">VCF imported.</p>
+          <p class="thick" style="color:#fff">VCF file "{{vcfFileName}}" imported.</p>
         </div>
         <button class="btn btn-danger" (click)="offerToLinkToEHRInstructions = false"><div style="margin-top:-3px; margin-right:-2px">&times;</div></button>
       </div>
@@ -337,6 +337,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
   offerToLinkToEHRInstructions = true;
   patientExists = false;
   vcfImported = false;
+  vcfFileName: string = "";
 
   patientObject: Object = null;
   patientAge: number = -1;
@@ -352,6 +353,13 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     this.offerToLinkToEHRInstructions = true;
     this.patientExists = false;
     this.vcfImported = false;
+
+    if (localStorage.getItem("fileName") != null) {
+      this.vcfImported = true;
+      this.offerToLinkToEHRInstructions = false;
+      this.vcfFileName = localStorage.getItem("fileName");
+    }
+
     if (localStorage.getItem("vcfVariants") != null) {
       this.vcfImported = true;
       this.offerToLinkToEHRInstructions = false;

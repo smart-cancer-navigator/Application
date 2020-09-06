@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { CMSService } from "../login-services/cms.service"
 import { VAService } from "../login-services/va.service"
-import { FileParsingService } from "../entry-and-visualization/vcf-reader/file-parsing.service"
+import { FileParsingService } from "../vcf-reader/file-parsing.service"
 
 
 @Component({templateUrl: 'ehr-login.component.html'})
