@@ -32,7 +32,7 @@ import { LandingPageComponent } from "./routes/home/home.component";
 import { GithubForkUsComponent } from "./universal-components/github-fork-us.component";
 import { TeamComponent } from "./routes/team/team.component";
 import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
-import { VCFUploadComponent } from "./routes/vcf-upload/vcf-upload.component"
+import { VCFUploadComponent } from "./routes/vcf-reader/vcf-upload.component"
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -43,9 +43,11 @@ import { VariantSelectorService } from "./routes/entry-and-visualization/variant
 import { DrugsSearchService } from "./routes/entry-and-visualization/variant-visualization/drugs/drugs-search.service";
 import { MyGeneInfoSearchService } from "./routes/entry-and-visualization/genomic-data-providers/mygeneinfo-search.service";
 import { JSONNavigatorService } from "./routes/entry-and-visualization/genomic-data-providers/utilities/json-navigator.service";
-import { FileParsingService } from "./routes/entry-and-visualization/vcf-reader/file-parsing.service";
-import { VCFMyVariantInfoSearchService } from "./routes/entry-and-visualization/vcf-reader/vcf-myvariantinfo-search.service";
-import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/vcf-reader/object-convert-to-variant.service";
+import { FileParsingService } from "./routes/vcf-reader/file-parsing.service";
+import { VCFMyVariantInfoSearchService } from "./routes/vcf-reader/vcf-myvariantinfo-search.service";
+import { ObjectConvertToVariantService } from "./routes/vcf-reader/object-convert-to-variant.service";
+import { RestService } from "./routes/vcf-reader/rest.service"
+import { FhirDownloadService } from "./routes/vcf-reader/fhir-download.service"
 
 @NgModule({
   imports:      [
@@ -101,7 +103,9 @@ import { ObjectConvertToVariantService } from "./routes/entry-and-visualization/
     JSONNavigatorService,
     FileParsingService,
     VCFMyVariantInfoSearchService,
-    ObjectConvertToVariantService
+    ObjectConvertToVariantService,
+    RestService,
+    FhirDownloadService
   ],
   bootstrap: [
     AppComponent
