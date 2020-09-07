@@ -42,7 +42,7 @@
         <div class="instructionBlock">
             <input #fileInput name="file" type="file"  (change)="handleFileInput($event.target.files)" >
             <button mat-raised-button class="standard-button" (click)="uploadFile()">Upload file</button>
-            <br><br><p>{{fileName}}</p><br><br>
+            <br><br><p>{{fileName}}</p>
             <button (click)="downloadFile()">Download FHIR file</button>
         </div><br>
     
@@ -53,9 +53,9 @@
             <p>To import your VCF file, click the Upload button above. Then, click the "Try It Out!" tab to see detailed information regarding your variants.</p>
             
             <p>To remove your variants from the app, simply click the Logout button.</p>
+            <p>Please click <a href="javascript:void(0);" (click)="showInstructionsModal()" >here</a> to see how to properly format the VCF file name.</p>
         </div>
         <br>
-        
         
         <br>
         

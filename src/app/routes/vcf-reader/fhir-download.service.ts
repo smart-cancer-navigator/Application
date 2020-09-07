@@ -10,7 +10,7 @@ export class FhirDownloadService {
     }
 
     downloadFhir(data) {
-        
+        console.log("Downloading the fhir.json file")
         this.downloadByHtmlTag({
             fileName: "fhir.json",
             text: data

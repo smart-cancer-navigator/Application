@@ -17,6 +17,9 @@ import { FilterableSearchComponent } from "./routes/entry-and-visualization/filt
 import { AssocsComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/assocs.component";
 import { DrugModalComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/drug-modal.component";
 import { DiseaseModalComponent } from "./routes/entry-and-visualization/variant-visualization/assocs/disease-modal.component";
+import { NoFileChosenModalComponent } from "./routes/vcf-reader/modals/no-file-chosen-modal.component"
+import { FileInstructionsModalComponent } from "./routes/vcf-reader/modals/file-instructions-modal.component"
+import { ServerErrorModalComponent } from "./routes/vcf-reader/modals/server-error-modal.component";
 
 import { ClinicalTrialsComponent } from "./routes/entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.component";
 import { DrugDetailsModalComponent } from "./routes/entry-and-visualization/variant-visualization/drugs/drug-details-modal.component";
@@ -32,7 +35,7 @@ import { LandingPageComponent } from "./routes/home/home.component";
 import { GithubForkUsComponent } from "./universal-components/github-fork-us.component";
 import { TeamComponent } from "./routes/team/team.component";
 import { DBAnalysisComponent } from "./routes/db-analysis/db-analysis.component";
-import { VCFUploadComponent } from "./routes/vcf-reader/vcf-upload.component"
+import { VCFUploadComponent } from "./routes/vcf-reader/vcf-upload.component";
 
 // Services
 import { SMARTReferenceService } from "./smart-initialization/smart-reference.service";
@@ -83,14 +86,20 @@ import { FhirDownloadService } from "./routes/vcf-reader/fhir-download.service"
     FeedbackFormModalComponent,
     TeamComponent,
     DBAnalysisComponent,
-    VCFUploadComponent
+    VCFUploadComponent,
+    NoFileChosenModalComponent,
+    FileInstructionsModalComponent,
+    ServerErrorModalComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
     ClassificationsModalComponent,
     DrugModalComponent,
     DiseaseModalComponent,
-    FeedbackFormModalComponent
+    FeedbackFormModalComponent,
+    NoFileChosenModalComponent,
+    FileInstructionsModalComponent,
+    ServerErrorModalComponent
   ],
   providers: [
     SMARTReferenceService,

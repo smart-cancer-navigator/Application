@@ -61,7 +61,7 @@ export class FileParsingService {
     // }
 
     createVariants(data, name) {
-      localStorage.setItem("fhir", JSON.stringify(data));
+      localStorage.setItem("fhir", JSON.stringify(data,null,"    "));
       localStorage.setItem("fileName", name);
       var nameSplit = name.split('.');
       var geneName = nameSplit[2];
@@ -72,8 +72,6 @@ export class FileParsingService {
         var entry = contained[i];
         var component = entry.component;
         if (component == null || component.length != 7) continue;
-        console.log(component);
-        console.log(component[6]);
         var position: number = component[6].valueRange.low.value;
         var ref: string = component[3].valueString;
         var alt: string = component[4].valueString;
@@ -84,13 +82,9 @@ export class FileParsingService {
         variantArray.push(variant);
       }
 
-      console.log(variantArray);
-
       this.vcfMyvariantinfoSearchService.searchByString(geneName).subscribe(data => {
         var fullVariants: Variant[] = [];
-        console.log(data);
         for (var i = 0; i < data.length; i++) {
-          console.log(data[i])
           if (this.vcfVariantInFile(data[i], variantArray)) {
             var converted = this.vcfVariantToNormal(data[i]);
             
