@@ -40,24 +40,103 @@ export class VAService {
         }, err => {}));
     }
 
-    // the patient file contains information on patient demographics
+
+    // patient/AllergyIntolerance.read
+    allergyIntoleranceInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/AllergyIntolerance?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/Condition.read
+    conditionInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Condition?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/DiagnosticReport.read
+    diagnosticReportInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/DiagnosticReport?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/Immunization.read
+    immunizationInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Immunization?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/MedicationOrder.read
+    medicationOrderInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/MedicationOrder?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/MedicationStatement.read
+    medicationStatementInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/MedicationStatement?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/Observation.read
+    observationInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Observation?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
+    }
+
+    // patient/Patient.read
     patientInfo(patientId: string) {
         const patientParams = new HttpParams({fromString: `${patientId}`});
         options['params'] = patientParams;
         options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
         return this.http.get<any>(`https://sandbox-api.va.gov/services/fhir/v0/argonaut/data-query/Patient/${patientId}`, options)
-        .pipe(map(patientReturnedData => {
-          return patientReturnedData;
-      }));
+        .pipe(map(data => {
+            return data;
+        }));
     }
 
-    // the conditions file contains information about conditions
-    conditionInfo(patientId: string) {
+    // patient/Procedure.read
+    procedureInfo(patientId: string) {
         const patientParams = new HttpParams({fromString: `${patientId}`});
         options['params'] = patientParams;
-        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Condition?_count=50&patient=' + patientId, options)
-        .pipe(map(conditionReturnedData => {
-          return conditionReturnedData;
-      }));
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox-api.va.gov/services/fhir/v0/dstu2/Procedure?_count=10000&patient=' + patientId, options)
+        .pipe(map(data => {
+            return data;
+        }));
     }
 }

@@ -57,9 +57,8 @@ export class CMSService {
         options['params'] = eobParams;
         options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
         return this.http.get<any>('https://sandbox.bluebutton.cms.gov/v1/fhir/ExplanationOfBenefit/', options)
-            .pipe(map(eobData => {          
-            localStorage.setItem('eobData', JSON.stringify(eobData));                
-            return JSON.stringify(eobData);
+            .pipe(map(data => {
+            return data;
         }));
     }
     // the patient file contains information on patient demographics
@@ -68,10 +67,27 @@ export class CMSService {
         options['params'] = patientParams;
         options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
         return this.http.get<any>('https://sandbox.bluebutton.cms.gov/v1/fhir/Patient/', options)
-            .pipe(map(patientReturnedData => {
-            
-            localStorage.setItem('patientData', JSON.stringify(patientReturnedData));                
-            return JSON.stringify(patientReturnedData);
+            .pipe(map(data => {
+            return data;
+        }));
+    }
+    
+    coverageInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `patient=${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox.bluebutton.cms.gov/v1/fhir/Coverage/', options)
+            .pipe(map(data => {            
+            return data;
+        }));
+    }
+    profileInfo(patientId: string) {
+        const patientParams = new HttpParams({fromString: `patient=${patientId}`});
+        options['params'] = patientParams;
+        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
+        return this.http.get<any>('https://sandbox.bluebutton.cms.gov/v1/fhir/userinfo/', options)
+            .pipe(map(data => {            
+            return data;
         }));
     }
 

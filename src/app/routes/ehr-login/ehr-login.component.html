@@ -41,13 +41,15 @@ button {
     <hr>
     <div class="instructionBlock">
         <h4 class="display-4 instructionHeading">Logins</h4>
-        <button (click)="vaSignIn()">  
+        <button (click)="vaSignIn()" style="margin:5px">  
             Login to VA  
-        </button> 
+        </button>
+        <button (click)="vaDownload()" style="margin:5px">Download VA Data</button>
         <br><br>
-        <button (click)="cmsSignIn()">  
+        <button (click)="cmsSignIn()" style="margin:5px">  
             Login to CMS  
         </button>
+        <button (click)="cmsDownload()"style="margin:5px">Download CMS Data</button>
         
     </div><br>
 

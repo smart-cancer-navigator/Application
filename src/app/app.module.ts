@@ -51,6 +51,7 @@ import { VCFMyVariantInfoSearchService } from "./routes/vcf-reader/vcf-myvariant
 import { ObjectConvertToVariantService } from "./routes/vcf-reader/object-convert-to-variant.service";
 import { RestService } from "./routes/vcf-reader/rest.service"
 import { FhirDownloadService } from "./routes/vcf-reader/fhir-download.service"
+import { DownloadZipsService } from "./routes/login-services/download-zips.service"
 
 @NgModule({
   imports:      [
@@ -114,7 +115,8 @@ import { FhirDownloadService } from "./routes/vcf-reader/fhir-download.service"
     VCFMyVariantInfoSearchService,
     ObjectConvertToVariantService,
     RestService,
-    FhirDownloadService
+    FhirDownloadService,
+    DownloadZipsService
   ],
   bootstrap: [
     AppComponent

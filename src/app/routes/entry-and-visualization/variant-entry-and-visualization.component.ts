@@ -386,6 +386,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       }
       // cms log on for first time
       if (localStorage.getItem("cmsUser") == "attempt") {
+        console.log("hello")
         this.cmsService.getToken("User", code).subscribe(data => {
           this.cmsService.accessToken = data.access_token;
           localStorage.setItem("cmsUser", "in");
@@ -534,8 +535,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
     this.patientExists = true;
     // patient info file reading
     this.cmsService.patientInfo(patientId).subscribe(patient => {
-      var parsing = JSON.parse(patient);
-      var justPatient = JSON.stringify(parsing.entry);
+      var justPatient = JSON.stringify(patient.entry);
       var bigResource = JSON.stringify(JSON.parse(justPatient)[0]);
       var justResource = JSON.stringify(JSON.parse(bigResource).resource)
       var bigName = JSON.stringify(JSON.parse(justResource).name);
@@ -553,7 +553,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
       var age = this.calculateAge(birthDate);
       // EOB info file reading
       this.cmsService.eobInfo(patientId).subscribe(eob => {
-        var entry = JSON.parse(eob).entry;
+        var entry = eob.entry;
         var entryString = JSON.stringify(entry);
         var conditionsArray: Condition[] = [];
         var codesInArray: string[] = [];
@@ -678,7 +678,7 @@ export class VariantEntryAndVisualizationComponent implements OnInit {
         }
         // CMS conditions
         this.cmsService.eobInfo(cmsPatientId).subscribe(eob => {
-          var entry = JSON.parse(eob).entry;
+          var entry = eob.entry;
           var entryString = JSON.stringify(entry);
           for (var i = 0; i < entry.length; i++) { // looping through all entries to find 
             var entryHere = JSON.stringify(JSON.parse(entryString)[i]);
