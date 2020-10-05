@@ -81,14 +81,5 @@ export class CMSService {
             return data;
         }));
     }
-    profileInfo(patientId: string) {
-        const patientParams = new HttpParams({fromString: `patient=${patientId}`});
-        options['params'] = patientParams;
-        options.headers = options.headers.set('Authorization', `Bearer ${this.accessToken}`);
-        return this.http.get<any>('https://sandbox.bluebutton.cms.gov/v1/fhir/userinfo/', options)
-            .pipe(map(data => {            
-            return data;
-        }));
-    }
 
 }

@@ -2,7 +2,8 @@ import { Component } from "@angular/core";
 import { CMSService } from "../login-services/cms.service"
 import { VAService } from "../login-services/va.service"
 import { DownloadZipsService } from "../login-services/download-zips.service"
-
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { DownloadErrorModalComponent } from "./download-error-modal.component"
 
 @Component({templateUrl: 'ehr-login.component.html'})
 
@@ -10,7 +11,8 @@ export class EHRLoginComponent {
     constructor(
         private cmsService: CMSService,
         private vaService: VAService,
-        private downloadZipsService: DownloadZipsService
+        private downloadZipsService: DownloadZipsService,
+        private modalService: NgbModal
     ) {}
     // called when the "Login to CMS" button is clicked.
     public cmsSignIn() {
@@ -21,7 +23,14 @@ export class EHRLoginComponent {
     }
 
     public cmsDownload() {
-        this.downloadZipsService.downloadCMS();
+        if (localStorage.getItem("cmsUser") != "in") {
+            const modalRef = this.modalService.open(DownloadErrorModalComponent, {size: "lg"});
+            modalRef.componentInstance.systemName = "CMS";
+        }
+        else {
+            this.downloadZipsService.downloadCMS();
+        }
+        
     }
 
     // called when the "Login to VA" button is clicked.
@@ -32,7 +41,13 @@ export class EHRLoginComponent {
         location.href = auth;
     }
     public vaDownload() {
-        this.downloadZipsService.downloadVA();
+        if (localStorage.getItem("vaUser") != "in") {
+            const modalRef = this.modalService.open(DownloadErrorModalComponent, {size: "lg"});
+            modalRef.componentInstance.systemName = "VA";
+        }
+        else {
+            this.downloadZipsService.downloadVA();
+        }
     }
 
     

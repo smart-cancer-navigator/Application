@@ -1,8 +1,3 @@
-/**
- * A part of the result visualization component, which displays the drugs that will be effective against genes
- * or variants.
- */
-
 import { Component, Input } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 

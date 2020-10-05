@@ -20,6 +20,7 @@ import { DiseaseModalComponent } from "./routes/entry-and-visualization/variant-
 import { NoFileChosenModalComponent } from "./routes/vcf-reader/modals/no-file-chosen-modal.component"
 import { FileInstructionsModalComponent } from "./routes/vcf-reader/modals/file-instructions-modal.component"
 import { ServerErrorModalComponent } from "./routes/vcf-reader/modals/server-error-modal.component";
+import { DownloadErrorModalComponent } from "./routes/ehr-login/download-error-modal.component"
 
 import { ClinicalTrialsComponent } from "./routes/entry-and-visualization/variant-visualization/clinical-trials/clinical-trials.component";
 import { DrugDetailsModalComponent } from "./routes/entry-and-visualization/variant-visualization/drugs/drug-details-modal.component";
@@ -90,7 +91,8 @@ import { DownloadZipsService } from "./routes/login-services/download-zips.servi
     VCFUploadComponent,
     NoFileChosenModalComponent,
     FileInstructionsModalComponent,
-    ServerErrorModalComponent
+    ServerErrorModalComponent,
+    DownloadErrorModalComponent
   ],
   entryComponents: [
     DrugDetailsModalComponent, // Since it enters later on in the flow.
@@ -100,7 +102,8 @@ import { DownloadZipsService } from "./routes/login-services/download-zips.servi
     FeedbackFormModalComponent,
     NoFileChosenModalComponent,
     FileInstructionsModalComponent,
-    ServerErrorModalComponent
+    ServerErrorModalComponent,
+    DownloadErrorModalComponent
   ],
   providers: [
     SMARTReferenceService,
