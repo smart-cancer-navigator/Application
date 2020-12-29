@@ -1,0 +1,68 @@
+<style>
+#wrapper {
+    padding: 5px;
+    margin: 15px 50px;
+}
+
+.instructionBlock {
+    border: 1px solid #cecece;
+    box-shadow: 1px 3px #cfcfcf;
+    background-color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.instructionHeading {
+    text-align: center;
+}
+
+.instructionBlock p {
+    font-size: 20px;
+}
+
+.display-2 {
+    font-weight: 550;
+}
+
+.display-4 {
+    font-weight: 500;
+}
+
+button {
+    font-size: 30;
+}
+</style>
+
+
+<div id="wrapper">
+    <div class="instructionBlock">
+        <h2 class="display-2" style="text-align: center;">EHR Logins</h2>
+    </div>
+    <hr>
+    <div class="instructionBlock">
+        <h4 class="display-4 instructionHeading">Logins</h4>
+        <button (click)="vaSignIn()" style="margin:5px">  
+            Login to VA  
+        </button>
+        <button (click)="vaDownload()" style="margin:5px">Download VA Data</button>
+        <br><br>
+        <button (click)="cmsSignIn()" style="margin:5px">  
+            Login to CMS  
+        </button>
+        <button (click)="cmsDownload()"style="margin:5px">Download CMS Data</button>
+        
+    </div><br>
+
+    <div class="instructionBlock">
+        <h4 class="display-4 instructionHeading">Server Information</h4>
+        <p>The SMART Cancer Navigator connects to two medical records servers: <b>Vetarans Affairs (VA)</b> and <b>Centers for Medicare and Medicaid Services (CMS)</b>.</p>
+        
+        <p>The app can connect to these servers to display data about a patient's conditions.</p>
+    </div>
+    <br>
+    
+    
+    <br>
+    
+    
+</div>

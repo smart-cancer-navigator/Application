@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+}
+
+.thick {						
+  font-weight: 550;
+}
+
+.regular {
+  font-weight: 300;
+}

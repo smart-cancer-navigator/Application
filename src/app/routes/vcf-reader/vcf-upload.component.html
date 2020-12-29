@@ -1,0 +1,63 @@
+<style>
+    #wrapper {
+        padding: 5px;
+        margin: 15px 50px;
+    }
+    
+    .instructionBlock {
+        border: 1px solid #cecece;
+        box-shadow: 1px 3px #cfcfcf;
+        background-color: white;
+        padding: 10px;
+        text-align: center;
+    }
+    
+    .instructionHeading {
+        text-align: center;
+    }
+    
+    .instructionBlock p {
+        font-size: 20px;
+    }
+    
+    .display-2 {
+        font-weight: 550;
+    }
+    
+    .display-4 {
+        font-weight: 500;
+    }
+    
+    button {
+        font-size: 30;
+    }
+    </style>
+    
+    
+    <div id="wrapper">
+        <div class="instructionBlock">
+            <h2 class="display-2" style="text-align: center;">VCF Upload</h2>
+        </div>
+        <hr>
+        <div class="instructionBlock">
+            <input #fileInput name="file" type="file"  (change)="handleFileInput($event.target.files)" >
+            <button mat-raised-button class="standard-button" (click)="uploadFile()">Upload file</button>
+            <br><br><p>{{fileName}}</p>
+            <button (click)="downloadFile()">Download FHIR file</button>
+        </div><br>
+    
+        <div class="instructionBlock">
+            <h4 class="display-4 instructionHeading">VCF Information</h4>
+            <p>The SMART Cancer Navigator can accept Variant Call Format (VCF) files and display them in an organized fashion, allowing patients to easily import any gene-variants that they may have into the app.</p>
+            
+            <p>To import your VCF file, click the Upload button above. Then, click the "Try It Out!" tab to see detailed information regarding your variants.</p>
+            
+            <p>To remove your variants from the app, simply click the Logout button.</p>
+            <p>Please click <a href="javascript:void(0);" (click)="showInstructionsModal()" >here</a> to see how to properly format the VCF file name.</p>
+        </div>
+        <br>
+        
+        <br>
+        
+        
+    </div>
